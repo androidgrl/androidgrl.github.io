@@ -4,13 +4,40 @@
  <title>Androidgrl's Blog</title>
  <link href="http://androidgrl.github.io/atom.xml" rel="self"/>
  <link href="http://androidgrl.github.io/"/>
- <updated>2015-07-31T23:50:54-06:00</updated>
+ <updated>2015-08-28T17:29:52-06:00</updated>
  <id>http://androidgrl.github.io</id>
  <author>
    <name>Jamie Kawahara</name>
    <email>kawaharajamie@gmail.com</email>
  </author>
 
+ 
+ <entry>
+   <title>How to add custom text to a 3D model</title>
+   <link href="http://androidgrl.github.io/2015/08/07/text/"/>
+   <updated>2015-08-07T00:00:00-06:00</updated>
+   <id>http://androidgrl.github.io/2015/08/07/text</id>
+   <content type="html">&lt;p&gt;This is a tutorial on how to add custom text to a 3D model, using Tinkercad’s free easy-to-use web-based 3D modeling tool.  This is great for adding personal messages and names to your prints!  In this tutorial I will add custom text to a trophy downloaded from Thingiverse.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;./public/trophy.jpg&quot; alt=&quot;Image of Trophy with Printed Text&quot; /&gt;
+&lt;em&gt;Pictured here is a trophy with custom text added&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;Since it is much easier to demonstrate how to do this with a video, I have made a short
+7 minute &lt;a href=&quot;&quot;&gt;Youtube video&lt;/a&gt; which demonstrates:&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;
+    &lt;p&gt;How to download the file from Thingiverse.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;How to remove the pre-existing text from the model using Tinkercad.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;How to add your own custom text.&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ol&gt;
+</content>
+ </entry>
  
  <entry>
    <title>How to use a Kinect to take a 3D scan and Print It</title>
