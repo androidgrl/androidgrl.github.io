@@ -4,13 +4,77 @@
  <title>Androidgrl's Blog</title>
  <link href="http://androidgrl.github.io/atom.xml" rel="self"/>
  <link href="http://androidgrl.github.io/"/>
- <updated>2015-08-30T18:16:56-06:00</updated>
+ <updated>2015-10-11T12:45:27-06:00</updated>
  <id>http://androidgrl.github.io</id>
  <author>
    <name>Jamie Kawahara</name>
    <email>kawaharajamie@gmail.com</email>
  </author>
 
+ 
+ <entry>
+   <title>3D Printed Portrait-Business Cards Tutorial</title>
+   <link href="http://androidgrl.github.io/2015/10/10/card/"/>
+   <updated>2015-10-10T00:00:00-06:00</updated>
+   <id>http://androidgrl.github.io/2015/10/10/card</id>
+   <content type="html">&lt;p&gt;Have business cards that truly stand out! The next time you give your business card to someone, impress them with a 3D printed business card with your own portrait on it!  This tutorial will show you how to use Tinkercad, a free online 3D design tool.  Tinkercad is easy-to-use and is web-based, so there is no need to download anything.  This design takes only 15 minutes to create.&lt;/p&gt;
+
+&lt;p&gt;I have included a video demonstrating the process below.  I suggest following along with the video, and then using the written instructions below as a reference.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://www.youtube.com/watch?v=VJI_D-GGwqY&quot;&gt;&lt;img src=&quot;http://img.youtube.com/vi/VJI_D-GGwqY/0.jpg&quot; alt=&quot;&quot; /&gt;&lt;/a&gt;&lt;em&gt;Youtube tutorial&lt;/em&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;sign-up-for-tinkercad-and-thingiverse-accounts&quot;&gt;Sign up for Tinkercad and Thingiverse accounts:&lt;/h2&gt;
+&lt;ol&gt;
+  &lt;li&gt;Sign up for a free &lt;a href=&quot;https://www.tinkercad.com/&quot;&gt;Tindercad account&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;Sign up for a free &lt;a href=&quot;http://www.thingiverse.com/&quot;&gt;Thingiverse account&lt;/a&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h2 id=&quot;create-a-lithopane-portrait&quot;&gt;Create a lithopane portrait:&lt;/h2&gt;
+&lt;ol&gt;
+  &lt;li&gt;Go to &lt;a href=&quot;http://www.thingiverse.com/thing:74322&quot;&gt;Thingiverse lithopane generator&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;Click on “open in customizer”&lt;/li&gt;
+  &lt;li&gt;Choose the small pane size, and click “invert colors”&lt;/li&gt;
+  &lt;li&gt;Choose the jpg file that you want to use for your portrait&lt;/li&gt;
+  &lt;li&gt;Click “create thing”
+It will take a few minutes for your lithopane to be generated.  You will be able to see it by clicking on the dropdown arrow next to your avatar photo on the top right of the page, and selecting “My Things”.&lt;/li&gt;
+  &lt;li&gt;When it’s ready, download the .stl file by clicking on “Thing Files” and selecting the file.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h2 id=&quot;create-the-business-card-base&quot;&gt;Create the business card base:&lt;/h2&gt;
+&lt;ol&gt;
+  &lt;li&gt;Sign into Tinkercad and click on “Create New Design”&lt;/li&gt;
+  &lt;li&gt;Under shape generators select geometric option, and select the red box.  Drag it to the workplane and click to deposit.&lt;/li&gt;
+  &lt;li&gt;I recommend using a mouse- it’s much easier than using the touchpad.  To zoom in and out, turn the scroll wheel.  To rotate your view around the model, right click and drag.&lt;/li&gt;
+  &lt;li&gt;The standard size of business cards in the US is 89 X 51mm.  We’ll use the ruler tool to manually enter the dimensions of the card.  On the toolbar on the top, select the grid, then select the ruler.  Drag it next to the red box and click. Now click on the red box, the dimensions will show up.  Click on the width and enter 89.00, click on the height and enter 51.00, finally click on the thickness and enter 1.00.&lt;/li&gt;
+  &lt;li&gt;Another shape manipulation feature is the black arrow you see on the top of the box. Click and drag it up to lift the card off of the workplane.  To drop the card back onto the workplane, just press “d”.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h2 id=&quot;create-the-business-card-text&quot;&gt;Create the business card text:&lt;/h2&gt;
+&lt;ol&gt;
+  &lt;li&gt;Under the Shape Generator’s menu, select Tinkercad, and click on the “TEXT” icon.  Drag it to the workplane and click to deposit.
+You’ll notice an Inspector window will automatically appear on the right.  In the “Text” field enter your name.&lt;/li&gt;
+  &lt;li&gt;Select the ruler tool again, and manually enter the following dimensions for your name:  5mm high, 40mm wide, 0.5mm thick.&lt;/li&gt;
+  &lt;li&gt;Now we’re going to drop the text on top of the card by creating a new workplane on top of the card.  Select the workplane tool.  Click anywhere on the top surface of the card.  This creates a new orange workplane.  Drag the text to be on top of the card.  Then type “d” and the text gets “dropped” on top of the new workplane.  We don’t need the new workplane anymore so to get rid of it, select the workplane tool again and click anywhere outside the orange workplane.&lt;/li&gt;
+  &lt;li&gt;To make the twitter handle, phone number, title and email fields, click on your name text, then copy and paste from the edit menu, 4 times.  Drag these texts onto the card.
+To change the text, click on it and edit it with the Inspector that pops up.
+Make any adjustments you want to the width of the text by manually entering it using the ruler.  Line them up on the left side of the card.  The horizontal placement doesn’t have to be exact now, but you’ll want the vertical spacing between the lines of text to be exactly how you want.  For fine adjustments, change the snap grid setting on the bottom right corner to 0.1mm.&lt;/li&gt;
+  &lt;li&gt;To horizontally align, shift click on all lines of text, and then select “Adjust” from the toolbar and select “Align”.  This will place an align tool on the card.  Click on the bottom right dot, and your text will be aligned to the right.
+Finally group all the text and the card base together by clicking and dragging to draw a square around the card.  Select “Group” on the toolbar.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h2 id=&quot;add-the-lithopane-portrait&quot;&gt;Add the lithopane portrait:&lt;/h2&gt;
+&lt;ol&gt;
+  &lt;li&gt;Under “Import” choose your .stl file that you downloaded from Thingiverse.  Click on “Import”.  It takes a minute or two to upload.
+Adjust it to the size you want by clicking and dragging on one of the small white squares on the corners.&lt;/li&gt;
+  &lt;li&gt;Next we need to get rid of the raised edges, and the top loop.  Under “Letters” select the letter “I” and drag it onto the workplane.  Make 3 more copies.  You can use the copy and edit from the Edit menu, or you can just use the keyboard shortcuts cmd+c for copy and cmd+v for paste.  Make each “I’ big enough to cover each raised edge.  The top one needs to be thick enough to cover the loop.  You don’t have to be exact, the point is to just cover the edges.&lt;/li&gt;
+  &lt;li&gt;Next, shift click on all 4 of them, and in the Inspector box on the top right, select “Hole”.
+Draw a box around it and select “Group”.  This will remove any material where you have put the holes.&lt;/li&gt;
+  &lt;li&gt;Finally, drag the lithopane onto the card.
+Draw a box around the whole card and select “Group”.&lt;/li&gt;
+  &lt;li&gt;That’s it!  You can download the .stl file to be 3D printed by selecting the ”Design” menu and selecting “Download for 3D printing”.&lt;/li&gt;
+&lt;/ol&gt;
+</content>
+ </entry>
  
  <entry>
    <title>How to add custom text to a 3D model</title>
