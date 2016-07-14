@@ -4,7 +4,7 @@
  <title>Androidgrl's Blog</title>
  <link href="http://androidgrl.github.io/atom.xml" rel="self"/>
  <link href="http://androidgrl.github.io/"/>
- <updated>2015-10-11T12:45:27-06:00</updated>
+ <updated>2016-07-13T22:30:50-05:00</updated>
  <id>http://androidgrl.github.io</id>
  <author>
    <name>Jamie Kawahara</name>
@@ -13,9 +13,31 @@
 
  
  <entry>
+   <title>The difference between Rspec spies, doubles and instance_doubles</title>
+   <link href="http://androidgrl.github.io/2016/07/13/double/"/>
+   <updated>2016-07-13T00:00:00-05:00</updated>
+   <id>http://androidgrl.github.io/2016/07/13/double</id>
+   <content type="html">&lt;p&gt;Throughout the code base of our Rails app at work, we have many Rspec tests that use spies, doubles and instance_doubles.  I found most of the information on the web about them to be very theoretical and not practical.  My coworker then explained it to me very clearly as follows:&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;
+    &lt;p&gt;All three terms belong under an umbrella term called “doubles”. In other words, a spy is a type of double, and so is an instance_double.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Spies, doubles, and instance_doubles are doubles that increase in their power of specificity in that order. So a double is more specific than a spy and an instance_double is more specific than a double.&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;The best way to demonstrate how they work is to pry into an rspec file:&lt;/p&gt;
+
+&lt;p&gt;1.&lt;/p&gt;
+</content>
+ </entry>
+ 
+ <entry>
    <title>3D Printed Portrait-Business Cards Tutorial</title>
    <link href="http://androidgrl.github.io/2015/10/10/card/"/>
-   <updated>2015-10-10T00:00:00-06:00</updated>
+   <updated>2015-10-10T00:00:00-05:00</updated>
    <id>http://androidgrl.github.io/2015/10/10/card</id>
    <content type="html">&lt;p&gt;Have business cards that truly stand out! The next time you give your business card to someone, impress them with a 3D printed business card with your own portrait on it!  This tutorial will show you how to use Tinkercad, a free online 3D design tool.  Tinkercad is easy-to-use and is web-based, so there is no need to download anything.  This design takes only 15 minutes to create.&lt;/p&gt;
 
@@ -79,7 +101,7 @@ Draw a box around the whole card and select “Group”.&lt;/li&gt;
  <entry>
    <title>How to add custom text to a 3D model</title>
    <link href="http://androidgrl.github.io/2015/08/07/text/"/>
-   <updated>2015-08-07T00:00:00-06:00</updated>
+   <updated>2015-08-07T00:00:00-05:00</updated>
    <id>http://androidgrl.github.io/2015/08/07/text</id>
    <content type="html">&lt;p&gt;This is a tutorial on how to add custom text to a 3D model, using Tinkercad’s free easy-to-use web-based 3D modeling tool.  This is great for adding personal messages and names to your prints!  In this tutorial I will add custom text to a trophy downloaded from Thingiverse.&lt;/p&gt;
 
@@ -106,7 +128,7 @@ Draw a box around the whole card and select “Group”.&lt;/li&gt;
  <entry>
    <title>How to use a Kinect to take a 3D scan and Print It</title>
    <link href="http://androidgrl.github.io/2015/07/30/kinect/"/>
-   <updated>2015-07-30T00:00:00-06:00</updated>
+   <updated>2015-07-30T00:00:00-05:00</updated>
    <id>http://androidgrl.github.io/2015/07/30/kinect</id>
    <content type="html">&lt;p&gt;This is a tutorial on how to use a Kinect to take a 3D scan and print it on a Lulzbot printer.
 Follow these instructions and you will be able to make a 3D print of a person!&lt;/p&gt;
@@ -138,7 +160,7 @@ Follow these instructions and you will be able to make a 3D print of a person!&l
  <entry>
    <title>Impostor Phenomenon in Software Development</title>
    <link href="http://androidgrl.github.io/2015/06/30/impostor/"/>
-   <updated>2015-06-30T00:00:00-06:00</updated>
+   <updated>2015-06-30T00:00:00-05:00</updated>
    <id>http://androidgrl.github.io/2015/06/30/impostor</id>
    <content type="html">&lt;p&gt;This is a lightning talk that I did on the Impostor Phenomenon in Software Development.  It is a very common phenomenon among high achievers especially in open source software.  Covered in this talk is results from a survey at Turing School of Software &amp;amp; Design, and 3 steps on how to deal with it.&lt;/p&gt;
 
@@ -149,7 +171,7 @@ Follow these instructions and you will be able to make a 3D print of a person!&l
  <entry>
    <title>A Day in the Life of Jamie Kawahara</title>
    <link href="http://androidgrl.github.io/2015/06/24/day/"/>
-   <updated>2015-06-24T00:00:00-06:00</updated>
+   <updated>2015-06-24T00:00:00-05:00</updated>
    <id>http://androidgrl.github.io/2015/06/24/day</id>
    <content type="html">&lt;p&gt;This is an article for Built in Colorado that I wrote that follows a day in my life as a student at Turing School of Software &amp;amp; Design.&lt;/p&gt;
 

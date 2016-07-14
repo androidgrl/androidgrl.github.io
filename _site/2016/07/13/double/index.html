@@ -11,7 +11,7 @@
 
   <title>
     
-      Impostor Phenomenon in Software Development &middot; Androidgrl's Blog
+      The difference between Rspec spies, doubles and instance_doubles &middot; Androidgrl's Blog
     
   </title>
 
@@ -93,26 +93,28 @@
 
       <div class="container content">
         <div class="post">
-  <h1 class="post-title">Impostor Phenomenon in Software Development</h1>
-  <span class="post-date">30 Jun 2015</span>
-  <p>This is a lightning talk that I did on the Impostor Phenomenon in Software Development.  It is a very common phenomenon among high achievers especially in open source software.  Covered in this talk is results from a survey at Turing School of Software &amp; Design, and 3 steps on how to deal with it.</p>
+  <h1 class="post-title">The difference between Rspec spies, doubles and instance_doubles</h1>
+  <span class="post-date">13 Jul 2016</span>
+  <p>Throughout the code base of our Rails app at work, we have many Rspec tests that use spies, doubles and instance_doubles.  I found most of the information on the web about them to be very theoretical and not practical.  My coworker then explained it to me very clearly as follows:</p>
 
-<p><a href="https://www.youtube.com/watch?v=fN_-os5-LMc"><img src="./public/screenshot.png" alt="Screenshot" /></a></p>
+<ol>
+  <li>
+    <p>All three terms belong under an umbrella term called “doubles”. In other words, a spy is a type of double, and so is an instance_double.</p>
+  </li>
+  <li>
+    <p>Spies, doubles, and instance_doubles are doubles that increase in their power of specificity in that order. So a double is more specific than a spy and an instance_double is more specific than a double.</p>
+  </li>
+</ol>
+
+<p>The best way to demonstrate how they work is to pry into an rspec file:</p>
+
+<p>1.</p>
 
 </div>
 
 <div class="related">
   <h2>Related Posts</h2>
   <ul class="related-posts">
-    
-      <li>
-        <h3>
-          <a href="/2016/07/13/double/">
-            The difference between Rspec spies, doubles and instance_doubles
-            <small>13 Jul 2016</small>
-          </a>
-        </h3>
-      </li>
     
       <li>
         <h3>
@@ -128,6 +130,15 @@
           <a href="/2015/08/07/text/">
             How to add custom text to a 3D model
             <small>07 Aug 2015</small>
+          </a>
+        </h3>
+      </li>
+    
+      <li>
+        <h3>
+          <a href="/2015/07/30/kinect/">
+            How to use a Kinect to take a 3D scan and Print It
+            <small>30 Jul 2015</small>
           </a>
         </h3>
       </li>

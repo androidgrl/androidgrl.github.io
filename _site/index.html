@@ -65,11 +65,15 @@
     
       
     
+      
+        
+      
+    
   </nav>
 
   <div class="sidebar-item">
     <p>
-      &copy; 2015. All rights reserved.
+      &copy; 2016. All rights reserved.
     </p>
   </div>
 </div>
@@ -89,6 +93,32 @@
 
       <div class="container content">
         <div class="posts">
+  
+  <div class="post">
+    <h1 class="post-title">
+      <a href="//2016/07/13/double/">
+        The difference between Rspec spies, doubles and instance_doubles
+      </a>
+    </h1>
+
+    <span class="post-date">13 Jul 2016</span>
+
+    <p>Throughout the code base of our Rails app at work, we have many Rspec tests that use spies, doubles and instance_doubles.  I found most of the information on the web about them to be very theoretical and not practical.  My coworker then explained it to me very clearly as follows:</p>
+
+<ol>
+  <li>
+    <p>All three terms belong under an umbrella term called “doubles”. In other words, a spy is a type of double, and so is an instance_double.</p>
+  </li>
+  <li>
+    <p>Spies, doubles, and instance_doubles are doubles that increase in their power of specificity in that order. So a double is more specific than a spy and an instance_double is more specific than a double.</p>
+  </li>
+</ol>
+
+<p>The best way to demonstrate how they work is to pry into an rspec file:</p>
+
+<p>1.</p>
+
+  </div>
   
   <div class="post">
     <h1 class="post-title">
@@ -240,28 +270,11 @@ Follow these instructions and you will be able to make a 3D print of a person!</
 
   </div>
   
-  <div class="post">
-    <h1 class="post-title">
-      <a href="//2015/06/24/day/">
-        A Day in the Life of Jamie Kawahara
-      </a>
-    </h1>
-
-    <span class="post-date">24 Jun 2015</span>
-
-    <p>This is an article for Built in Colorado that I wrote that follows a day in my life as a student at Turing School of Software &amp; Design.</p>
-
-<p><a href="http://www.builtincolorado.com/2015/07/29/dev-school-right-you-here-what-average-day-really-looks"><img src="./public/day.png" alt="Screenshot" /></a></p>
-
-<p><a href="http://www.builtincolorado.com/2015/07/29/dev-school-right-you-here-what-average-day-really-looks">Click here to read full article</a></p>
-
-  </div>
-  
 </div>
 
 <div class="pagination">
   
-    <span class="pagination-item older">Older</span>
+    <a class="pagination-item older" href="/page2">Older</a>
   
   
     <span class="pagination-item newer">Newer</span>
