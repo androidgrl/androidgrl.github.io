@@ -118,3 +118,19 @@ This will result in the object being successfully instantiated, as shown in the 
 ```
 #<Random:0x007fbbb9170cd8>
 ```
+
+If you wanted actually have access to the attribute then you would have to set it as an instance variable inside the initialize method, and set an attr_reader.
+
+```
+class Random
+  attr_reader :word
+  def initialize(word)
+    @word = word
+  end
+end
+
+puts Random.new("whatever").word
+```
+
+Which will output "whatever".
+

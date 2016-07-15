@@ -192,6 +192,22 @@ puts Random.new("whatever")
 </code></pre>
 </div>
 
+<p>If you wanted actually have access to the attribute then you would have to set it as an instance variable inside the initialize method, and set an attr_reader.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>class Random
+  attr_reader :word
+  def initialize(word)
+    @word = word
+  end
+end
+
+puts Random.new("whatever").word
+</code></pre>
+</div>
+
+<p>Which will output “whatever”.</p>
+
+
 </div>
 
 <div class="related">
