@@ -4,7 +4,7 @@
  <title>Androidgrl's Blog</title>
  <link href="http://androidgrl.github.io/atom.xml" rel="self"/>
  <link href="http://androidgrl.github.io/"/>
- <updated>2016-07-15T16:27:33-05:00</updated>
+ <updated>2016-07-15T16:28:30-05:00</updated>
  <id>http://androidgrl.github.io</id>
  <author>
    <name>Jamie Kawahara</name>
@@ -133,7 +133,7 @@ puts Random.new(&quot;whatever&quot;)
 &lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
 
-&lt;p&gt;If you wanted actually have access to the attribute then you would have to set it as an instance variable inside the initialize method, and set an attr_reader.&lt;/p&gt;
+&lt;p&gt;If you wanted to actually have access to the attribute then you would have to set it as an instance variable inside the initialize method, and set an attr_reader.&lt;/p&gt;
 
 &lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;class Random
   attr_reader :word
