@@ -4,13 +4,22 @@
  <title>Androidgrl's Blog</title>
  <link href="http://androidgrl.github.io/atom.xml" rel="self"/>
  <link href="http://androidgrl.github.io/"/>
- <updated>2016-07-15T12:11:26-05:00</updated>
+ <updated>2016-07-15T14:41:03-05:00</updated>
  <id>http://androidgrl.github.io</id>
  <author>
    <name>Jamie Kawahara</name>
    <email>kawaharajamie@gmail.com</email>
  </author>
 
+ 
+ <entry>
+   <title>What is initialize used for in Ruby?</title>
+   <link href="http://androidgrl.github.io/2016/07/15/initialize/"/>
+   <updated>2016-07-15T00:00:00-05:00</updated>
+   <id>http://androidgrl.github.io/2016/07/15/initialize</id>
+   <content type="html">
+</content>
+ </entry>
  
  <entry>
    <title>The difference between Rspec spies, doubles and instance_doubles</title>
