@@ -4,7 +4,7 @@
  <title>Androidgrl's Blog</title>
  <link href="http://androidgrl.github.io/atom.xml" rel="self"/>
  <link href="http://androidgrl.github.io/"/>
- <updated>2016-07-15T14:41:03-05:00</updated>
+ <updated>2016-07-15T16:23:03-05:00</updated>
  <id>http://androidgrl.github.io</id>
  <author>
    <name>Jamie Kawahara</name>
@@ -17,7 +17,121 @@
    <link href="http://androidgrl.github.io/2016/07/15/initialize/"/>
    <updated>2016-07-15T00:00:00-05:00</updated>
    <id>http://androidgrl.github.io/2016/07/15/initialize</id>
-   <content type="html">
+   <content type="html">&lt;p&gt;Does initialize need to be used all the time in a class?  No.
+You only need it to set instance variables and to allow passing of arguments when instantiating a class.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Example one:&lt;/strong&gt; &lt;em&gt;You don’t need it to instantiate a class&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;Let’s make a class with a single instance method and no initialize method.&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;class Holiday
+  def statement
+    &quot;I&#39;m going to the beach&quot;
+  end
+end
+puts Holiday.new
+puts Holiday.new.statement
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;If we run the code, the “puts” outputs the following, and we see that Holiday.new instantiates an object just fine and we can call the method statement on it:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;#&amp;lt;Holiday:0x007fe194093d00&amp;gt;
+I&#39;m going to the beach
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;&lt;strong&gt;Example two:&lt;/strong&gt; &lt;em&gt;You don’t need it to use attr_accessors&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;Let’s make a class with an attr_accessor and no initialize method.  We instantiate two different holiday objects, and then using the attr_accessors set a separate location attribute for each.&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;class Holiday
+  attr_accessor :location
+  def statement
+    &quot;I&#39;m going on holiday to #{location}&quot;
+  end
+end
+holiday1 = Holiday.new
+holiday2 = Holiday.new
+holiday1.location = &quot;Europe&quot;
+holiday2.location = &quot;Hawaii&quot;
+puts holiday1.statement
+puts holiday2.statement
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;The output shows that the attr_accessors still work without the initialize method.&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;I&#39;m going on holiday to Europe
+I&#39;m going on holiday to Hawaii
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;&lt;strong&gt;Example three:&lt;/strong&gt; &lt;em&gt;You DO need it to set instance variables&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;The following is a class that tries to set an instance variable @word to equal “whatever”.
+The output is nothing, because instance variables need to be put inside an initialize method.&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;class Random
+  @word = &quot;whatever&quot;
+  def whatever
+    @word
+  end
+end
+puts Random.new.whatever
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;The following will correctly result in an output of “whatever”.&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;class Random
+  def initialize
+    @word = &quot;whatever&quot;
+  end
+  def whatever
+    @word
+  end
+end
+puts Random.new.whatever
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;&lt;strong&gt;Example four:&lt;/strong&gt; &lt;em&gt;You DO need it to allow arguments to be passed in when instantiating a Class&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;The following code tries to pass in a string argument into the “new” method.&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;class Random
+end
+
+puts Random.new(&quot;whatever&quot;)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;This results in an error.&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;new.rb:35:in `initialize&#39;: no implicit conversion of String into Integer (TypeError)
+        from new.rb:35:in `new&#39;
+        from new.rb:35:in `&amp;lt;main&amp;gt;&#39;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;You need to specify that there are arguments in the initialize method for “new” method to be able to take any.
+However, you don’t have to actually do anything with the arguments in the initialize method.&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;class Random
+  def initialize(word)
+  end
+end
+
+puts Random.new(&quot;whatever&quot;)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;This will result in the object being successfully instantiated, as shown in the output below.&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;#&amp;lt;Random:0x007fbbb9170cd8&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
 </content>
  </entry>
  
