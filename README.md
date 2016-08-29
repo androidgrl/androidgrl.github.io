@@ -132,3 +132,9 @@ Lanyon has two branches, but only one is used for active development.
 Open sourced under the [MIT license](LICENSE.md).
 
 <3
+
+## Customization
+
+Make changes to master.
+Run jekyll serve --watch and go to localhost 4000.
+Push to master.
