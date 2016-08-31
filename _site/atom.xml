@@ -4,22 +4,13 @@
  <title>Androidgrl's Blog</title>
  <link href="http://androidgrl.github.io/atom.xml" rel="self"/>
  <link href="http://androidgrl.github.io/"/>
- <updated>2016-08-30T23:28:37-05:00</updated>
+ <updated>2016-08-30T23:29:23-05:00</updated>
  <id>http://androidgrl.github.io</id>
  <author>
    <name>Jamie Kawahara</name>
    <email>kawaharajamie@gmail.com</email>
  </author>
 
- 
- <entry>
-   <title>Rescue</title>
-   <link href="http://androidgrl.github.io/2016/08/29/rescue/"/>
-   <updated>2016-08-29T00:00:00-05:00</updated>
-   <id>http://androidgrl.github.io/2016/08/29/rescue</id>
-   <content type="html">
-</content>
- </entry>
  
  <entry>
    <title>What is initialize used for in Ruby?</title>
