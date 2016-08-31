@@ -4,7 +4,7 @@
  <title>Androidgrl's Blog</title>
  <link href="http://androidgrl.github.io/atom.xml" rel="self"/>
  <link href="http://androidgrl.github.io/"/>
- <updated>2016-08-29T16:55:32-05:00</updated>
+ <updated>2016-08-30T23:28:37-05:00</updated>
  <id>http://androidgrl.github.io</id>
  <author>
    <name>Jamie Kawahara</name>
@@ -13,12 +13,11 @@
 
  
  <entry>
-   <title>Raising and Rescuing Errors in Rails</title>
+   <title>Rescue</title>
    <link href="http://androidgrl.github.io/2016/08/29/rescue/"/>
    <updated>2016-08-29T00:00:00-05:00</updated>
    <id>http://androidgrl.github.io/2016/08/29/rescue</id>
-   <content type="html">&lt;p&gt;The following summarizes the basic steps for raising and rescuing errors in a Rails project.&lt;/p&gt;
-
+   <content type="html">
 </content>
  </entry>
  
@@ -34,28 +33,29 @@ You only need it to set instance variables and to allow passing of arguments whe
 
 &lt;p&gt;Let’s make a class with a single instance method and no initialize method.&lt;/p&gt;
 
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;class Holiday
+&lt;p&gt;&lt;code&gt;
+class Holiday
   def statement
     &quot;I&#39;m going to the beach&quot;
   end
 end
 puts Holiday.new
 puts Holiday.new.statement
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
+&lt;/code&gt;&lt;/p&gt;
 
 &lt;p&gt;If we run the code, the “puts” outputs the following, and we see that Holiday.new instantiates an object just fine and we can call the method statement on it:&lt;/p&gt;
 
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;#&amp;lt;Holiday:0x007fe194093d00&amp;gt;
+&lt;p&gt;&lt;code&gt;
+#&amp;lt;Holiday:0x007fe194093d00&amp;gt;
 I&#39;m going to the beach
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
+&lt;/code&gt;&lt;/p&gt;
 
 &lt;p&gt;&lt;strong&gt;Example two:&lt;/strong&gt; &lt;em&gt;You don’t need it to use attr_accessors&lt;/em&gt;&lt;/p&gt;
 
 &lt;p&gt;Let’s make a class with an attr_accessor and no initialize method.  We instantiate two different holiday objects, and then using the attr_accessors set a separate location attribute for each.&lt;/p&gt;
 
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;class Holiday
+&lt;p&gt;&lt;code&gt;
+class Holiday
   attr_accessor :location
   def statement
     &quot;I&#39;m going on holiday to #{location}&quot;
@@ -67,34 +67,34 @@ holiday1.location = &quot;Europe&quot;
 holiday2.location = &quot;Hawaii&quot;
 puts holiday1.statement
 puts holiday2.statement
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
+&lt;/code&gt;&lt;/p&gt;
 
 &lt;p&gt;The output shows that the attr_accessors still work without the initialize method.&lt;/p&gt;
 
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;I&#39;m going on holiday to Europe
+&lt;p&gt;&lt;code&gt;
+I&#39;m going on holiday to Europe
 I&#39;m going on holiday to Hawaii
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
+&lt;/code&gt;&lt;/p&gt;
 
 &lt;p&gt;&lt;strong&gt;Example three:&lt;/strong&gt; &lt;em&gt;You DO need it to set instance variables&lt;/em&gt;&lt;/p&gt;
 
 &lt;p&gt;The following is a class that tries to set an instance variable @word to equal “whatever”.
 The output is nothing, because instance variables need to be put inside an initialize method.&lt;/p&gt;
 
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;class Random
+&lt;p&gt;&lt;code&gt;
+class Random
   @word = &quot;whatever&quot;
   def whatever
     @word
   end
 end
 puts Random.new.whatever
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
+&lt;/code&gt;&lt;/p&gt;
 
 &lt;p&gt;The following will correctly result in an output of “whatever”.&lt;/p&gt;
 
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;class Random
+&lt;p&gt;&lt;code&gt;
+class Random
   def initialize
     @word = &quot;whatever&quot;
   end
@@ -103,58 +103,57 @@ puts Random.new.whatever
   end
 end
 puts Random.new.whatever
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
+&lt;/code&gt;&lt;/p&gt;
 
 &lt;p&gt;&lt;strong&gt;Example four:&lt;/strong&gt; &lt;em&gt;You DO need it to allow arguments to be passed in when instantiating a Class&lt;/em&gt;&lt;/p&gt;
 
 &lt;p&gt;The following code tries to pass in a string argument into the “new” method.&lt;/p&gt;
 
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;class Random
-end
+&lt;p&gt;```
+class Random
+end&lt;/p&gt;
 
-puts Random.new(&quot;whatever&quot;)
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
+&lt;p&gt;puts Random.new(“whatever”)
+```&lt;/p&gt;
 
 &lt;p&gt;This results in an error.&lt;/p&gt;
 
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;new.rb:35:in `initialize&#39;: no implicit conversion of String into Integer (TypeError)
+&lt;p&gt;&lt;code&gt;
+new.rb:35:in `initialize&#39;: no implicit conversion of String into Integer (TypeError)
         from new.rb:35:in `new&#39;
         from new.rb:35:in `&amp;lt;main&amp;gt;&#39;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
+&lt;/code&gt;&lt;/p&gt;
 
 &lt;p&gt;You need to specify that there are arguments in the initialize method for “new” method to be able to take any.
 However, you don’t have to actually do anything with the arguments in the initialize method.&lt;/p&gt;
 
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;class Random
+&lt;p&gt;```
+class Random
   def initialize(word)
   end
-end
+end&lt;/p&gt;
 
-puts Random.new(&quot;whatever&quot;)
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
+&lt;p&gt;puts Random.new(“whatever”)
+```&lt;/p&gt;
 
 &lt;p&gt;This will result in the object being successfully instantiated, as shown in the output below.&lt;/p&gt;
 
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;#&amp;lt;Random:0x007fbbb9170cd8&amp;gt;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
+&lt;p&gt;&lt;code&gt;
+#&amp;lt;Random:0x007fbbb9170cd8&amp;gt;
+&lt;/code&gt;&lt;/p&gt;
 
 &lt;p&gt;If you wanted to actually have access to the attribute then you would have to set it as an instance variable inside the initialize method, and set an attr_reader.&lt;/p&gt;
 
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;class Random
+&lt;p&gt;```
+class Random
   attr_reader :word
   def initialize(word)
     @word = word
   end
-end
+end&lt;/p&gt;
 
-puts Random.new(&quot;whatever&quot;).word
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
+&lt;p&gt;puts Random.new(“whatever”).word
+```&lt;/p&gt;
 
 &lt;p&gt;Which will output “whatever”.&lt;/p&gt;
 
@@ -179,51 +178,51 @@ puts Random.new(&quot;whatever&quot;).word
 
 &lt;p&gt;The best way to demonstrate how they work is to pry into an rspec file.  This assumes that you are already familiar with setting up an Rspec test file in a Rails app. In the Rspec file, inside an “it” block place a binding.pry.&lt;/p&gt;
 
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;    it &quot;demonstrates doubles&quot; do
+&lt;p&gt;&lt;code&gt;
+    it &quot;demonstrates doubles&quot; do
       binding.pry
     end
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
+&lt;/code&gt;&lt;/p&gt;
 
 &lt;p&gt;In the pry session, define a spy, then try to call undefined methods on it.  It will keep returning a double.  So spies, are just generic doubles that will keep giving you a double no matter what methods you call on them.&lt;/p&gt;
 
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;pry(#&amp;lt;RSpec&amp;gt;)&amp;gt; s=spy
+&lt;p&gt;&lt;code&gt;
+pry(#&amp;lt;RSpec&amp;gt;)&amp;gt; s=spy
 =&amp;gt; #&amp;lt;Double (anonymous)&amp;gt;
 pry(#&amp;lt;RSpec&amp;gt;)&amp;gt; s.what?
 =&amp;gt; #&amp;lt;Double (anonymous)&amp;gt;
 pry(#&amp;lt;RSpec&amp;gt;)&amp;gt; s.anything?
 =&amp;gt; #&amp;lt;Double (anonymous)&amp;gt;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
+&lt;/code&gt;&lt;/p&gt;
 
 &lt;p&gt;Moving towards more specificity, define a double.  Below a double is defined with a method called name that returns the string “androidgrl”.  When we call name on the double it returns “androidgrl”.  What happens when we call an undefined method like “age” on the double?  It gives us an error unlike with spies.  So with doubles, you have to define methods that can be called on them.&lt;/p&gt;
 
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;pry(#&amp;lt;RSpec&amp;gt;)&amp;gt; d=double(name: &quot;androidgrl&quot;)
+&lt;p&gt;&lt;code&gt;
+pry(#&amp;lt;RSpec&amp;gt;)&amp;gt; d=double(name: &quot;androidgrl&quot;)
 =&amp;gt; #&amp;lt;Double (anonymous)&amp;gt;
 pry(#&amp;lt;RSpec&amp;gt;)&amp;gt; d.name
 =&amp;gt; &quot;androidgrl&quot;
 pry(#&amp;lt;RSpec&amp;gt;)&amp;gt; d.age
 RSpec::Mocks::MockExpectationError: #&amp;lt;Double (anonymous)&amp;gt; received unexpected message :age with (no args)
 from /opt/active/acl_api/current/vendor/bundle/ruby/2.1.0/gems/rspec-support-3.3.0/lib/rspec/support.rb:86:in `block in &amp;lt;module:Support&amp;gt;&#39;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
+&lt;/code&gt;&lt;/p&gt;
 
 &lt;p&gt;And finally, we have the most specific type of double, instance_doubles.  Here we have to specify which Class we’re defining the double for.  This has to be an actual class that exists either in your application or inherited through Ruby.  Here we’re stubbing out the “count” method on the Array class to always return 3.  Notice that when we try to define a method on Array that doesn’t actually exist we get an error.  Also when we try to make an instance double for a Class that doesn’t exist we get an error.&lt;/p&gt;
 
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;pry(#&amp;lt;RSpec&amp;gt;)&amp;gt; i=instance_double(Array, count: 3)
+&lt;p&gt;&lt;code&gt;
+pry(#&amp;lt;RSpec&amp;gt;)&amp;gt; i=instance_double(Array, count: 3)
 =&amp;gt; #&amp;lt;InstanceDouble(Array) (anonymous)&amp;gt;
 pry(#&amp;lt;RSpec&amp;gt;)&amp;gt; i.count
 =&amp;gt; 3
 pry(#&amp;lt;RSpec&amp;gt;)&amp;gt; i=instance_double(Array, whatever: &quot;?&quot;)
 RSpec::Mocks::MockExpectationError: the Array class does not implement the instance method: whatever
 from /opt/active/acl_api/current/vendor/bundle/ruby/2.1.0/gems/rspec-support-3.3.0/lib/rspec/support.rb:86:in `block in &amp;lt;module:Support&amp;gt;&#39;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;pry(#&amp;lt;RSpeci=instance_double(FakeClass, fake_method: &quot;fake&quot;)
+&lt;/code&gt;
+&lt;code&gt;
+pry(#&amp;lt;RSpeci=instance_double(FakeClass, fake_method: &quot;fake&quot;)
 NameError: uninitialized constant TM::FakeClass
 from (pry):14:in `block (2 levels) in &amp;lt;module:TM&amp;gt;&#39;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
+&lt;/code&gt;&lt;/p&gt;
 
 &lt;p&gt;In summary:&lt;/p&gt;
 
@@ -252,46 +251,56 @@ from (pry):14:in `block (2 levels) in &amp;lt;module:TM&amp;gt;&#39;
 
 &lt;p&gt;&lt;a href=&quot;https://www.youtube.com/watch?v=VJI_D-GGwqY&quot;&gt;&lt;img src=&quot;http://img.youtube.com/vi/VJI_D-GGwqY/0.jpg&quot; alt=&quot;&quot; /&gt;&lt;/a&gt;&lt;em&gt;Youtube tutorial&lt;/em&gt;&lt;/p&gt;
 
-&lt;p&gt;##Sign up for Tinkercad and Thingiverse accounts:
-1.  Sign up for a free &lt;a href=&quot;https://www.tinkercad.com/&quot;&gt;Tindercad account&lt;/a&gt;
-2.  Sign up for a free &lt;a href=&quot;http://www.thingiverse.com/&quot;&gt;Thingiverse account&lt;/a&gt;&lt;/p&gt;
+&lt;h2 id=&quot;sign-up-for-tinkercad-and-thingiverse-accounts&quot;&gt;Sign up for Tinkercad and Thingiverse accounts:&lt;/h2&gt;
+&lt;ol&gt;
+  &lt;li&gt;Sign up for a free &lt;a href=&quot;https://www.tinkercad.com/&quot;&gt;Tindercad account&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;Sign up for a free &lt;a href=&quot;http://www.thingiverse.com/&quot;&gt;Thingiverse account&lt;/a&gt;&lt;/li&gt;
+&lt;/ol&gt;
 
-&lt;p&gt;##Create a lithopane portrait:
-1.  Go to &lt;a href=&quot;http://www.thingiverse.com/thing:74322&quot;&gt;Thingiverse lithopane generator&lt;/a&gt;
-2.  Click on “open in customizer”
-3.  Choose the small pane size, and click “invert colors”
-4.  Choose the jpg file that you want to use for your portrait
-5.  Click “create thing”
-It will take a few minutes for your lithopane to be generated.  You will be able to see it by clicking on the dropdown arrow next to your avatar photo on the top right of the page, and selecting “My Things”.
-6. When it’s ready, download the .stl file by clicking on “Thing Files” and selecting the file.&lt;/p&gt;
+&lt;h2 id=&quot;create-a-lithopane-portrait&quot;&gt;Create a lithopane portrait:&lt;/h2&gt;
+&lt;ol&gt;
+  &lt;li&gt;Go to &lt;a href=&quot;http://www.thingiverse.com/thing:74322&quot;&gt;Thingiverse lithopane generator&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;Click on “open in customizer”&lt;/li&gt;
+  &lt;li&gt;Choose the small pane size, and click “invert colors”&lt;/li&gt;
+  &lt;li&gt;Choose the jpg file that you want to use for your portrait&lt;/li&gt;
+  &lt;li&gt;Click “create thing”
+It will take a few minutes for your lithopane to be generated.  You will be able to see it by clicking on the dropdown arrow next to your avatar photo on the top right of the page, and selecting “My Things”.&lt;/li&gt;
+  &lt;li&gt;When it’s ready, download the .stl file by clicking on “Thing Files” and selecting the file.&lt;/li&gt;
+&lt;/ol&gt;
 
-&lt;p&gt;##Create the business card base:
-1.  Sign into Tinkercad and click on “Create New Design”
-2.  Under shape generators select geometric option, and select the red box.  Drag it to the workplane and click to deposit.
-3.  I recommend using a mouse- it’s much easier than using the touchpad.  To zoom in and out, turn the scroll wheel.  To rotate your view around the model, right click and drag.
-4.  The standard size of business cards in the US is 89 X 51mm.  We’ll use the ruler tool to manually enter the dimensions of the card.  On the toolbar on the top, select the grid, then select the ruler.  Drag it next to the red box and click. Now click on the red box, the dimensions will show up.  Click on the width and enter 89.00, click on the height and enter 51.00, finally click on the thickness and enter 1.00.
-5. Another shape manipulation feature is the black arrow you see on the top of the box. Click and drag it up to lift the card off of the workplane.  To drop the card back onto the workplane, just press “d”.&lt;/p&gt;
+&lt;h2 id=&quot;create-the-business-card-base&quot;&gt;Create the business card base:&lt;/h2&gt;
+&lt;ol&gt;
+  &lt;li&gt;Sign into Tinkercad and click on “Create New Design”&lt;/li&gt;
+  &lt;li&gt;Under shape generators select geometric option, and select the red box.  Drag it to the workplane and click to deposit.&lt;/li&gt;
+  &lt;li&gt;I recommend using a mouse- it’s much easier than using the touchpad.  To zoom in and out, turn the scroll wheel.  To rotate your view around the model, right click and drag.&lt;/li&gt;
+  &lt;li&gt;The standard size of business cards in the US is 89 X 51mm.  We’ll use the ruler tool to manually enter the dimensions of the card.  On the toolbar on the top, select the grid, then select the ruler.  Drag it next to the red box and click. Now click on the red box, the dimensions will show up.  Click on the width and enter 89.00, click on the height and enter 51.00, finally click on the thickness and enter 1.00.&lt;/li&gt;
+  &lt;li&gt;Another shape manipulation feature is the black arrow you see on the top of the box. Click and drag it up to lift the card off of the workplane.  To drop the card back onto the workplane, just press “d”.&lt;/li&gt;
+&lt;/ol&gt;
 
-&lt;p&gt;##Create the business card text:
-1.  Under the Shape Generator’s menu, select Tinkercad, and click on the “TEXT” icon.  Drag it to the workplane and click to deposit.
-You’ll notice an Inspector window will automatically appear on the right.  In the “Text” field enter your name.
-2.  Select the ruler tool again, and manually enter the following dimensions for your name:  5mm high, 40mm wide, 0.5mm thick.
-3.  Now we’re going to drop the text on top of the card by creating a new workplane on top of the card.  Select the workplane tool.  Click anywhere on the top surface of the card.  This creates a new orange workplane.  Drag the text to be on top of the card.  Then type “d” and the text gets “dropped” on top of the new workplane.  We don’t need the new workplane anymore so to get rid of it, select the workplane tool again and click anywhere outside the orange workplane.
-4.  To make the twitter handle, phone number, title and email fields, click on your name text, then copy and paste from the edit menu, 4 times.  Drag these texts onto the card.
+&lt;h2 id=&quot;create-the-business-card-text&quot;&gt;Create the business card text:&lt;/h2&gt;
+&lt;ol&gt;
+  &lt;li&gt;Under the Shape Generator’s menu, select Tinkercad, and click on the “TEXT” icon.  Drag it to the workplane and click to deposit.
+You’ll notice an Inspector window will automatically appear on the right.  In the “Text” field enter your name.&lt;/li&gt;
+  &lt;li&gt;Select the ruler tool again, and manually enter the following dimensions for your name:  5mm high, 40mm wide, 0.5mm thick.&lt;/li&gt;
+  &lt;li&gt;Now we’re going to drop the text on top of the card by creating a new workplane on top of the card.  Select the workplane tool.  Click anywhere on the top surface of the card.  This creates a new orange workplane.  Drag the text to be on top of the card.  Then type “d” and the text gets “dropped” on top of the new workplane.  We don’t need the new workplane anymore so to get rid of it, select the workplane tool again and click anywhere outside the orange workplane.&lt;/li&gt;
+  &lt;li&gt;To make the twitter handle, phone number, title and email fields, click on your name text, then copy and paste from the edit menu, 4 times.  Drag these texts onto the card.
 To change the text, click on it and edit it with the Inspector that pops up.
-Make any adjustments you want to the width of the text by manually entering it using the ruler.  Line them up on the left side of the card.  The horizontal placement doesn’t have to be exact now, but you’ll want the vertical spacing between the lines of text to be exactly how you want.  For fine adjustments, change the snap grid setting on the bottom right corner to 0.1mm.
-5.  To horizontally align, shift click on all lines of text, and then select “Adjust” from the toolbar and select “Align”.  This will place an align tool on the card.  Click on the bottom right dot, and your text will be aligned to the right.
-Finally group all the text and the card base together by clicking and dragging to draw a square around the card.  Select “Group” on the toolbar.&lt;/p&gt;
+Make any adjustments you want to the width of the text by manually entering it using the ruler.  Line them up on the left side of the card.  The horizontal placement doesn’t have to be exact now, but you’ll want the vertical spacing between the lines of text to be exactly how you want.  For fine adjustments, change the snap grid setting on the bottom right corner to 0.1mm.&lt;/li&gt;
+  &lt;li&gt;To horizontally align, shift click on all lines of text, and then select “Adjust” from the toolbar and select “Align”.  This will place an align tool on the card.  Click on the bottom right dot, and your text will be aligned to the right.
+Finally group all the text and the card base together by clicking and dragging to draw a square around the card.  Select “Group” on the toolbar.&lt;/li&gt;
+&lt;/ol&gt;
 
-&lt;p&gt;##Add the lithopane portrait:
-1.  Under “Import” choose your .stl file that you downloaded from Thingiverse.  Click on “Import”.  It takes a minute or two to upload.
-Adjust it to the size you want by clicking and dragging on one of the small white squares on the corners.
-2.  Next we need to get rid of the raised edges, and the top loop.  Under “Letters” select the letter “I” and drag it onto the workplane.  Make 3 more copies.  You can use the copy and edit from the Edit menu, or you can just use the keyboard shortcuts cmd+c for copy and cmd+v for paste.  Make each “I’ big enough to cover each raised edge.  The top one needs to be thick enough to cover the loop.  You don’t have to be exact, the point is to just cover the edges.
-3.  Next, shift click on all 4 of them, and in the Inspector box on the top right, select “Hole”.
-Draw a box around it and select “Group”.  This will remove any material where you have put the holes.
-4.  Finally, drag the lithopane onto the card.
-Draw a box around the whole card and select “Group”.
-5.  That’s it!  You can download the .stl file to be 3D printed by selecting the ”Design” menu and selecting “Download for 3D printing”.&lt;/p&gt;
+&lt;h2 id=&quot;add-the-lithopane-portrait&quot;&gt;Add the lithopane portrait:&lt;/h2&gt;
+&lt;ol&gt;
+  &lt;li&gt;Under “Import” choose your .stl file that you downloaded from Thingiverse.  Click on “Import”.  It takes a minute or two to upload.
+Adjust it to the size you want by clicking and dragging on one of the small white squares on the corners.&lt;/li&gt;
+  &lt;li&gt;Next we need to get rid of the raised edges, and the top loop.  Under “Letters” select the letter “I” and drag it onto the workplane.  Make 3 more copies.  You can use the copy and edit from the Edit menu, or you can just use the keyboard shortcuts cmd+c for copy and cmd+v for paste.  Make each “I’ big enough to cover each raised edge.  The top one needs to be thick enough to cover the loop.  You don’t have to be exact, the point is to just cover the edges.&lt;/li&gt;
+  &lt;li&gt;Next, shift click on all 4 of them, and in the Inspector box on the top right, select “Hole”.
+Draw a box around it and select “Group”.  This will remove any material where you have put the holes.&lt;/li&gt;
+  &lt;li&gt;Finally, drag the lithopane onto the card.
+Draw a box around the whole card and select “Group”.&lt;/li&gt;
+  &lt;li&gt;That’s it!  You can download the .stl file to be 3D printed by selecting the ”Design” menu and selecting “Download for 3D printing”.&lt;/li&gt;
+&lt;/ol&gt;
 </content>
  </entry>
  
@@ -347,10 +356,9 @@ Follow these instructions and you will be able to make a 3D print of a person!&l
     &lt;p&gt;Watch my &lt;a href=&quot;https://www.youtube.com/watch?v=8Nm2ufFYNBI&quot;&gt;Youtube video&lt;/a&gt; which demonstrates: how to make a scan of a person, how to export it as an .stl file, and how to import the file to slic3r.&lt;/p&gt;
   &lt;/li&gt;
   &lt;li&gt;
-    &lt;p&gt;Once it’s imported to slic3r, follow the instructions below for how to make a print on a lulzbot Taz 4.  Or, proceed with your usual way of making 3D prints! &lt;noscript&gt;&amp;lt;pre&amp;gt;400: Invalid request&lt;/noscript&gt;&lt;/p&gt;
+    &lt;p&gt;Once it’s imported to slic3r, follow the instructions below for how to make a print on a lulzbot Taz 4.  Or, proceed with your usual way of making 3D prints! &lt;script src=&quot;https://gist.github.com/0361b0f2b917a1c322f3.js&quot;&gt; &lt;/script&gt;&lt;/p&gt;
   &lt;/li&gt;
 &lt;/ol&gt;
-&lt;p&gt;&amp;lt;/pre&amp;gt;&amp;lt;/noscript&amp;gt;&lt;script src=&quot;https://gist.github.com/0361b0f2b917a1c322f3.js&quot;&gt; &lt;/script&gt;&lt;/p&gt;
 
 </content>
  </entry>
