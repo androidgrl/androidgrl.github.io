@@ -11,7 +11,7 @@
 
   <title>
     
-      How to perform a Raise and Rescue in Rails &middot; Androidgrl's Blog
+      How to Raise and Rescue Errors in Rails &middot; Androidgrl's Blog
     
   </title>
 
@@ -74,9 +74,50 @@
 
       <div class="container content">
         <div class="post">
-  <h1 class="post-title">How to perform a Raise and Rescue in Rails</h1>
+  <h1 class="post-title">How to Raise and Rescue Errors in Rails</h1>
   <span class="post-date">30 Aug 2016</span>
-  
+  <ul>
+  <li>Make a custom error class that inherits from StandardError.  This will give you a more descriptive error instead of raising the generic StandardError, so you can better deduce where the error came from.
+ I will use a hypothetical example o an error that is raised when a User is being created.</li>
+</ul>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>class UserCreateError &lt; StandardError
+end
+</code></pre>
+</div>
+
+<ul>
+  <li>Each custom error class should have it’s own file which you can put in an app/errors directory.</li>
+  <li>Use the error in the model.</li>
+</ul>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>class User
+  def create
+    raise UserCreateError
+  end
+end
+</code></pre>
+</div>
+
+<ul>
+  <li>When a User is created, it will raise this error, which will bubble back up to the controller.</li>
+  <li>In the controller rescue the error.</li>
+</ul>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>class UsersController &lt; ApplicationController
+  def create
+  rescue UserCreateError
+    render json: "Invalid User Information", status: :bad_request
+  end
+end
+</code></pre>
+</div>
+
+<ul>
+  <li>Note the indentation of the rescue is on the same column as the def.</li>
+  <li>You will either need to redirect to a view, or you can return a custom error message such as “Invalid User Information”.</li>
+  <li>You can also specify the status code.</li>
+</ul>
 
 </div>
 
