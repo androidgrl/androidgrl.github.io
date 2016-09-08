@@ -50,6 +50,25 @@
 
     
     
+      
+        
+      
+    
+      
+        
+      
+    
+      
+        
+        
+      
+    
+      
+    
+      
+        
+      
+    
   </nav>
 
   <div class="sidebar-item">
@@ -81,37 +100,37 @@
  I will use a hypothetical example o an error that is raised when a User is being created.</li>
 </ul>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>class UserCreateError &lt; StandardError
+<p><code>
+class UserCreateError &lt; StandardError
 end
-</code></pre>
-</div>
+</code></p>
 
 <ul>
   <li>Each custom error class should have it’s own file which you can put in an app/errors directory.</li>
   <li>Use the error in the model.</li>
 </ul>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>class User
+<p><code>
+class User
   def create
     raise UserCreateError
   end
 end
-</code></pre>
-</div>
+</code></p>
 
 <ul>
   <li>When a User is created, it will raise this error, which will bubble back up to the controller.</li>
   <li>In the controller rescue the error.</li>
 </ul>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>class UsersController &lt; ApplicationController
+<p><code>
+class UsersController &lt; ApplicationController
   def create
   rescue UserCreateError
     render json: "Invalid User Information", status: :bad_request
   end
 end
-</code></pre>
-</div>
+</code></p>
 
 <ul>
   <li>Note the indentation of the rescue is on the same column as the def.</li>
