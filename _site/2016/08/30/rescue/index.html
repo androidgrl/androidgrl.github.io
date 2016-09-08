@@ -122,7 +122,7 @@ end
 <p><code>
 class UsersController &lt; ApplicationController
   def create
-  User.example_method
+    User.example_method
   rescue UserCreateError
     render json: "Invalid User Information", status: :bad_request
   end
@@ -131,8 +131,11 @@ end
 
 <p>Note the indentation of the rescue is on the same column as the def.</p>
 
-<p>Whatever you put underneath the rescue will be run if there is an error.
-Here I render a custom json error message and specify an optional status code.</p>
+<p>Whatever you put underneath the rescue will be run if there is an error.</p>
+
+<p>Here I render a custom json error message and specify an optional status code.</p>
+
+<p>And that’s pretty much all there is too it.</p>
 
 </div>
 

@@ -4,7 +4,7 @@
  <title>Androidgrl's Blog</title>
  <link href="http://androidgrl.github.io/atom.xml" rel="self"/>
  <link href="http://androidgrl.github.io/"/>
- <updated>2016-09-07T22:54:12-05:00</updated>
+ <updated>2016-09-07T22:57:30-05:00</updated>
  <id>http://androidgrl.github.io</id>
  <author>
    <name>Jamie Kawahara</name>
@@ -44,7 +44,7 @@ end
 &lt;p&gt;&lt;code&gt;
 class UsersController &amp;lt; ApplicationController
   def create
-  User.example_method
+    User.example_method
   rescue UserCreateError
     render json: &quot;Invalid User Information&quot;, status: :bad_request
   end
@@ -53,8 +53,11 @@ end
 
 &lt;p&gt;Note the indentation of the rescue is on the same column as the def.&lt;/p&gt;
 
-&lt;p&gt;Whatever you put underneath the rescue will be run if there is an error.
-Here I render a custom json error message and specify an optional status code.&lt;/p&gt;
+&lt;p&gt;Whatever you put underneath the rescue will be run if there is an error.&lt;/p&gt;
+
+&lt;p&gt;Here I render a custom json error message and specify an optional status code.&lt;/p&gt;
+
+&lt;p&gt;And that’s pretty much all there is too it.&lt;/p&gt;
 </content>
  </entry>
  
