@@ -4,7 +4,7 @@
  <title>Androidgrl's Blog</title>
  <link href="http://androidgrl.github.io/atom.xml" rel="self"/>
  <link href="http://androidgrl.github.io/"/>
- <updated>2016-09-07T22:48:19-05:00</updated>
+ <updated>2016-09-07T22:54:12-05:00</updated>
  <id>http://androidgrl.github.io</id>
  <author>
    <name>Jamie Kawahara</name>
@@ -19,9 +19,8 @@
    <id>http://androidgrl.github.io/2016/08/30/rescue</id>
    <content type="html">&lt;p&gt;Raising and rescuing errors in Rails is relatively easy.  All you need to do is make a custom error class, raise it (usually in a model) and rescue it (usually in a controller).&lt;/p&gt;
 
-&lt;p&gt;First:
-Make a custom error class that inherits from StandardError.  This will give you a more descriptive error instead of raising the generic StandardError, so you can better deduce where the error came from.
- I will use a hypothetical example o an error that is raised when a User is being created.&lt;/p&gt;
+&lt;p&gt;Start by making a custom error class that inherits from StandardError.  This will give you a more descriptive error instead of raising the generic StandardError, so you can better deduce where the error came from.
+ I will use a hypothetical example of an error that is raised when a User is being created.&lt;/p&gt;
 
 &lt;p&gt;&lt;code&gt;
 class UserCreateError &amp;lt; StandardError
@@ -30,10 +29,10 @@ end
 
 &lt;p&gt;Each custom error class should have it’s own file which you can put in an app/errors directory.&lt;/p&gt;
 
-&lt;p&gt;Here I will raise the error in a model method.&lt;/p&gt;
+&lt;p&gt;Here I will raise the error in a User model method.&lt;/p&gt;
 
 &lt;p&gt;&lt;code&gt;
-class User
+class User &amp;lt; ActiveRecord::Base
   def self.example_method
     raise UserCreateError
   end
