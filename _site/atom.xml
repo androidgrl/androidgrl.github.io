@@ -4,13 +4,40 @@
  <title>Androidgrl's Blog</title>
  <link href="http://androidgrl.github.io/atom.xml" rel="self"/>
  <link href="http://androidgrl.github.io/"/>
- <updated>2016-08-31T12:01:13-05:00</updated>
+ <updated>2017-01-03T22:55:10-06:00</updated>
  <id>http://androidgrl.github.io</id>
  <author>
    <name>Jamie Kawahara</name>
    <email>kawaharajamie@gmail.com</email>
  </author>
 
+ 
+ <entry>
+   <title>Refining Searches using Ag</title>
+   <link href="http://androidgrl.github.io/2017/01/03/ag/"/>
+   <updated>2017-01-03T00:00:00-06:00</updated>
+   <id>http://androidgrl.github.io/2017/01/03/ag</id>
+   <content type="html">&lt;p&gt;I use Ag a lot to search for keywords in Rails Apps.  However sometimes a keyword is present so often that I want to refine my search.  One example of this is if I want to search for a keyword present only in test files. Ag has a useful -G flag that allows you to do this.&lt;/p&gt;
+
+&lt;p&gt;For example say I wanted to search for the keyword “organization” in files that end in spec.rb.  I would use:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&amp;gt; Ag organization -G spec.rb$
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;The -G flag tells Ag to look for the term inside files with names containing spec.rb.  It can accept a regex which is what the $ is for.  The $ indicates that I want to search in files that end in spec.rb, not just files that have spec.rb somewhere within their names.&lt;/p&gt;
+
+&lt;p&gt;Another example is if I am searching for a keyword that includes punctuation marks which happen to be regex characters.  For example, I was searching for “.try” and since Ag automatically treats search terms as regexes by default, it will find all terms with any character followed by try, like “retry” in addition to “.try”.&lt;/p&gt;
+
+&lt;p&gt;Ag has a literal expression flag -Q to specify that you’re searching for a literal expression not a regex.  In order to search for “.try” you would use:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&amp;gt; Ag -Q .try
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;For more  information see &lt;a href=&quot;http://conqueringthecommandline.com/book/ack_ag&quot;&gt;Conquering the Commandline, by Mark Bates&lt;/a&gt;&lt;/p&gt;
+</content>
+ </entry>
  
  <entry>
    <title>How to Raise and Rescue Errors in Rails</title>

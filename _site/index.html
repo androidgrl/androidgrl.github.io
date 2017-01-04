@@ -54,7 +54,7 @@
 
   <div class="sidebar-item">
     <p>
-      &copy; 2016. All rights reserved.
+      &copy; 2017. All rights reserved.
     </p>
   </div>
 </div>
@@ -74,6 +74,37 @@
 
       <div class="container content">
         <div class="posts">
+  
+  <div class="post">
+    <h1 class="post-title">
+      <a href="//2017/01/03/ag/">
+        Refining Searches using Ag
+      </a>
+    </h1>
+
+    <span class="post-date">03 Jan 2017</span>
+
+    <p>I use Ag a lot to search for keywords in Rails Apps.  However sometimes a keyword is present so often that I want to refine my search.  One example of this is if I want to search for a keyword present only in test files. Ag has a useful -G flag that allows you to do this.</p>
+
+<p>For example say I wanted to search for the keyword “organization” in files that end in spec.rb.  I would use:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>&gt; Ag organization -G spec.rb$
+</code></pre>
+</div>
+
+<p>The -G flag tells Ag to look for the term inside files with names containing spec.rb.  It can accept a regex which is what the $ is for.  The $ indicates that I want to search in files that end in spec.rb, not just files that have spec.rb somewhere within their names.</p>
+
+<p>Another example is if I am searching for a keyword that includes punctuation marks which happen to be regex characters.  For example, I was searching for “.try” and since Ag automatically treats search terms as regexes by default, it will find all terms with any character followed by try, like “retry” in addition to “.try”.</p>
+
+<p>Ag has a literal expression flag -Q to specify that you’re searching for a literal expression not a regex.  In order to search for “.try” you would use:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>&gt; Ag -Q .try
+</code></pre>
+</div>
+
+<p>For more  information see <a href="http://conqueringthecommandline.com/book/ack_ag">Conquering the Commandline, by Mark Bates</a></p>
+
+  </div>
   
   <div class="post">
     <h1 class="post-title">
@@ -411,37 +442,6 @@ Draw a box around it and select “Group”.  This will remove any material wher
 4.  Finally, drag the lithopane onto the card.
 Draw a box around the whole card and select “Group”.
 5.  That’s it!  You can download the .stl file to be 3D printed by selecting the ”Design” menu and selecting “Download for 3D printing”.</p>
-
-  </div>
-  
-  <div class="post">
-    <h1 class="post-title">
-      <a href="//2015/08/07/text/">
-        How to add custom text to a 3D model
-      </a>
-    </h1>
-
-    <span class="post-date">07 Aug 2015</span>
-
-    <p>This is a tutorial on how to add custom text to a 3D model, using Tinkercad’s free easy-to-use web-based 3D modeling tool.  This is great for adding personal messages and names to your prints!  In this tutorial I will add custom text to a trophy downloaded from Thingiverse.</p>
-
-<p><img src="./public/trophy.jpg" alt="Image of Trophy with Printed Text" />
-<em>Pictured here is a trophy with custom text added</em></p>
-
-<p>Since it is much easier to demonstrate how to do this with a video, I have made a short
-7 minute <a href="https://www.youtube.com/watch?v=hfQt0NmeYvU">Youtube video</a> which demonstrates:</p>
-
-<ol>
-  <li>
-    <p>How to download the file from Thingiverse.</p>
-  </li>
-  <li>
-    <p>How to remove the pre-existing text from the model using Tinkercad.</p>
-  </li>
-  <li>
-    <p>How to add your own custom text.</p>
-  </li>
-</ol>
 
   </div>
   
