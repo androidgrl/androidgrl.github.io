@@ -4,7 +4,7 @@
  <title>Androidgrl's Blog</title>
  <link href="http://androidgrl.github.io/atom.xml" rel="self"/>
  <link href="http://androidgrl.github.io/"/>
- <updated>2017-01-03T22:55:10-06:00</updated>
+ <updated>2017-01-03T22:55:39-06:00</updated>
  <id>http://androidgrl.github.io</id>
  <author>
    <name>Jamie Kawahara</name>
@@ -44,36 +44,33 @@
    <link href="http://androidgrl.github.io/2016/08/30/rescue/"/>
    <updated>2016-08-30T00:00:00-05:00</updated>
    <id>http://androidgrl.github.io/2016/08/30/rescue</id>
-   <content type="html">&lt;ul&gt;
-  &lt;li&gt;Make a custom error class that inherits from StandardError.  This will give you a more descriptive error instead of raising the generic StandardError, so you can better deduce where the error came from.
- I will use a hypothetical example o an error that is raised when a User is being created.&lt;/li&gt;
-&lt;/ul&gt;
+   <content type="html">&lt;p&gt;Raising and rescuing errors in Rails is relatively easy.  All you need to do is make a custom error class, raise it (usually in a model) and rescue it (usually in a controller).&lt;/p&gt;
+
+&lt;p&gt;Start by making a custom error class that inherits from StandardError.  This will give you a more descriptive error instead of raising the generic StandardError, so you can better deduce where the error came from.
+ I will use a hypothetical example of an error that is raised when a User is being created.&lt;/p&gt;
 
 &lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;class UserCreateError &amp;lt; StandardError
 end
 &lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
 
-&lt;ul&gt;
-  &lt;li&gt;Each custom error class should have it’s own file which you can put in an app/errors directory.&lt;/li&gt;
-  &lt;li&gt;Use the error in the model.&lt;/li&gt;
-&lt;/ul&gt;
+&lt;p&gt;Each custom error class should have it’s own file which you can put in an app/errors directory.&lt;/p&gt;
 
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;class User
-  def create
+&lt;p&gt;Here I will raise the error in a User model method.&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;class User &amp;lt; ActiveRecord::Base
+  def self.example_method
     raise UserCreateError
   end
 end
 &lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
 
-&lt;ul&gt;
-  &lt;li&gt;When a User is created, it will raise this error, which will bubble back up to the controller.&lt;/li&gt;
-  &lt;li&gt;In the controller rescue the error.&lt;/li&gt;
-&lt;/ul&gt;
+&lt;p&gt;When the create action is called on the controller, it will call User.example_method, which will raise the error.  The error then goes back up to the controller where it is rescued.&lt;/p&gt;
 
 &lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;class UsersController &amp;lt; ApplicationController
   def create
+    User.example_method
   rescue UserCreateError
     render json: &quot;Invalid User Information&quot;, status: :bad_request
   end
@@ -81,11 +78,13 @@ end
 &lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
 
-&lt;ul&gt;
-  &lt;li&gt;Note the indentation of the rescue is on the same column as the def.&lt;/li&gt;
-  &lt;li&gt;You will either need to redirect to a view, or you can return a custom error message such as “Invalid User Information”.&lt;/li&gt;
-  &lt;li&gt;You can also specify the status code.&lt;/li&gt;
-&lt;/ul&gt;
+&lt;p&gt;Note the indentation of the rescue is on the same column as the def.&lt;/p&gt;
+
+&lt;p&gt;Whatever you put underneath the rescue will be run if there is an error.&lt;/p&gt;
+
+&lt;p&gt;Here I render a custom json error message and specify an optional status code.&lt;/p&gt;
+
+&lt;p&gt;And that’s pretty much all there is too it.&lt;/p&gt;
 </content>
  </entry>
  
