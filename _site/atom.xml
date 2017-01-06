@@ -4,13 +4,86 @@
  <title>Androidgrl's Blog</title>
  <link href="http://androidgrl.github.io/atom.xml" rel="self"/>
  <link href="http://androidgrl.github.io/"/>
- <updated>2017-01-03T23:01:06-06:00</updated>
+ <updated>2017-01-05T20:29:13-06:00</updated>
  <id>http://androidgrl.github.io</id>
  <author>
    <name>Jamie Kawahara</name>
    <email>kawaharajamie@gmail.com</email>
  </author>
 
+ 
+ <entry>
+   <title>Law of Demeter</title>
+   <link href="http://androidgrl.github.io/2017/01/04/demeter/"/>
+   <updated>2017-01-04T00:00:00-06:00</updated>
+   <id>http://androidgrl.github.io/2017/01/04/demeter</id>
+   <content type="html">&lt;p&gt;A few times I’ve been told during code review that something violates the Law of Demeter.  This method for example.&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;class User
+  def user_info
+    &quot;#{user.name}, #{user.department.name}&quot;
+  end
+end
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Which led me to ask: what is the Law of Demeter, why should I follow it, how do I know if I’m violating it, and how do I avoid violating it?&lt;/p&gt;
+
+&lt;p&gt;The Law of Demeter is formally defined as,&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;A method of an object may only call methods of:
+  The object itself.
+  An argument of the method.
+  Any object created within the method.
+  Any direct properties/fields of the object.
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;The above code sample violates the law with “user.department.name” because it’s calling name on the user’s department, and department is an entirely different object from a user.&lt;/p&gt;
+
+&lt;p&gt;In general it is better if one class does not have to know about methods from another class, in other words when the classes are “decoupled”.  This is because it makes the code more flexible.  For example in our code sample, there is only one department for a user.  But what happens if things changed so that a user could have many departments and we wanted the only use the first one for our user_info method?  We would then have to say:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;class User
+  def user_info
+    &quot;#{user.name}, #{user.departments.first.name}&quot;
+  end
+end
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;This seems reasonable for now but what if we used “user.department” in multiple places?  We’d have to make the same change wherever it was used, which would be cumbersome.&lt;/p&gt;
+
+&lt;p&gt;So how do you avoid violating the law?&lt;/p&gt;
+
+&lt;p&gt;You could make a custom method in the User class called “department_name”:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;class User
+  def user_info
+    &quot;#{user.name}, #{user.department_name}&quot;
+  end
+
+  def department_name
+    departments.first.name
+  end
+end
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Now the department_name is an immediate property of the user itself, satisfying the law and also making it easier to make future changes if we want to change what we use for the department’s name.&lt;/p&gt;
+
+&lt;p&gt;One sign that is often but not always an indication of Demeter violation is chaining of dots.  For example “user.departments.first.name” had chained dots and indeed was a violation.  However, sometimes dot chaining does not mean Demeter violation for example:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;def slug(string)
+  string.strip.downcase.tr_s(&#39;^[a-z0-9]&#39;, &#39;-&#39;)
+end
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;The above complies with the Law of Demeter because each method is called on a String object.  And the law doesn’t care about the number of methods called, but the number of &lt;em&gt;types&lt;/em&gt; of methods called.&lt;/p&gt;
+
+&lt;p&gt;For more information see &lt;a href=&quot;http://www.virtuouscode.com/2011/07/05/demeter-its-not-just-a-good-idea-its-the-law/&quot;&gt;Demeter: It’s not just a good idea. It’s the law.&lt;/a&gt;&lt;/p&gt;
+</content>
+ </entry>
  
  <entry>
    <title>Refining Searches using Ag</title>

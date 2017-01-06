@@ -77,6 +77,83 @@
   
   <div class="post">
     <h1 class="post-title">
+      <a href="//2017/01/04/demeter/">
+        Law of Demeter
+      </a>
+    </h1>
+
+    <span class="post-date">04 Jan 2017</span>
+
+    <p>A few times I’ve been told during code review that something violates the Law of Demeter.  This method for example.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>class User
+  def user_info
+    "#{user.name}, #{user.department.name}"
+  end
+end
+</code></pre>
+</div>
+
+<p>Which led me to ask: what is the Law of Demeter, why should I follow it, how do I know if I’m violating it, and how do I avoid violating it?</p>
+
+<p>The Law of Demeter is formally defined as,</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>A method of an object may only call methods of:
+  The object itself.
+  An argument of the method.
+  Any object created within the method.
+  Any direct properties/fields of the object.
+</code></pre>
+</div>
+
+<p>The above code sample violates the law with “user.department.name” because it’s calling name on the user’s department, and department is an entirely different object from a user.</p>
+
+<p>In general it is better if one class does not have to know about methods from another class, in other words when the classes are “decoupled”.  This is because it makes the code more flexible.  For example in our code sample, there is only one department for a user.  But what happens if things changed so that a user could have many departments and we wanted the only use the first one for our user_info method?  We would then have to say:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>class User
+  def user_info
+    "#{user.name}, #{user.departments.first.name}"
+  end
+end
+</code></pre>
+</div>
+
+<p>This seems reasonable for now but what if we used “user.department” in multiple places?  We’d have to make the same change wherever it was used, which would be cumbersome.</p>
+
+<p>So how do you avoid violating the law?</p>
+
+<p>You could make a custom method in the User class called “department_name”:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>class User
+  def user_info
+    "#{user.name}, #{user.department_name}"
+  end
+
+  def department_name
+    departments.first.name
+  end
+end
+</code></pre>
+</div>
+
+<p>Now the department_name is an immediate property of the user itself, satisfying the law and also making it easier to make future changes if we want to change what we use for the department’s name.</p>
+
+<p>One sign that is often but not always an indication of Demeter violation is chaining of dots.  For example “user.departments.first.name” had chained dots and indeed was a violation.  However, sometimes dot chaining does not mean Demeter violation for example:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>def slug(string)
+  string.strip.downcase.tr_s('^[a-z0-9]', '-')
+end
+</code></pre>
+</div>
+
+<p>The above complies with the Law of Demeter because each method is called on a String object.  And the law doesn’t care about the number of methods called, but the number of <em>types</em> of methods called.</p>
+
+<p>For more information see <a href="http://www.virtuouscode.com/2011/07/05/demeter-its-not-just-a-good-idea-its-the-law/">Demeter: It’s not just a good idea. It’s the law.</a></p>
+
+  </div>
+  
+  <div class="post">
+    <h1 class="post-title">
       <a href="//2017/01/03/ag/">
         Refining Searches using Ag
       </a>
@@ -383,64 +460,6 @@ from (pry):14:in `block (2 levels) in &lt;module:TM&gt;'
     <p>Spies don’t need to have anything defined on them and will always return a double.</p>
   </li>
 </ol>
-
-  </div>
-  
-  <div class="post">
-    <h1 class="post-title">
-      <a href="//2015/10/10/card/">
-        3D Printed Portrait-Business Cards Tutorial
-      </a>
-    </h1>
-
-    <span class="post-date">10 Oct 2015</span>
-
-    <p>Have business cards that truly stand out! The next time you give your business card to someone, impress them with a 3D printed business card with your own portrait on it!  This tutorial will show you how to use Tinkercad, a free online 3D design tool.  Tinkercad is easy-to-use and is web-based, so there is no need to download anything.  This design takes only 15 minutes to create.</p>
-
-<p>I have included a video demonstrating the process below.  I suggest following along with the video, and then using the written instructions below as a reference.</p>
-
-<p><a href="https://www.youtube.com/watch?v=VJI_D-GGwqY"><img src="http://img.youtube.com/vi/VJI_D-GGwqY/0.jpg" alt="" /></a><em>Youtube tutorial</em></p>
-
-<p>##Sign up for Tinkercad and Thingiverse accounts:
-1.  Sign up for a free <a href="https://www.tinkercad.com/">Tindercad account</a>
-2.  Sign up for a free <a href="http://www.thingiverse.com/">Thingiverse account</a></p>
-
-<p>##Create a lithopane portrait:
-1.  Go to <a href="http://www.thingiverse.com/thing:74322">Thingiverse lithopane generator</a>
-2.  Click on “open in customizer”
-3.  Choose the small pane size, and click “invert colors”
-4.  Choose the jpg file that you want to use for your portrait
-5.  Click “create thing”
-It will take a few minutes for your lithopane to be generated.  You will be able to see it by clicking on the dropdown arrow next to your avatar photo on the top right of the page, and selecting “My Things”.
-6. When it’s ready, download the .stl file by clicking on “Thing Files” and selecting the file.</p>
-
-<p>##Create the business card base:
-1.  Sign into Tinkercad and click on “Create New Design”
-2.  Under shape generators select geometric option, and select the red box.  Drag it to the workplane and click to deposit.
-3.  I recommend using a mouse- it’s much easier than using the touchpad.  To zoom in and out, turn the scroll wheel.  To rotate your view around the model, right click and drag.
-4.  The standard size of business cards in the US is 89 X 51mm.  We’ll use the ruler tool to manually enter the dimensions of the card.  On the toolbar on the top, select the grid, then select the ruler.  Drag it next to the red box and click. Now click on the red box, the dimensions will show up.  Click on the width and enter 89.00, click on the height and enter 51.00, finally click on the thickness and enter 1.00.
-5. Another shape manipulation feature is the black arrow you see on the top of the box. Click and drag it up to lift the card off of the workplane.  To drop the card back onto the workplane, just press “d”.</p>
-
-<p>##Create the business card text:
-1.  Under the Shape Generator’s menu, select Tinkercad, and click on the “TEXT” icon.  Drag it to the workplane and click to deposit.
-You’ll notice an Inspector window will automatically appear on the right.  In the “Text” field enter your name.
-2.  Select the ruler tool again, and manually enter the following dimensions for your name:  5mm high, 40mm wide, 0.5mm thick.
-3.  Now we’re going to drop the text on top of the card by creating a new workplane on top of the card.  Select the workplane tool.  Click anywhere on the top surface of the card.  This creates a new orange workplane.  Drag the text to be on top of the card.  Then type “d” and the text gets “dropped” on top of the new workplane.  We don’t need the new workplane anymore so to get rid of it, select the workplane tool again and click anywhere outside the orange workplane.
-4.  To make the twitter handle, phone number, title and email fields, click on your name text, then copy and paste from the edit menu, 4 times.  Drag these texts onto the card.
-To change the text, click on it and edit it with the Inspector that pops up.
-Make any adjustments you want to the width of the text by manually entering it using the ruler.  Line them up on the left side of the card.  The horizontal placement doesn’t have to be exact now, but you’ll want the vertical spacing between the lines of text to be exactly how you want.  For fine adjustments, change the snap grid setting on the bottom right corner to 0.1mm.
-5.  To horizontally align, shift click on all lines of text, and then select “Adjust” from the toolbar and select “Align”.  This will place an align tool on the card.  Click on the bottom right dot, and your text will be aligned to the right.
-Finally group all the text and the card base together by clicking and dragging to draw a square around the card.  Select “Group” on the toolbar.</p>
-
-<p>##Add the lithopane portrait:
-1.  Under “Import” choose your .stl file that you downloaded from Thingiverse.  Click on “Import”.  It takes a minute or two to upload.
-Adjust it to the size you want by clicking and dragging on one of the small white squares on the corners.
-2.  Next we need to get rid of the raised edges, and the top loop.  Under “Letters” select the letter “I” and drag it onto the workplane.  Make 3 more copies.  You can use the copy and edit from the Edit menu, or you can just use the keyboard shortcuts cmd+c for copy and cmd+v for paste.  Make each “I’ big enough to cover each raised edge.  The top one needs to be thick enough to cover the loop.  You don’t have to be exact, the point is to just cover the edges.
-3.  Next, shift click on all 4 of them, and in the Inspector box on the top right, select “Hole”.
-Draw a box around it and select “Group”.  This will remove any material where you have put the holes.
-4.  Finally, drag the lithopane onto the card.
-Draw a box around the whole card and select “Group”.
-5.  That’s it!  You can download the .stl file to be 3D printed by selecting the ”Design” menu and selecting “Download for 3D printing”.</p>
 
   </div>
   
