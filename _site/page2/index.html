@@ -77,6 +77,90 @@
   
   <div class="post">
     <h1 class="post-title">
+      <a href="//2016/07/13/double/">
+        The difference between Rspec spies, doubles and instance_doubles
+      </a>
+    </h1>
+
+    <span class="post-date">13 Jul 2016</span>
+
+    <p>Throughout the code base of our Rails app at work, we have many Rspec tests that use spies, doubles and instance_doubles.  I found most of the information on the web about them to be very theoretical and not practical.  My coworker then explained it to me very clearly as follows:</p>
+
+<ol>
+  <li>
+    <p>All three terms belong under an umbrella term called “doubles”. In other words, a spy is a type of double, and so is an instance_double.</p>
+  </li>
+  <li>
+    <p>Spies, doubles, and instance_doubles are doubles that increase in their power of specificity in that order. So a double is more specific than a spy and an instance_double is more specific than a double.</p>
+  </li>
+</ol>
+
+<p>The best way to demonstrate how they work is to pry into an rspec file.  This assumes that you are already familiar with setting up an Rspec test file in a Rails app. In the Rspec file, inside an “it” block place a binding.pry.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>    it "demonstrates doubles" do
+      binding.pry
+    end
+</code></pre>
+</div>
+
+<p>In the pry session, define a spy, then try to call undefined methods on it.  It will keep returning a double.  So spies, are just generic doubles that will keep giving you a double no matter what methods you call on them.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>pry(#&lt;RSpec&gt;)&gt; s=spy
+=&gt; #&lt;Double (anonymous)&gt;
+pry(#&lt;RSpec&gt;)&gt; s.what?
+=&gt; #&lt;Double (anonymous)&gt;
+pry(#&lt;RSpec&gt;)&gt; s.anything?
+=&gt; #&lt;Double (anonymous)&gt;
+</code></pre>
+</div>
+
+<p>Moving towards more specificity, define a double.  Below a double is defined with a method called name that returns the string “androidgrl”.  When we call name on the double it returns “androidgrl”.  What happens when we call an undefined method like “age” on the double?  It gives us an error unlike with spies.  So with doubles, you have to define methods that can be called on them.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>pry(#&lt;RSpec&gt;)&gt; d=double(name: "androidgrl")
+=&gt; #&lt;Double (anonymous)&gt;
+pry(#&lt;RSpec&gt;)&gt; d.name
+=&gt; "androidgrl"
+pry(#&lt;RSpec&gt;)&gt; d.age
+RSpec::Mocks::MockExpectationError: #&lt;Double (anonymous)&gt; received unexpected message :age with (no args)
+from /opt/active/acl_api/current/vendor/bundle/ruby/2.1.0/gems/rspec-support-3.3.0/lib/rspec/support.rb:86:in `block in &lt;module:Support&gt;'
+</code></pre>
+</div>
+
+<p>And finally, we have the most specific type of double, instance_doubles.  Here we have to specify which Class we’re defining the double for.  This has to be an actual class that exists either in your application or inherited through Ruby.  Here we’re stubbing out the “count” method on the Array class to always return 3.  Notice that when we try to define a method on Array that doesn’t actually exist we get an error.  Also when we try to make an instance double for a Class that doesn’t exist we get an error.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>pry(#&lt;RSpec&gt;)&gt; i=instance_double(Array, count: 3)
+=&gt; #&lt;InstanceDouble(Array) (anonymous)&gt;
+pry(#&lt;RSpec&gt;)&gt; i.count
+=&gt; 3
+pry(#&lt;RSpec&gt;)&gt; i=instance_double(Array, whatever: "?")
+RSpec::Mocks::MockExpectationError: the Array class does not implement the instance method: whatever
+from /opt/active/acl_api/current/vendor/bundle/ruby/2.1.0/gems/rspec-support-3.3.0/lib/rspec/support.rb:86:in `block in &lt;module:Support&gt;'
+</code></pre>
+</div>
+<div class="highlighter-rouge"><pre class="highlight"><code>pry(#&lt;RSpeci=instance_double(FakeClass, fake_method: "fake")
+NameError: uninitialized constant TM::FakeClass
+from (pry):14:in `block (2 levels) in &lt;module:TM&gt;'
+</code></pre>
+</div>
+
+<p>In summary:</p>
+
+<ol>
+  <li>
+    <p>Instance_doubles have to be defined on Classes that actually exist in your code and you can only stub methods that actually exist.</p>
+  </li>
+  <li>
+    <p>Doubles can have any methods called on them as long as you define them in the double.</p>
+  </li>
+  <li>
+    <p>Spies don’t need to have anything defined on them and will always return a double.</p>
+  </li>
+</ol>
+
+  </div>
+  
+  <div class="post">
+    <h1 class="post-title">
       <a href="//2015/10/10/card/">
         3D Printed Portrait-Business Cards Tutorial
       </a>
@@ -216,28 +300,11 @@ Follow these instructions and you will be able to make a 3D print of a person!</
 
   </div>
   
-  <div class="post">
-    <h1 class="post-title">
-      <a href="//2015/06/24/day/">
-        A Day in the Life of Jamie Kawahara
-      </a>
-    </h1>
-
-    <span class="post-date">24 Jun 2015</span>
-
-    <p>This is an article for Built in Colorado that I wrote that follows a day in my life as a student at Turing School of Software &amp; Design.</p>
-
-<p><a href="http://www.builtincolorado.com/2015/07/29/dev-school-right-you-here-what-average-day-really-looks"><img src="./public/day.png" alt="Screenshot" /></a></p>
-
-<p><a href="http://www.builtincolorado.com/2015/07/29/dev-school-right-you-here-what-average-day-really-looks">Click here to read full article</a></p>
-
-  </div>
-  
 </div>
 
 <div class="pagination">
   
-    <span class="pagination-item older">Older</span>
+    <a class="pagination-item older" href="/page3">Older</a>
   
   
     

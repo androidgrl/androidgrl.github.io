@@ -4,13 +4,119 @@
  <title>Androidgrl's Blog</title>
  <link href="http://androidgrl.github.io/atom.xml" rel="self"/>
  <link href="http://androidgrl.github.io/"/>
- <updated>2017-01-05T20:29:13-06:00</updated>
+ <updated>2017-01-15T01:39:22-06:00</updated>
  <id>http://androidgrl.github.io</id>
  <author>
    <name>Jamie Kawahara</name>
    <email>kawaharajamie@gmail.com</email>
  </author>
 
+ 
+ <entry>
+   <title>Alternatives to Using the Try method</title>
+   <link href="http://androidgrl.github.io/2017/01/14/try/"/>
+   <updated>2017-01-14T00:00:00-06:00</updated>
+   <id>http://androidgrl.github.io/2017/01/14/try</id>
+   <content type="html">&lt;p&gt;The architect for our team said that using the try method is like introducing cancer into a code base.
+One example of how try is used is:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;class Order
+  def grand_total
+    sub_total.try(:*, sales_tax)
+  end
+
+  def sub_total
+    FooBar.baz
+  end
+end
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Say we have a method grand_total which multiplies an order instance’s subtotal by the local sales_tax.
+What if sub_total were nil?  If you multiiply nil by a number you get an error.  To prevent this, some people use try.  If try is called on nil, it will return nil instead of erroring out.  If it is called on an actual object then it will perform the operation as normal.&lt;/p&gt;
+
+&lt;p&gt;One reason why this is insidious is because although it seems harmless, it introduces uncertainty in the code.  It is better to know what kind of object you’re dealing with.&lt;/p&gt;
+
+&lt;p&gt;In this case, we can avoid using try with an if statement.&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;class Order
+  def grand_total
+    if subtotal
+      (sub_total * sales_tax)
+    else
+      nil
+    end
+  end
+
+  def sub_total
+    FooBar.baz
+  end
+end
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;If there’s a subtotal it will perform the multiplication, if there is not it will return nil.  Since by default nil is what is returned by else, you can take out the else and make the statement one line.&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;class Order
+  def grand_total
+    (sub_total * sales_tax) if sub_total
+  end
+
+  def sub_total
+    FooBar.baz
+  end
+end
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;What if we wanted to return 0 instead of nil if there was no sub_total?  We could go back to the if else statement but sometimes it can be better to use a Null Object pattern.&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;class Order
+  def grand_total
+    sub_total * sales_tax
+  end
+
+  def sub_total
+    result = FooBar.baz
+    if result
+      result
+    else
+      NullOrder.new.sub_total
+    end
+  end
+end
+
+class NullOrder
+  def sub_total
+    0
+  end
+end
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Going into the sub_total method, if we get a result from FooBar.baz we return it, if it is nil then we return an instance of NullOrder which has a sub_total of 0.&lt;/p&gt;
+
+&lt;p&gt;We then no longer have to have branching inside the grand_total method.  It will either be the actual sub_total or the sub_total on the NullOrder which is 0.&lt;/p&gt;
+
+&lt;p&gt;This is an example of Duck Typing.  Duck Typing is when we don’t care what type of object we’re dealing with only that it has certain behavior.  In this case  we just care that Order and NullOrder both have a sub_total method.&lt;/p&gt;
+
+&lt;p&gt;In order to prevent an error in case someone tries to call an undefined method on the NullOrder, we can override the method_missing method to return whatever we want.  For example:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;class NullOrder
+  def method_missing(*_args)
+    nil
+  end
+
+  def sub_total
+    0
+  end
+end
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;If someone were to call NullOrder.new.whatever, the method_missing method gets called which by default will raise an error.  Instead we override it to return nil.  We add a splat argument in case someone calls an undefined method on it that has arguments.  The underscore in  front of “args” denotes that it’s something that’s not supposed to be used.&lt;/p&gt;
+</content>
+ </entry>
  
  <entry>
    <title>Law of Demeter</title>

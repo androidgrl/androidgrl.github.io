@@ -11,7 +11,7 @@
 
   <title>
     
-      Law of Demeter &middot; Androidgrl's Blog
+      Alternatives to Using the Try method &middot; Androidgrl's Blog
     
   </title>
 
@@ -74,73 +74,106 @@
 
       <div class="container content">
         <div class="post">
-  <h1 class="post-title">Law of Demeter</h1>
-  <span class="post-date">04 Jan 2017</span>
-  <p>A few times I’ve been told during code review that something violates the Law of Demeter.  This method for example.</p>
+  <h1 class="post-title">Alternatives to Using the Try method</h1>
+  <span class="post-date">14 Jan 2017</span>
+  <p>The architect for our team said that using the try method is like introducing cancer into a code base.
+One example of how try is used is:</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>class User
-  def user_info
-    "#{user.name}, #{user.department.name}"
+<div class="highlighter-rouge"><pre class="highlight"><code>class Order
+  def grand_total
+    sub_total.try(:*, sales_tax)
+  end
+
+  def sub_total
+    FooBar.baz
   end
 end
 </code></pre>
 </div>
 
-<p>Which led me to ask: what is the Law of Demeter, why should I follow it, how do I know if I’m violating it, and how do I avoid violating it?</p>
+<p>Say we have a method grand_total which multiplies an order instance’s subtotal by the local sales_tax.
+What if sub_total were nil?  If you multiiply nil by a number you get an error.  To prevent this, some people use try.  If try is called on nil, it will return nil instead of erroring out.  If it is called on an actual object then it will perform the operation as normal.</p>
 
-<p>The Law of Demeter is formally defined as,</p>
+<p>One reason why this is insidious is because although it seems harmless, it introduces uncertainty in the code.  It is better to know what kind of object you’re dealing with.</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>A method of an object may only call methods of:
-  The object itself.
-  An argument of the method.
-  Any object created within the method.
-  Any direct properties/fields of the object.
-</code></pre>
-</div>
+<p>In this case, we can avoid using try with an if statement.</p>
 
-<p>The above code sample violates the law with “user.department.name” because it’s calling name on the user’s department, and department is an entirely different object from a user.</p>
+<div class="highlighter-rouge"><pre class="highlight"><code>class Order
+  def grand_total
+    if subtotal
+      (sub_total * sales_tax)
+    else
+      nil
+    end
+  end
 
-<p>In general it is better if one class does not have to know about methods from another class, in other words when the classes are “decoupled”.  This is because it makes the code more flexible.  For example in our code sample, there is only one department for a user.  But what happens if things changed so that a user could have many departments and we wanted the only use the first one for our user_info method?  We would then have to say:</p>
-
-<div class="highlighter-rouge"><pre class="highlight"><code>class User
-  def user_info
-    "#{user.name}, #{user.departments.first.name}"
+  def sub_total
+    FooBar.baz
   end
 end
 </code></pre>
 </div>
 
-<p>This seems reasonable for now but what if we used “user.department” in multiple places?  We’d have to make the same change wherever it was used, which would be cumbersome.</p>
+<p>If there’s a subtotal it will perform the multiplication, if there is not it will return nil.  Since by default nil is what is returned by else, you can take out the else and make the statement one line.</p>
 
-<p>So how do you avoid violating the law?</p>
-
-<p>You could make a custom method in the User class called “department_name”:</p>
-
-<div class="highlighter-rouge"><pre class="highlight"><code>class User
-  def user_info
-    "#{user.name}, #{user.department_name}"
+<div class="highlighter-rouge"><pre class="highlight"><code>class Order
+  def grand_total
+    (sub_total * sales_tax) if sub_total
   end
 
-  def department_name
-    departments.first.name
+  def sub_total
+    FooBar.baz
   end
 end
 </code></pre>
 </div>
 
-<p>Now the department_name is an immediate property of the user itself, satisfying the law and also making it easier to make future changes if we want to change what we use for the department’s name.</p>
+<p>What if we wanted to return 0 instead of nil if there was no sub_total?  We could go back to the if else statement but sometimes it can be better to use a Null Object pattern.</p>
 
-<p>One sign that is often but not always an indication of Demeter violation is chaining of dots.  For example “user.departments.first.name” had chained dots and indeed was a violation.  However, sometimes dot chaining does not mean Demeter violation for example:</p>
+<div class="highlighter-rouge"><pre class="highlight"><code>class Order
+  def grand_total
+    sub_total * sales_tax
+  end
 
-<div class="highlighter-rouge"><pre class="highlight"><code>def slug(string)
-  string.strip.downcase.tr_s('^[a-z0-9]', '-')
+  def sub_total
+    result = FooBar.baz
+    if result
+      result
+    else
+      NullOrder.new.sub_total
+    end
+  end
+end
+
+class NullOrder
+  def sub_total
+    0
+  end
 end
 </code></pre>
 </div>
 
-<p>The above complies with the Law of Demeter because each method is called on a String object.  And the law doesn’t care about the number of methods called, but the number of <em>types</em> of methods called.</p>
+<p>Going into the sub_total method, if we get a result from FooBar.baz we return it, if it is nil then we return an instance of NullOrder which has a sub_total of 0.</p>
 
-<p>For more information see <a href="http://www.virtuouscode.com/2011/07/05/demeter-its-not-just-a-good-idea-its-the-law/">Demeter: It’s not just a good idea. It’s the law.</a></p>
+<p>We then no longer have to have branching inside the grand_total method.  It will either be the actual sub_total or the sub_total on the NullOrder which is 0.</p>
+
+<p>This is an example of Duck Typing.  Duck Typing is when we don’t care what type of object we’re dealing with only that it has certain behavior.  In this case  we just care that Order and NullOrder both have a sub_total method.</p>
+
+<p>In order to prevent an error in case someone tries to call an undefined method on the NullOrder, we can override the method_missing method to return whatever we want.  For example:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>class NullOrder
+  def method_missing(*_args)
+    nil
+  end
+
+  def sub_total
+    0
+  end
+end
+</code></pre>
+</div>
+
+<p>If someone were to call NullOrder.new.whatever, the method_missing method gets called which by default will raise an error.  Instead we override it to return nil.  We add a splat argument in case someone calls an undefined method on it that has arguments.  The underscore in  front of “args” denotes that it’s something that’s not supposed to be used.</p>
 
 </div>
 
@@ -150,9 +183,9 @@ end
     
       <li>
         <h3>
-          <a href="/2017/01/14/try/">
-            Alternatives to Using the Try method
-            <small>14 Jan 2017</small>
+          <a href="/2017/01/04/demeter/">
+            Law of Demeter
+            <small>04 Jan 2017</small>
           </a>
         </h3>
       </li>
