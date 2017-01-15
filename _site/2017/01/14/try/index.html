@@ -91,10 +91,10 @@ end
 </code></pre>
 </div>
 
-<p>Say we have a method grand_total which multiplies an order instance’s subtotal by the local sales_tax.
+<p>Say we have a method grand_total which multiplies an order’s subtotal by the local sales_tax.
 What if sub_total were nil?  If you multiiply nil by a number you get an error.  To prevent this, some people use try.  If try is called on nil, it will return nil instead of erroring out.  If it is called on an actual object then it will perform the operation as normal.</p>
 
-<p>One reason why this is insidious is because although it seems harmless, it introduces uncertainty in the code.  It is better to know what kind of object you’re dealing with.</p>
+<p>One reason why this is insidious is because although it seems harmless, it introduces uncertainty in the code.  It is better to know what kind of result you’re dealing with.</p>
 
 <p>In this case, we can avoid using try with an if statement.</p>
 

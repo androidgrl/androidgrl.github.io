@@ -4,7 +4,7 @@
  <title>Androidgrl's Blog</title>
  <link href="http://androidgrl.github.io/atom.xml" rel="self"/>
  <link href="http://androidgrl.github.io/"/>
- <updated>2017-01-15T01:39:22-06:00</updated>
+ <updated>2017-01-15T01:41:31-06:00</updated>
  <id>http://androidgrl.github.io</id>
  <author>
    <name>Jamie Kawahara</name>
@@ -32,10 +32,10 @@ end
 &lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
 
-&lt;p&gt;Say we have a method grand_total which multiplies an order instance’s subtotal by the local sales_tax.
+&lt;p&gt;Say we have a method grand_total which multiplies an order’s subtotal by the local sales_tax.
 What if sub_total were nil?  If you multiiply nil by a number you get an error.  To prevent this, some people use try.  If try is called on nil, it will return nil instead of erroring out.  If it is called on an actual object then it will perform the operation as normal.&lt;/p&gt;
 
-&lt;p&gt;One reason why this is insidious is because although it seems harmless, it introduces uncertainty in the code.  It is better to know what kind of object you’re dealing with.&lt;/p&gt;
+&lt;p&gt;One reason why this is insidious is because although it seems harmless, it introduces uncertainty in the code.  It is better to know what kind of result you’re dealing with.&lt;/p&gt;
 
 &lt;p&gt;In this case, we can avoid using try with an if statement.&lt;/p&gt;
 
