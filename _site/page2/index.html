@@ -77,6 +77,149 @@
   
   <div class="post">
     <h1 class="post-title">
+      <a href="//2016/07/15/initialize/">
+        What is initialize used for in Ruby?
+      </a>
+    </h1>
+
+    <span class="post-date">15 Jul 2016</span>
+
+    <p>Does initialize need to be used all the time in a class?  No.
+You only need it to set instance variables and to allow passing of arguments when instantiating a class.</p>
+
+<p><strong>Example one:</strong> <em>You don’t need it to instantiate a class</em></p>
+
+<p>Let’s make a class with a single instance method and no initialize method.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>class Holiday
+  def statement
+    "I'm going to the beach"
+  end
+end
+puts Holiday.new
+puts Holiday.new.statement
+</code></pre>
+</div>
+
+<p>If we run the code, the “puts” outputs the following, and we see that Holiday.new instantiates an object just fine and we can call the method statement on it:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>#&lt;Holiday:0x007fe194093d00&gt;
+I'm going to the beach
+</code></pre>
+</div>
+
+<p><strong>Example two:</strong> <em>You don’t need it to use attr_accessors</em></p>
+
+<p>Let’s make a class with an attr_accessor and no initialize method.  We instantiate two different holiday objects, and then using the attr_accessors set a separate location attribute for each.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>class Holiday
+  attr_accessor :location
+  def statement
+    "I'm going on holiday to #{location}"
+  end
+end
+holiday1 = Holiday.new
+holiday2 = Holiday.new
+holiday1.location = "Europe"
+holiday2.location = "Hawaii"
+puts holiday1.statement
+puts holiday2.statement
+</code></pre>
+</div>
+
+<p>The output shows that the attr_accessors still work without the initialize method.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>I'm going on holiday to Europe
+I'm going on holiday to Hawaii
+</code></pre>
+</div>
+
+<p><strong>Example three:</strong> <em>You DO need it to set instance variables</em></p>
+
+<p>The following is a class that tries to set an instance variable @word to equal “whatever”.
+The output is nothing, because instance variables need to be put inside an initialize method.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>class Random
+  @word = "whatever"
+  def whatever
+    @word
+  end
+end
+puts Random.new.whatever
+</code></pre>
+</div>
+
+<p>The following will correctly result in an output of “whatever”.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>class Random
+  def initialize
+    @word = "whatever"
+  end
+  def whatever
+    @word
+  end
+end
+puts Random.new.whatever
+</code></pre>
+</div>
+
+<p><strong>Example four:</strong> <em>You DO need it to allow arguments to be passed in when instantiating a Class</em></p>
+
+<p>The following code tries to pass in a string argument into the “new” method.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>class Random
+end
+
+puts Random.new("whatever")
+</code></pre>
+</div>
+
+<p>This results in an error.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>new.rb:35:in `initialize': no implicit conversion of String into Integer (TypeError)
+        from new.rb:35:in `new'
+        from new.rb:35:in `&lt;main&gt;'
+</code></pre>
+</div>
+
+<p>You need to specify that there are arguments in the initialize method for “new” method to be able to take any.
+However, you don’t have to actually do anything with the arguments in the initialize method.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>class Random
+  def initialize(word)
+  end
+end
+
+puts Random.new("whatever")
+</code></pre>
+</div>
+
+<p>This will result in the object being successfully instantiated, as shown in the output below.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>#&lt;Random:0x007fbbb9170cd8&gt;
+</code></pre>
+</div>
+
+<p>If you wanted to actually have access to the attribute then you would have to set it as an instance variable inside the initialize method, and set an attr_reader.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>class Random
+  attr_reader :word
+  def initialize(word)
+    @word = word
+  end
+end
+
+puts Random.new("whatever").word
+</code></pre>
+</div>
+
+<p>Which will output “whatever”.</p>
+
+
+  </div>
+  
+  <div class="post">
+    <h1 class="post-title">
       <a href="//2016/07/13/double/">
         The difference between Rspec spies, doubles and instance_doubles
       </a>
@@ -282,21 +425,6 @@ Follow these instructions and you will be able to make a 3D print of a person!</
 </ol>
 <p>&lt;/pre&gt;&lt;/noscript&gt;<script src="https://gist.github.com/0361b0f2b917a1c322f3.js"> </script></p>
 
-
-  </div>
-  
-  <div class="post">
-    <h1 class="post-title">
-      <a href="//2015/06/30/impostor/">
-        Impostor Phenomenon in Software Development
-      </a>
-    </h1>
-
-    <span class="post-date">30 Jun 2015</span>
-
-    <p>This is a lightning talk that I did on the Impostor Phenomenon in Software Development.  It is a very common phenomenon among high achievers especially in open source software.  Covered in this talk is results from a survey at Turing School of Software &amp; Design, and 3 steps on how to deal with it.</p>
-
-<p><a href="https://www.youtube.com/watch?v=fN_-os5-LMc"><img src="./public/screenshot.png" alt="Screenshot" /></a></p>
 
   </div>
   

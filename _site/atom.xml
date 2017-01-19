@@ -4,13 +4,136 @@
  <title>Androidgrl's Blog</title>
  <link href="http://androidgrl.github.io/atom.xml" rel="self"/>
  <link href="http://androidgrl.github.io/"/>
- <updated>2017-01-15T01:41:31-06:00</updated>
+ <updated>2017-01-19T12:48:50-06:00</updated>
  <id>http://androidgrl.github.io</id>
  <author>
    <name>Jamie Kawahara</name>
    <email>kawaharajamie@gmail.com</email>
  </author>
 
+ 
+ <entry>
+   <title>The difference between using include and extend when including modules in a Class</title>
+   <link href="http://androidgrl.github.io/2017/01/19/modules/"/>
+   <updated>2017-01-19T00:00:00-06:00</updated>
+   <id>http://androidgrl.github.io/2017/01/19/modules</id>
+   <content type="html">&lt;p&gt;We’ve seen the use of include for including methods from a module into a Class.
+The following shows three modules included into Class A:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;module B
+  def b
+    :b
+  end
+end
+
+module C
+  def c
+    :c
+  end
+end
+
+module D
+  def d
+    :d
+  end
+end
+
+class A
+  include B
+  include C
+  include D
+end
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Include turns the methods inside the module into &lt;em&gt;instance&lt;/em&gt; methods for that class:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;puts A.new.b &amp;gt;&amp;gt; b
+puts A.new.c &amp;gt;&amp;gt; c
+puts A.new.d &amp;gt;&amp;gt; d
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;However you can also change the methods into &lt;em&gt;class&lt;/em&gt; methods by using extend:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;module B
+  def b
+    :b
+  end
+end
+
+module C
+  def c
+    :c
+  end
+end
+
+module D
+  def d
+    :d
+  end
+end
+
+class A
+  extend B
+  extend C
+  extend D
+end
+
+puts A.b &amp;gt;&amp;gt; b
+puts A.c &amp;gt;&amp;gt; c
+puts A.d &amp;gt;&amp;gt; d
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Notice how we didn’t have to change the method definitions inside the module to self.method.
+This is because modules have no sense of Class, they’re just buckets for methods.  They are called
+‘mixins’ because they mix methods into wherever they are included or extended into.&lt;/p&gt;
+
+&lt;p&gt;Our team architect Adam Zaninovich gives the analogy of modules being ‘viruses’ and classes being ‘hosts’.  Modules ‘infect’
+classes with their ‘methods’ (in a good way in this case), in the sense that viruses inject their dna into host cells.&lt;/p&gt;
+
+&lt;p&gt;I wrote include in class A three times which is repetitive.  If you find that you are
+including modules in a class many times you can avoid this by using the self.included module method.&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;module B
+  def self.included(klass)
+    klass.include C
+    klass.include D
+  end
+
+  def b
+    :b
+  end
+end
+
+module C
+  def c
+    :c
+  end
+end
+
+module D
+  def d
+    :d
+  end
+end
+
+class A
+  include B
+end
+
+puts A.new.b &amp;gt;&amp;gt; b
+puts A.new.c &amp;gt;&amp;gt; c
+puts A.new.d &amp;gt;&amp;gt; d
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Now there is only ‘include B’ inside class A.  Whenever B is included in a Class, it calls self.included
+which passes in the class A as an argument.  “self.included” then included modules C and D into the klass
+passed as the argument which in our case is class A.&lt;/p&gt;
+</content>
+ </entry>
  
  <entry>
    <title>Alternatives to Using the Try method</title>

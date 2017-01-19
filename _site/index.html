@@ -77,6 +77,133 @@
   
   <div class="post">
     <h1 class="post-title">
+      <a href="//2017/01/19/modules/">
+        The difference between using include and extend when including modules in a Class
+      </a>
+    </h1>
+
+    <span class="post-date">19 Jan 2017</span>
+
+    <p>We’ve seen the use of include for including methods from a module into a Class.
+The following shows three modules included into Class A:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>module B
+  def b
+    :b
+  end
+end
+
+module C
+  def c
+    :c
+  end
+end
+
+module D
+  def d
+    :d
+  end
+end
+
+class A
+  include B
+  include C
+  include D
+end
+</code></pre>
+</div>
+
+<p>Include turns the methods inside the module into <em>instance</em> methods for that class:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>puts A.new.b &gt;&gt; b
+puts A.new.c &gt;&gt; c
+puts A.new.d &gt;&gt; d
+</code></pre>
+</div>
+
+<p>However you can also change the methods into <em>class</em> methods by using extend:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>module B
+  def b
+    :b
+  end
+end
+
+module C
+  def c
+    :c
+  end
+end
+
+module D
+  def d
+    :d
+  end
+end
+
+class A
+  extend B
+  extend C
+  extend D
+end
+
+puts A.b &gt;&gt; b
+puts A.c &gt;&gt; c
+puts A.d &gt;&gt; d
+</code></pre>
+</div>
+
+<p>Notice how we didn’t have to change the method definitions inside the module to self.method.
+This is because modules have no sense of Class, they’re just buckets for methods.  They are called
+‘mixins’ because they mix methods into wherever they are included or extended into.</p>
+
+<p>Our team architect Adam Zaninovich gives the analogy of modules being ‘viruses’ and classes being ‘hosts’.  Modules ‘infect’
+classes with their ‘methods’ (in a good way in this case), in the sense that viruses inject their dna into host cells.</p>
+
+<p>I wrote include in class A three times which is repetitive.  If you find that you are
+including modules in a class many times you can avoid this by using the self.included module method.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>module B
+  def self.included(klass)
+    klass.include C
+    klass.include D
+  end
+
+  def b
+    :b
+  end
+end
+
+module C
+  def c
+    :c
+  end
+end
+
+module D
+  def d
+    :d
+  end
+end
+
+class A
+  include B
+end
+
+puts A.new.b &gt;&gt; b
+puts A.new.c &gt;&gt; c
+puts A.new.d &gt;&gt; d
+</code></pre>
+</div>
+
+<p>Now there is only ‘include B’ inside class A.  Whenever B is included in a Class, it calls self.included
+which passes in the class A as an argument.  “self.included” then included modules C and D into the klass
+passed as the argument which in our case is class A.</p>
+
+  </div>
+  
+  <div class="post">
+    <h1 class="post-title">
       <a href="//2017/01/14/try/">
         Alternatives to Using the Try method
       </a>
@@ -343,149 +470,6 @@ end
 <p>Here I render a custom json error message and specify an optional status code.</p>
 
 <p>And that’s pretty much all there is too it.</p>
-
-  </div>
-  
-  <div class="post">
-    <h1 class="post-title">
-      <a href="//2016/07/15/initialize/">
-        What is initialize used for in Ruby?
-      </a>
-    </h1>
-
-    <span class="post-date">15 Jul 2016</span>
-
-    <p>Does initialize need to be used all the time in a class?  No.
-You only need it to set instance variables and to allow passing of arguments when instantiating a class.</p>
-
-<p><strong>Example one:</strong> <em>You don’t need it to instantiate a class</em></p>
-
-<p>Let’s make a class with a single instance method and no initialize method.</p>
-
-<div class="highlighter-rouge"><pre class="highlight"><code>class Holiday
-  def statement
-    "I'm going to the beach"
-  end
-end
-puts Holiday.new
-puts Holiday.new.statement
-</code></pre>
-</div>
-
-<p>If we run the code, the “puts” outputs the following, and we see that Holiday.new instantiates an object just fine and we can call the method statement on it:</p>
-
-<div class="highlighter-rouge"><pre class="highlight"><code>#&lt;Holiday:0x007fe194093d00&gt;
-I'm going to the beach
-</code></pre>
-</div>
-
-<p><strong>Example two:</strong> <em>You don’t need it to use attr_accessors</em></p>
-
-<p>Let’s make a class with an attr_accessor and no initialize method.  We instantiate two different holiday objects, and then using the attr_accessors set a separate location attribute for each.</p>
-
-<div class="highlighter-rouge"><pre class="highlight"><code>class Holiday
-  attr_accessor :location
-  def statement
-    "I'm going on holiday to #{location}"
-  end
-end
-holiday1 = Holiday.new
-holiday2 = Holiday.new
-holiday1.location = "Europe"
-holiday2.location = "Hawaii"
-puts holiday1.statement
-puts holiday2.statement
-</code></pre>
-</div>
-
-<p>The output shows that the attr_accessors still work without the initialize method.</p>
-
-<div class="highlighter-rouge"><pre class="highlight"><code>I'm going on holiday to Europe
-I'm going on holiday to Hawaii
-</code></pre>
-</div>
-
-<p><strong>Example three:</strong> <em>You DO need it to set instance variables</em></p>
-
-<p>The following is a class that tries to set an instance variable @word to equal “whatever”.
-The output is nothing, because instance variables need to be put inside an initialize method.</p>
-
-<div class="highlighter-rouge"><pre class="highlight"><code>class Random
-  @word = "whatever"
-  def whatever
-    @word
-  end
-end
-puts Random.new.whatever
-</code></pre>
-</div>
-
-<p>The following will correctly result in an output of “whatever”.</p>
-
-<div class="highlighter-rouge"><pre class="highlight"><code>class Random
-  def initialize
-    @word = "whatever"
-  end
-  def whatever
-    @word
-  end
-end
-puts Random.new.whatever
-</code></pre>
-</div>
-
-<p><strong>Example four:</strong> <em>You DO need it to allow arguments to be passed in when instantiating a Class</em></p>
-
-<p>The following code tries to pass in a string argument into the “new” method.</p>
-
-<div class="highlighter-rouge"><pre class="highlight"><code>class Random
-end
-
-puts Random.new("whatever")
-</code></pre>
-</div>
-
-<p>This results in an error.</p>
-
-<div class="highlighter-rouge"><pre class="highlight"><code>new.rb:35:in `initialize': no implicit conversion of String into Integer (TypeError)
-        from new.rb:35:in `new'
-        from new.rb:35:in `&lt;main&gt;'
-</code></pre>
-</div>
-
-<p>You need to specify that there are arguments in the initialize method for “new” method to be able to take any.
-However, you don’t have to actually do anything with the arguments in the initialize method.</p>
-
-<div class="highlighter-rouge"><pre class="highlight"><code>class Random
-  def initialize(word)
-  end
-end
-
-puts Random.new("whatever")
-</code></pre>
-</div>
-
-<p>This will result in the object being successfully instantiated, as shown in the output below.</p>
-
-<div class="highlighter-rouge"><pre class="highlight"><code>#&lt;Random:0x007fbbb9170cd8&gt;
-</code></pre>
-</div>
-
-<p>If you wanted to actually have access to the attribute then you would have to set it as an instance variable inside the initialize method, and set an attr_reader.</p>
-
-<div class="highlighter-rouge"><pre class="highlight"><code>class Random
-  attr_reader :word
-  def initialize(word)
-    @word = word
-  end
-end
-
-puts Random.new("whatever").word
-</code></pre>
-</div>
-
-<p>Which will output “whatever”.</p>
-
 
   </div>
   

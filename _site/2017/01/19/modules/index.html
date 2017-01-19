@@ -11,7 +11,7 @@
 
   <title>
     
-      Law of Demeter &middot; Androidgrl's Blog
+      The difference between using include and extend when including modules in a Class &middot; Androidgrl's Blog
     
   </title>
 
@@ -74,73 +74,123 @@
 
       <div class="container content">
         <div class="post">
-  <h1 class="post-title">Law of Demeter</h1>
-  <span class="post-date">04 Jan 2017</span>
-  <p>A few times I’ve been told during code review that something violates the Law of Demeter.  This method for example.</p>
+  <h1 class="post-title">The difference between using include and extend when including modules in a Class</h1>
+  <span class="post-date">19 Jan 2017</span>
+  <p>We’ve seen the use of include for including methods from a module into a Class.
+The following shows three modules included into Class A:</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>class User
-  def user_info
-    "#{user.name}, #{user.department.name}"
+<div class="highlighter-rouge"><pre class="highlight"><code>module B
+  def b
+    :b
   end
+end
+
+module C
+  def c
+    :c
+  end
+end
+
+module D
+  def d
+    :d
+  end
+end
+
+class A
+  include B
+  include C
+  include D
 end
 </code></pre>
 </div>
 
-<p>Which led me to ask: what is the Law of Demeter, why should I follow it, how do I know if I’m violating it, and how do I avoid violating it?</p>
+<p>Include turns the methods inside the module into <em>instance</em> methods for that class:</p>
 
-<p>The Law of Demeter is formally defined as,</p>
-
-<div class="highlighter-rouge"><pre class="highlight"><code>A method of an object may only call methods of:
-  The object itself.
-  An argument of the method.
-  Any object created within the method.
-  Any direct properties/fields of the object.
+<div class="highlighter-rouge"><pre class="highlight"><code>puts A.new.b &gt;&gt; b
+puts A.new.c &gt;&gt; c
+puts A.new.d &gt;&gt; d
 </code></pre>
 </div>
 
-<p>The above code sample violates the law with “user.department.name” because it’s calling name on the user’s department, and department is an entirely different object from a user.</p>
+<p>However you can also change the methods into <em>class</em> methods by using extend:</p>
 
-<p>In general it is better if one class does not have to know about methods from another class, in other words when the classes are “decoupled”.  This is because it makes the code more flexible.  For example in our code sample, there is only one department for a user.  But what happens if things changed so that a user could have many departments and we wanted the only use the first one for our user_info method?  We would then have to say:</p>
-
-<div class="highlighter-rouge"><pre class="highlight"><code>class User
-  def user_info
-    "#{user.name}, #{user.departments.first.name}"
+<div class="highlighter-rouge"><pre class="highlight"><code>module B
+  def b
+    :b
   end
 end
-</code></pre>
-</div>
 
-<p>This seems reasonable for now but what if we used “user.department” in multiple places?  We’d have to make the same change wherever it was used, which would be cumbersome.</p>
-
-<p>So how do you avoid violating the law?</p>
-
-<p>You could make a custom method in the User class called “department_name”:</p>
-
-<div class="highlighter-rouge"><pre class="highlight"><code>class User
-  def user_info
-    "#{user.name}, #{user.department_name}"
-  end
-
-  def department_name
-    departments.first.name
+module C
+  def c
+    :c
   end
 end
-</code></pre>
-</div>
 
-<p>Now the department_name is an immediate property of the user itself, satisfying the law and also making it easier to make future changes if we want to change what we use for the department’s name.</p>
-
-<p>One sign that is often but not always an indication of Demeter violation is chaining of dots.  For example “user.departments.first.name” had chained dots and indeed was a violation.  However, sometimes dot chaining does not mean Demeter violation for example:</p>
-
-<div class="highlighter-rouge"><pre class="highlight"><code>def slug(string)
-  string.strip.downcase.tr_s('^[a-z0-9]', '-')
+module D
+  def d
+    :d
+  end
 end
+
+class A
+  extend B
+  extend C
+  extend D
+end
+
+puts A.b &gt;&gt; b
+puts A.c &gt;&gt; c
+puts A.d &gt;&gt; d
 </code></pre>
 </div>
 
-<p>The above complies with the Law of Demeter because each method is called on a String object.  And the law doesn’t care about the number of methods called, but the number of <em>types</em> of methods called.</p>
+<p>Notice how we didn’t have to change the method definitions inside the module to self.method.
+This is because modules have no sense of Class, they’re just buckets for methods.  They are called
+‘mixins’ because they mix methods into wherever they are included or extended into.</p>
 
-<p>For more information see <a href="http://www.virtuouscode.com/2011/07/05/demeter-its-not-just-a-good-idea-its-the-law/">Demeter: It’s not just a good idea. It’s the law.</a></p>
+<p>Our team architect Adam Zaninovich gives the analogy of modules being ‘viruses’ and classes being ‘hosts’.  Modules ‘infect’
+classes with their ‘methods’ (in a good way in this case), in the sense that viruses inject their dna into host cells.</p>
+
+<p>I wrote include in class A three times which is repetitive.  If you find that you are
+including modules in a class many times you can avoid this by using the self.included module method.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>module B
+  def self.included(klass)
+    klass.include C
+    klass.include D
+  end
+
+  def b
+    :b
+  end
+end
+
+module C
+  def c
+    :c
+  end
+end
+
+module D
+  def d
+    :d
+  end
+end
+
+class A
+  include B
+end
+
+puts A.new.b &gt;&gt; b
+puts A.new.c &gt;&gt; c
+puts A.new.d &gt;&gt; d
+</code></pre>
+</div>
+
+<p>Now there is only ‘include B’ inside class A.  Whenever B is included in a Class, it calls self.included
+which passes in the class A as an argument.  “self.included” then included modules C and D into the klass
+passed as the argument which in our case is class A.</p>
 
 </div>
 
@@ -150,18 +200,18 @@ end
     
       <li>
         <h3>
-          <a href="/2017/01/19/modules/">
-            The difference between using include and extend when including modules in a Class
-            <small>19 Jan 2017</small>
+          <a href="/2017/01/14/try/">
+            Alternatives to Using the Try method
+            <small>14 Jan 2017</small>
           </a>
         </h3>
       </li>
     
       <li>
         <h3>
-          <a href="/2017/01/14/try/">
-            Alternatives to Using the Try method
-            <small>14 Jan 2017</small>
+          <a href="/2017/01/04/demeter/">
+            Law of Demeter
+            <small>04 Jan 2017</small>
           </a>
         </h3>
       </li>
