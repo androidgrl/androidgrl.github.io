@@ -4,7 +4,7 @@
  <title>Androidgrl's Blog</title>
  <link href="http://androidgrl.github.io/atom.xml" rel="self"/>
  <link href="http://androidgrl.github.io/"/>
- <updated>2017-01-28T01:05:08-06:00</updated>
+ <updated>2017-02-04T16:59:59-06:00</updated>
  <id>http://androidgrl.github.io</id>
  <author>
    <name>Jamie Kawahara</name>
@@ -277,7 +277,7 @@ passed as the argument which in our case is class A.&lt;/p&gt;
    <link href="http://androidgrl.github.io/2017/01/14/try/"/>
    <updated>2017-01-14T00:00:00-06:00</updated>
    <id>http://androidgrl.github.io/2017/01/14/try</id>
-   <content type="html">&lt;p&gt;I was reviewing an MR at work and found an interesting use of try that I had never seen before.  Here is a simplified version:&lt;/p&gt;
+   <content type="html">&lt;p&gt;At my work we have a North America team and a China team.  Part of our workflow is to review each others merge requests before merging.  As a junior developer I often see things that I have never seen before and must make an educated decision about whether the unfamiliar pattern is a genuine coding error or deviation from best practices, or just something new I don’t know about.  And because the person who wrote the code is in China in an opposite time zone, it’s not easy to ask them directly about it.  So, while reviewing an MR I saw a use of the try method that I had never seen before.  Here is a simplified version:&lt;/p&gt;
 
 &lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;class Order
   def grand_total
@@ -293,9 +293,9 @@ end
 
 &lt;p&gt;Here the asterisk is the multiplication operator.  Try is trying to multiply sub_total by sales_tax.  If sub_total is nil, it will return nil, instead of erroring out as would happen when trying to multiply nil by a number.&lt;/p&gt;
 
-&lt;p&gt;This seemed harmless enough but when I showed it to the team architect he said that using try is like introducing cancer into the code base.  It seems harmless but then other people see it and start to use it and if allowed to continue can introduce a lot of uncertainty into the code.  It is better to know what kind of result your methods are returning.&lt;/p&gt;
+&lt;p&gt;This seemed harmless enough but when I showed it to the team architect in North America he said that using try is like introducing cancer into the code base.  I believe his exact words were “OMG make it stop that try needs to die with fire”.  It seems harmless but then other people see it and start to use it and if allowed to continue can introduce a lot of uncertainty into the code.  It is better to know what kind of result your methods are returning.  We then had a pairing session to use alternatives ways to handle nil cases without using try, and here are two of the alternatives we used:&lt;/p&gt;
 
-&lt;p&gt;One alternative to using try is to use an if statement.&lt;/p&gt;
+&lt;p&gt;The first alternative is to use an if statement.&lt;/p&gt;
 
 &lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;class Order
   def grand_total
@@ -327,7 +327,7 @@ end
 &lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
 
-&lt;p&gt;What if we wanted to return 0 instead of nil if there was no sub_total?  We could go back to the if else statement but sometimes it can be better to use a Null Object pattern.&lt;/p&gt;
+&lt;p&gt;What if we wanted to return 0 instead of nil if there was no sub_total?  We could go back to the if else statement but sometimes it can be better to use a Null Object pattern, which is the second alternative.&lt;/p&gt;
 
 &lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;class Order
   def grand_total
@@ -373,6 +373,8 @@ end
 &lt;/div&gt;
 
 &lt;p&gt;If someone were to call NullOrder.new.whatever, the method_missing method gets called which by default will raise an error.  Instead we override it to return nil.  We add a splat argument in case someone calls an undefined method on it that has arguments.  The underscore in  front of “args” denotes that it’s something that’s not supposed to be used.&lt;/p&gt;
+
+&lt;p&gt;In summary, the try method introduces uncertainty into the code because it makes it ok to not know what is being returned by a method.  Alternatives to using try are using if statements and the Null Object pattern.&lt;/p&gt;
 </content>
  </entry>
  

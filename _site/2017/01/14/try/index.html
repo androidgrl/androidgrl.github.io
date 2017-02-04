@@ -76,7 +76,7 @@
         <div class="post">
   <h1 class="post-title">Alternatives to Using the Try method</h1>
   <span class="post-date">14 Jan 2017</span>
-  <p>I was reviewing an MR at work and found an interesting use of try that I had never seen before.  Here is a simplified version:</p>
+  <p>At my work we have a North America team and a China team.  Part of our workflow is to review each others merge requests before merging.  As a junior developer I often see things that I have never seen before and must make an educated decision about whether the unfamiliar pattern is a genuine coding error or deviation from best practices, or just something new I don’t know about.  And because the person who wrote the code is in China in an opposite time zone, it’s not easy to ask them directly about it.  So, while reviewing an MR I saw a use of the try method that I had never seen before.  Here is a simplified version:</p>
 
 <div class="highlighter-rouge"><pre class="highlight"><code>class Order
   def grand_total
@@ -92,9 +92,9 @@ end
 
 <p>Here the asterisk is the multiplication operator.  Try is trying to multiply sub_total by sales_tax.  If sub_total is nil, it will return nil, instead of erroring out as would happen when trying to multiply nil by a number.</p>
 
-<p>This seemed harmless enough but when I showed it to the team architect he said that using try is like introducing cancer into the code base.  It seems harmless but then other people see it and start to use it and if allowed to continue can introduce a lot of uncertainty into the code.  It is better to know what kind of result your methods are returning.</p>
+<p>This seemed harmless enough but when I showed it to the team architect in North America he said that using try is like introducing cancer into the code base.  I believe his exact words were “OMG make it stop that try needs to die with fire”.  It seems harmless but then other people see it and start to use it and if allowed to continue can introduce a lot of uncertainty into the code.  It is better to know what kind of result your methods are returning.  We then had a pairing session to use alternatives ways to handle nil cases without using try, and here are two of the alternatives we used:</p>
 
-<p>One alternative to using try is to use an if statement.</p>
+<p>The first alternative is to use an if statement.</p>
 
 <div class="highlighter-rouge"><pre class="highlight"><code>class Order
   def grand_total
@@ -126,7 +126,7 @@ end
 </code></pre>
 </div>
 
-<p>What if we wanted to return 0 instead of nil if there was no sub_total?  We could go back to the if else statement but sometimes it can be better to use a Null Object pattern.</p>
+<p>What if we wanted to return 0 instead of nil if there was no sub_total?  We could go back to the if else statement but sometimes it can be better to use a Null Object pattern, which is the second alternative.</p>
 
 <div class="highlighter-rouge"><pre class="highlight"><code>class Order
   def grand_total
@@ -172,6 +172,8 @@ end
 </div>
 
 <p>If someone were to call NullOrder.new.whatever, the method_missing method gets called which by default will raise an error.  Instead we override it to return nil.  We add a splat argument in case someone calls an undefined method on it that has arguments.  The underscore in  front of “args” denotes that it’s something that’s not supposed to be used.</p>
+
+<p>In summary, the try method introduces uncertainty into the code because it makes it ok to not know what is being returned by a method.  Alternatives to using try are using if statements and the Null Object pattern.</p>
 
 </div>
 
