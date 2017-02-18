@@ -4,7 +4,7 @@
  <title>Androidgrl's Blog</title>
  <link href="http://androidgrl.github.io/atom.xml" rel="self"/>
  <link href="http://androidgrl.github.io/"/>
- <updated>2017-02-17T22:54:52-06:00</updated>
+ <updated>2017-02-17T23:01:29-06:00</updated>
  <id>http://androidgrl.github.io</id>
  <author>
    <name>Jamie Kawahara</name>
@@ -43,13 +43,17 @@
 
 &lt;p&gt;&lt;strong&gt;Compiled&lt;/strong&gt;&lt;/p&gt;
 
-&lt;p&gt;All languages at the end of the day need to be translated into byte code for your computer’s processor.  Some languages like Java and Elixir pre-compile themselves into an intermediate form of byte code that is one step closer to processor byte code.  This extra step makes it easier for the language to be translated into processor byte code, resulting in a faster language.  A language such as Ruby or Python are not compiled but are “interpreted”.  Interpreted just means that it does not go though the pre-compiling step, and has to be directly interpreted into processor byte code which requires more work and is therefore slower.  Still faster yet is C which can compile directly into processor byte code skipping the intermediate step.  A language that is directly compiled into processor byte code is called a “natively compiled” language.&lt;/p&gt;
+&lt;p&gt;All languages at the end of the day need to be translated into byte code for your computer’s processor.  Some languages like Java and Elixir pre-compile themselves into an intermediate form of byte code that is one step closer to processor byte code.  This extra step makes it easier for the language to be translated into processor byte code, resulting in a faster language.  A language such as Ruby or Python are not compiled but are “interpreted”.  Interpreted just means that it does not go though the pre-compiling step, and has to be directly interpreted into processor byte code which requires more work and is therefore slower.  Still faster yet is C which can compile directly into processor byte code skipping the intermediate step.  A language that is directly compiled into processor byte code is called a “natively compiled” language.  An app that is for a startup which doesn’t have a lot of users yet and needs to be built quickly would do well with Ruby.&lt;/p&gt;
 
 &lt;p&gt;Here is a chart summarizing four popular languages and their characteristics:&lt;/p&gt;
 
 &lt;p&gt;&lt;img src=&quot;./public/chart.png&quot; alt=&quot;Chart&quot; /&gt;&lt;/p&gt;
 
 &lt;p&gt;Lastly, how do you choose which language is good for your app?  When choosing a language it is important to consider what the app is being used for.  For example, math computations are run on the computer’s processor.  Therefore apps that do a lot of math computations will run faster with a natively compiled language because it won’t be slowed down by pre-compiling or interpretation.  Apps that have a relatively few numbers of users but need to wait for multiple api calls to perform a function, would benefit from an asynchronous language.  Apps that have millions of users trying to request a webpage all at once will benefit from a multi-threaded language.&lt;/p&gt;
+
+&lt;p&gt;In summary the five characteristics that can increase the speed of a language are: Asynchronious, Multi-Threaded, Statically-typed, Functional, and Compiled.  When choosing a language it is good to consider what the app is being used for.&lt;/p&gt;
+
+&lt;p&gt;A special thanks to Alex Jensen and Adam Zaninovich for their help in explaining these concepts to me.&lt;/p&gt;
 </content>
  </entry>
  
