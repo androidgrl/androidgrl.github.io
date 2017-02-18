@@ -77,6 +77,51 @@
   
   <div class="post">
     <h1 class="post-title">
+      <a href="//2017/02/17/languages/">
+        What Makes a Language Fast?  Five Factors That Affect a Programming Language's Speed
+      </a>
+    </h1>
+
+    <span class="post-date">17 Feb 2017</span>
+
+    <p>Often I have heard that Ruby is a slow language compared to other languages like Go and Elixir.  I have also heard of startups that originally build their apps on Rails but after hitting it big need to switch to a language like Java in order to scale up.  What are the factors that determine whether a language is considered fast?  How do companies choose which language is most appropriate for their application?  This blog will cover these five factors, a brief overview of how a language is run on your computer processor, and some considerations that go into deciding what is an optimal language for a particular end use.</p>
+
+<p><strong>The Five Main Factors</strong>:</p>
+
+<p><strong>Asynchronous</strong></p>
+
+<p>A language that can be asynchronous can be much faster than a synchronous one.  Let’s say that I want to bake a cake and wash the dishes.  If I put the cake in the oven, wait for it to bake, then wash the dishes, that is synchronous.  There is a little time lost waiting for the cake to bake and doing nothing.  This is how Ruby works, it waits for something to be completely done before starting something else.  Now let’s say that I put the cake in the oven, and while it bakes I do the dishes thereby cutting the overall time to do both tasks.  That is asynchronous.</p>
+
+<p>Javascript is a language that is good at asynch.  One example of how Javascript uses asynch is when a number of api calls are made to a backend to get a bundle of information.  Instead of waiting for each call to get it’s response before making the next one, it can make other calls while it is waiting for previous ones.  If all the calls are necessary to perform an action, then a “promise” can be made which means it will wait for all the calls to complete before performing the action.</p>
+
+<p><strong>Multithreaded</strong></p>
+
+<p>Let’s say that I decided to ask my friend to wash the dishes while I baked a cake.  That is multithreading.  I doubled the working power by asking my friend to help.  Likewise multithreaded languages can spin up multiple “threads” to perform multiple tasks at once.</p>
+
+<p>Java and Elixir are capable of multithreading while Ruby and Javascript are not.</p>
+
+<p><strong>Static Typed</strong></p>
+
+<p>A statically typed language is one in which you have to define what data type a variable is.  For example in Java, if you set a variable to be an array, you have to specify that it is an array.  Ruby on the other hand is dynamically typed.  You don’t have to specify that a variable is any particular data structure, and you can even change what it is at any time.  Although a dynamically typed language can be great to build something quickly, it is slower than a statically typed language.  This is because a statically typed language knows exactly how much memory to allocate to a variable because it knows exactly what kind of data type it is.  A dynamically typed language on the other hand must allocate a greater amount of memory to store a variable because it doesn’t know what it will be.  Less memory usage results in greater speed.</p>
+
+<p><strong>Functional</strong></p>
+
+<p>A functional language is the opposite of an object-oriented language.  Elixir is a functional language, in which everything is based on functions not objects.  Ruby is an object-oriented language because everything in Ruby including simple things like numbers and strings are objects.  Objects take up a lot of memory and therefore an object-oriented language will be slower.</p>
+
+<p><strong>Compiled</strong></p>
+
+<p>All languages at the end of the day need to be translated into byte code for your computer’s processor.  Some languages like Java and Elixir pre-compile themselves into an intermediate form of byte code that is one step closer to processor byte code.  This extra step makes it easier for the language to be translated into processor byte code, resulting in a faster language.  A language such as Ruby or Python are not compiled but are “interpreted”.  Interpreted just means that it does not go though the pre-compiling step, and has to be directly interpreted into processor byte code which requires more work and is therefore slower.  Still faster yet is C which can compile directly into processor byte code skipping the intermediate step.  A language that is directly compiled into processor byte code is called a “natively compiled” language.</p>
+
+<p>Here is a chart summarizing four popular languages and their characteristics:</p>
+
+<p><img src="./public/chart.png" alt="Chart" /></p>
+
+<p>Lastly, how do you choose which language is good for your app?  When choosing a language it is important to consider what the app is being used for.  For example, math computations are run on the computer’s processor.  Therefore apps that do a lot of math computations will run faster with a natively compiled language because it won’t be slowed down by pre-compiling or interpretation.  Apps that have a relatively few numbers of users but need to wait for multiple api calls to perform a function, would benefit from an asynchronous language.  Apps that have millions of users trying to request a webpage all at once will benefit from a multi-threaded language.</p>
+
+  </div>
+  
+  <div class="post">
+    <h1 class="post-title">
       <a href="//2017/01/28/namespace/">
         The Namespace Resolution Operator, aka the "double colon operator"
       </a>
@@ -527,37 +572,6 @@ end
 <p>The above complies with the Law of Demeter because each method is called on a String object.  And the law doesn’t care about the number of methods called, but the number of <em>types</em> of methods called.</p>
 
 <p>For more information see <a href="http://www.virtuouscode.com/2011/07/05/demeter-its-not-just-a-good-idea-its-the-law/">Demeter: It’s not just a good idea. It’s the law.</a></p>
-
-  </div>
-  
-  <div class="post">
-    <h1 class="post-title">
-      <a href="//2017/01/03/ag/">
-        Refining Searches using Ag
-      </a>
-    </h1>
-
-    <span class="post-date">03 Jan 2017</span>
-
-    <p>I use Ag a lot to search for keywords in Rails Apps.  However sometimes a keyword is present so often that I want to refine my search.  One example of this is if I want to search for a keyword present only in test files. Ag has a useful -G flag that allows you to do this.</p>
-
-<p>For example say I wanted to search for the keyword “organization” in files that end in spec.rb.  I would use:</p>
-
-<div class="highlighter-rouge"><pre class="highlight"><code>&gt; Ag organization -G spec.rb$
-</code></pre>
-</div>
-
-<p>The -G flag tells Ag to look for the term inside files with names containing spec.rb.  It can accept a regex which is what the $ is for.  The $ indicates that I want to search in files that end in spec.rb, not just files that have spec.rb somewhere within their names.</p>
-
-<p>Another example is if I am searching for a keyword that includes punctuation marks which happen to be regex characters.  For example, I was searching for “.try” and since Ag automatically treats search terms as regexes by default, it will find all terms with any character followed by try, like “retry” in addition to “.try”.</p>
-
-<p>Ag has a literal expression flag -Q to specify that you’re searching for a literal expression not a regex.  In order to search for “.try” you would use:</p>
-
-<div class="highlighter-rouge"><pre class="highlight"><code>&gt; Ag -Q .try
-</code></pre>
-</div>
-
-<p>For more  information see <a href="http://conqueringthecommandline.com/book/ack_ag">Conquering the Command Line, by Mark Bates</a></p>
 
   </div>
   
