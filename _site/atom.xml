@@ -4,7 +4,7 @@
  <title>Androidgrl's Blog</title>
  <link href="http://androidgrl.github.io/atom.xml" rel="self"/>
  <link href="http://androidgrl.github.io/"/>
- <updated>2017-02-17T23:06:09-06:00</updated>
+ <updated>2017-02-18T10:57:02-06:00</updated>
  <id>http://androidgrl.github.io</id>
  <author>
    <name>Jamie Kawahara</name>
@@ -35,7 +35,7 @@
 
 &lt;p&gt;&lt;strong&gt;Static Typed&lt;/strong&gt;&lt;/p&gt;
 
-&lt;p&gt;A statically typed language is one in which you have to define what data type a variable is.  For example in Java, if you set a variable to be an array, you have to specify that it is an array.  Ruby on the other hand is dynamically typed.  You don’t have to specify that a variable is any particular data structure, and you can even change what it is at any time.  Although a dynamically typed language can be great to build something quickly, it runs slower than a statically typed language.  This is because a statically typed language knows exactly how much memory to allocate to a variable because it knows exactly what kind of data type it is.  A dynamically typed language on the other hand must allocate a greater amount of memory to store a variable because it doesn’t know what it will be.  Less memory usage results in greater speed.&lt;/p&gt;
+&lt;p&gt;A statically typed language is one in which you have to define what data type a variable is.  For example in Java, if you set a variable to be an array, you have to specify that it is an array.  Ruby on the other hand is dynamically typed.  You don’t have to specify that a variable is any particular data structure, and you can even change what it is at any time.  Although a dynamically typed language can be great for building something quickly, it runs slower than a statically typed language.  This is because a statically typed language knows exactly how much memory to allocate to a variable because it knows exactly what kind of data type it is.  A dynamically typed language on the other hand must allocate a greater amount of memory to store a variable because it doesn’t know what it will be.  Less memory usage results in greater speed.&lt;/p&gt;
 
 &lt;p&gt;&lt;strong&gt;Functional&lt;/strong&gt;&lt;/p&gt;
 
@@ -897,9 +897,10 @@ Follow these instructions and you will be able to make a 3D print of a person!&l
     &lt;p&gt;Watch my &lt;a href=&quot;https://www.youtube.com/watch?v=8Nm2ufFYNBI&quot;&gt;Youtube video&lt;/a&gt; which demonstrates: how to make a scan of a person, how to export it as an .stl file, and how to import the file to slic3r.&lt;/p&gt;
   &lt;/li&gt;
   &lt;li&gt;
-    &lt;p&gt;Once it’s imported to slic3r, follow the instructions below for how to make a print on a lulzbot Taz 4.  Or, proceed with your usual way of making 3D prints! true&lt;script src=&quot;https://gist.github.com/0361b0f2b917a1c322f3.js&quot;&gt; &lt;/script&gt;&lt;/p&gt;
+    &lt;p&gt;Once it’s imported to slic3r, follow the instructions below for how to make a print on a lulzbot Taz 4.  Or, proceed with your usual way of making 3D prints! &lt;noscript&gt;&amp;lt;pre&amp;gt;400: Invalid request&lt;/noscript&gt;&lt;/p&gt;
   &lt;/li&gt;
 &lt;/ol&gt;
+&lt;p&gt;&amp;lt;/pre&amp;gt;&amp;lt;/noscript&amp;gt;&lt;script src=&quot;https://gist.github.com/0361b0f2b917a1c322f3.js&quot;&gt; &lt;/script&gt;&lt;/p&gt;
 
 </content>
  </entry>
