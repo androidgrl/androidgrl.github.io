@@ -50,6 +50,29 @@
 
     
     
+      
+        
+      
+    
+      
+        
+      
+    
+      
+        
+        
+      
+    
+      
+    
+      
+        
+      
+    
+      
+        
+      
+    
   </nav>
 
   <div class="sidebar-item">
@@ -80,9 +103,9 @@
 
 <p>For example say I wanted to search for the keyword “organization” in files that end in spec.rb.  I would use:</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>&gt; Ag organization -G spec.rb$
-</code></pre>
-</div>
+<p><code>
+&gt; Ag organization -G spec.rb$
+</code></p>
 
 <p>The -G flag tells Ag to look for the term inside files with names containing spec.rb.  It can accept a regex which is what the $ is for.  The $ indicates that I want to search in files that end in spec.rb, not just files that have spec.rb somewhere within their names.</p>
 
@@ -90,9 +113,9 @@
 
 <p>Ag has a literal expression flag -Q to specify that you’re searching for a literal expression not a regex.  In order to search for “.try” you would use:</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>&gt; Ag -Q .try
-</code></pre>
-</div>
+<p><code>
+&gt; Ag -Q .try
+</code></p>
 
 <p>For more  information see <a href="http://conqueringthecommandline.com/book/ack_ag">Conquering the Command Line, by Mark Bates</a></p>
 
@@ -101,6 +124,15 @@
 <div class="related">
   <h2>Related Posts</h2>
   <ul class="related-posts">
+    
+      <li>
+        <h3>
+          <a href="/2017/04/14/testing/">
+            Determining the Scope of What to Test Inside Methods
+            <small>14 Apr 2017</small>
+          </a>
+        </h3>
+      </li>
     
       <li>
         <h3>
@@ -116,15 +148,6 @@
           <a href="/2017/01/28/namespace/">
             The Namespace Resolution Operator, aka the "double colon operator"
             <small>28 Jan 2017</small>
-          </a>
-        </h3>
-      </li>
-    
-      <li>
-        <h3>
-          <a href="/2017/01/19/modules/">
-            The difference between using include and extend when including modules in a Class
-            <small>19 Jan 2017</small>
           </a>
         </h3>
       </li>

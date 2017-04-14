@@ -50,6 +50,29 @@
 
     
     
+      
+        
+      
+    
+      
+        
+      
+    
+      
+        
+        
+      
+    
+      
+    
+      
+        
+      
+    
+      
+        
+      
+    
   </nav>
 
   <div class="sidebar-item">
@@ -83,28 +106,29 @@ You only need it to set instance variables and to allow passing of arguments whe
 
 <p>Let’s make a class with a single instance method and no initialize method.</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>class Holiday
+<p><code>
+class Holiday
   def statement
     "I'm going to the beach"
   end
 end
 puts Holiday.new
 puts Holiday.new.statement
-</code></pre>
-</div>
+</code></p>
 
 <p>If we run the code, the “puts” outputs the following, and we see that Holiday.new instantiates an object just fine and we can call the method statement on it:</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>#&lt;Holiday:0x007fe194093d00&gt;
+<p><code>
+#&lt;Holiday:0x007fe194093d00&gt;
 I'm going to the beach
-</code></pre>
-</div>
+</code></p>
 
 <p><strong>Example two:</strong> <em>You don’t need it to use attr_accessors</em></p>
 
 <p>Let’s make a class with an attr_accessor and no initialize method.  We instantiate two different holiday objects, and then using the attr_accessors set a separate location attribute for each.</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>class Holiday
+<p><code>
+class Holiday
   attr_accessor :location
   def statement
     "I'm going on holiday to #{location}"
@@ -116,34 +140,34 @@ holiday1.location = "Europe"
 holiday2.location = "Hawaii"
 puts holiday1.statement
 puts holiday2.statement
-</code></pre>
-</div>
+</code></p>
 
 <p>The output shows that the attr_accessors still work without the initialize method.</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>I'm going on holiday to Europe
+<p><code>
+I'm going on holiday to Europe
 I'm going on holiday to Hawaii
-</code></pre>
-</div>
+</code></p>
 
 <p><strong>Example three:</strong> <em>You DO need it to set instance variables</em></p>
 
 <p>The following is a class that tries to set an instance variable @word to equal “whatever”.
 The output is nothing, because instance variables need to be put inside an initialize method.</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>class Random
+<p><code>
+class Random
   @word = "whatever"
   def whatever
     @word
   end
 end
 puts Random.new.whatever
-</code></pre>
-</div>
+</code></p>
 
 <p>The following will correctly result in an output of “whatever”.</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>class Random
+<p><code>
+class Random
   def initialize
     @word = "whatever"
   end
@@ -152,58 +176,57 @@ puts Random.new.whatever
   end
 end
 puts Random.new.whatever
-</code></pre>
-</div>
+</code></p>
 
 <p><strong>Example four:</strong> <em>You DO need it to allow arguments to be passed in when instantiating a Class</em></p>
 
 <p>The following code tries to pass in a string argument into the “new” method.</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>class Random
-end
+<p>```
+class Random
+end</p>
 
-puts Random.new("whatever")
-</code></pre>
-</div>
+<p>puts Random.new(“whatever”)
+```</p>
 
 <p>This results in an error.</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>new.rb:35:in `initialize': no implicit conversion of String into Integer (TypeError)
+<p><code>
+new.rb:35:in `initialize': no implicit conversion of String into Integer (TypeError)
         from new.rb:35:in `new'
         from new.rb:35:in `&lt;main&gt;'
-</code></pre>
-</div>
+</code></p>
 
 <p>You need to specify that there are arguments in the initialize method for “new” method to be able to take any.
 However, you don’t have to actually do anything with the arguments in the initialize method.</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>class Random
+<p>```
+class Random
   def initialize(word)
   end
-end
+end</p>
 
-puts Random.new("whatever")
-</code></pre>
-</div>
+<p>puts Random.new(“whatever”)
+```</p>
 
 <p>This will result in the object being successfully instantiated, as shown in the output below.</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>#&lt;Random:0x007fbbb9170cd8&gt;
-</code></pre>
-</div>
+<p><code>
+#&lt;Random:0x007fbbb9170cd8&gt;
+</code></p>
 
 <p>If you wanted to actually have access to the attribute then you would have to set it as an instance variable inside the initialize method, and set an attr_reader.</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>class Random
+<p>```
+class Random
   attr_reader :word
   def initialize(word)
     @word = word
   end
-end
+end</p>
 
-puts Random.new("whatever").word
-</code></pre>
-</div>
+<p>puts Random.new(“whatever”).word
+```</p>
 
 <p>Which will output “whatever”.</p>
 
@@ -213,6 +236,15 @@ puts Random.new("whatever").word
 <div class="related">
   <h2>Related Posts</h2>
   <ul class="related-posts">
+    
+      <li>
+        <h3>
+          <a href="/2017/04/14/testing/">
+            Determining the Scope of What to Test Inside Methods
+            <small>14 Apr 2017</small>
+          </a>
+        </h3>
+      </li>
     
       <li>
         <h3>
@@ -228,15 +260,6 @@ puts Random.new("whatever").word
           <a href="/2017/01/28/namespace/">
             The Namespace Resolution Operator, aka the "double colon operator"
             <small>28 Jan 2017</small>
-          </a>
-        </h3>
-      </li>
-    
-      <li>
-        <h3>
-          <a href="/2017/01/19/modules/">
-            The difference between using include and extend when including modules in a Class
-            <small>19 Jan 2017</small>
           </a>
         </h3>
       </li>

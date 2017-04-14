@@ -50,6 +50,29 @@
 
     
     
+      
+        
+      
+    
+      
+        
+      
+    
+      
+        
+        
+      
+    
+      
+    
+      
+        
+      
+    
+      
+        
+      
+    
   </nav>
 
   <div class="sidebar-item">
@@ -81,34 +104,34 @@
 <p>Start by making a custom error class that inherits from StandardError.  This will give you a more descriptive error instead of raising the generic StandardError, so you can better deduce where the error came from.
  I will use a hypothetical example of an error that is raised when a User is being created.</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>class UserCreateError &lt; StandardError
+<p><code>
+class UserCreateError &lt; StandardError
 end
-</code></pre>
-</div>
+</code></p>
 
 <p>Each custom error class should have it’s own file which you can put in an app/errors directory.</p>
 
 <p>Here I will raise the error in a User model method.</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>class User &lt; ActiveRecord::Base
+<p><code>
+class User &lt; ActiveRecord::Base
   def self.example_method
     raise UserCreateError
   end
 end
-</code></pre>
-</div>
+</code></p>
 
 <p>When the create action is called on the controller, it will call User.example_method, which will raise the error.  The error then goes back up to the controller where it is rescued.</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>class UsersController &lt; ApplicationController
+<p><code>
+class UsersController &lt; ApplicationController
   def create
     User.example_method
   rescue UserCreateError
     render json: "Invalid User Information", status: :bad_request
   end
 end
-</code></pre>
-</div>
+</code></p>
 
 <p>Note the indentation of the rescue is on the same column as the def.</p>
 
@@ -126,6 +149,15 @@ end
     
       <li>
         <h3>
+          <a href="/2017/04/14/testing/">
+            Determining the Scope of What to Test Inside Methods
+            <small>14 Apr 2017</small>
+          </a>
+        </h3>
+      </li>
+    
+      <li>
+        <h3>
           <a href="/2017/02/17/languages/">
             What Makes a Language Fast?  Five Factors That Affect a Programming Language's Speed
             <small>17 Feb 2017</small>
@@ -138,15 +170,6 @@ end
           <a href="/2017/01/28/namespace/">
             The Namespace Resolution Operator, aka the "double colon operator"
             <small>28 Jan 2017</small>
-          </a>
-        </h3>
-      </li>
-    
-      <li>
-        <h3>
-          <a href="/2017/01/19/modules/">
-            The difference between using include and extend when including modules in a Class
-            <small>19 Jan 2017</small>
           </a>
         </h3>
       </li>

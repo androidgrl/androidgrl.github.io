@@ -50,6 +50,29 @@
 
     
     
+      
+        
+      
+    
+      
+        
+      
+    
+      
+        
+        
+      
+    
+      
+    
+      
+        
+      
+    
+      
+        
+      
+    
   </nav>
 
   <div class="sidebar-item">
@@ -78,17 +101,17 @@
   <span class="post-date">14 Jan 2017</span>
   <p>At my work we have a North America team and a China team.  Part of our workflow is to review each others merge requests before merging.  As a junior developer I often see things that I have never seen before and must make an educated decision about whether the unfamiliar pattern is a genuine coding error or deviation from best practices, or just something new I don’t know about.  And because the person who wrote the code is in China in an opposite time zone, it’s not easy to ask them directly about it.  So, while reviewing an MR I saw a use of the try method that I had never seen before.  Here is a simplified version:</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>class Order
+<p>```
+class Order
   def grand_total
     sub_total.try(:*, sales_tax)
-  end
+  end</p>
 
-  def sub_total
+<p>def sub_total
     FooBar.baz
   end
 end
-</code></pre>
-</div>
+```</p>
 
 <p>Here the asterisk is the multiplication operator.  Try is trying to multiply sub_total by sales_tax.  If sub_total is nil, it will return nil, instead of erroring out as would happen when trying to multiply nil by a number.</p>
 
@@ -96,44 +119,45 @@ end
 
 <p>The first alternative is to use an if statement.</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>class Order
+<p>```
+class Order
   def grand_total
     if subtotal
       (sub_total * sales_tax)
     else
       nil
     end
-  end
+  end</p>
 
-  def sub_total
+<p>def sub_total
     FooBar.baz
   end
 end
-</code></pre>
-</div>
+```</p>
 
 <p>If there’s a subtotal it will perform the multiplication, if there is not it will return nil.  Since by default nil is what is returned by else, you can take out the else and make the statement one line.</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>class Order
+<p>```
+class Order
   def grand_total
     (sub_total * sales_tax) if sub_total
-  end
+  end</p>
 
-  def sub_total
+<p>def sub_total
     FooBar.baz
   end
 end
-</code></pre>
-</div>
+```</p>
 
 <p>What if we wanted to return 0 instead of nil if there was no sub_total?  We could go back to the if else statement but sometimes it can be better to use a Null Object pattern, which is the second alternative.</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>class Order
+<p>```
+class Order
   def grand_total
     sub_total * sales_tax
-  end
+  end</p>
 
-  def sub_total
+<p>def sub_total
     result = FooBar.baz
     if result
       result
@@ -141,15 +165,14 @@ end
       NullOrder.new.sub_total
     end
   end
-end
+end</p>
 
-class NullOrder
+<p>class NullOrder
   def sub_total
     0
   end
 end
-</code></pre>
-</div>
+```</p>
 
 <p>Going into the sub_total method, if we get a result from FooBar.baz we return it, if it is nil then we return an instance of NullOrder which has a sub_total of 0.</p>
 
@@ -159,17 +182,17 @@ end
 
 <p>In order to prevent an error in case someone tries to call an undefined method on the NullOrder, we can override the method_missing method to return whatever we want.  For example:</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>class NullOrder
+<p>```
+class NullOrder
   def method_missing(*_args)
     nil
-  end
+  end</p>
 
-  def sub_total
+<p>def sub_total
     0
   end
 end
-</code></pre>
-</div>
+```</p>
 
 <p>If someone were to call NullOrder.new.whatever, the method_missing method gets called which by default will raise an error.  Instead we override it to return nil.  We add a splat argument in case someone calls an undefined method on it that has arguments.  The underscore in  front of “args” denotes that it’s something that’s not supposed to be used.</p>
 
@@ -180,6 +203,15 @@ end
 <div class="related">
   <h2>Related Posts</h2>
   <ul class="related-posts">
+    
+      <li>
+        <h3>
+          <a href="/2017/04/14/testing/">
+            Determining the Scope of What to Test Inside Methods
+            <small>14 Apr 2017</small>
+          </a>
+        </h3>
+      </li>
     
       <li>
         <h3>
@@ -195,15 +227,6 @@ end
           <a href="/2017/01/28/namespace/">
             The Namespace Resolution Operator, aka the "double colon operator"
             <small>28 Jan 2017</small>
-          </a>
-        </h3>
-      </li>
-    
-      <li>
-        <h3>
-          <a href="/2017/01/19/modules/">
-            The difference between using include and extend when including modules in a Class
-            <small>19 Jan 2017</small>
           </a>
         </h3>
       </li>
