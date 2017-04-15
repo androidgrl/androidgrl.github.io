@@ -50,29 +50,6 @@
 
     
     
-      
-        
-      
-    
-      
-        
-      
-    
-      
-        
-        
-      
-    
-      
-    
-      
-        
-      
-    
-      
-        
-      
-    
   </nav>
 
   <div class="sidebar-item">
@@ -112,51 +89,51 @@
 
 <p>The best way to demonstrate how they work is to pry into an rspec file.  This assumes that you are already familiar with setting up an Rspec test file in a Rails app. In the Rspec file, inside an “it” block place a binding.pry.</p>
 
-<p><code>
-    it "demonstrates doubles" do
+<div class="highlighter-rouge"><pre class="highlight"><code>    it "demonstrates doubles" do
       binding.pry
     end
-</code></p>
+</code></pre>
+</div>
 
 <p>In the pry session, define a spy, then try to call undefined methods on it.  It will keep returning a double.  So spies, are just generic doubles that will keep giving you a double no matter what methods you call on them.</p>
 
-<p><code>
-pry(#&lt;RSpec&gt;)&gt; s=spy
+<div class="highlighter-rouge"><pre class="highlight"><code>pry(#&lt;RSpec&gt;)&gt; s=spy
 =&gt; #&lt;Double (anonymous)&gt;
 pry(#&lt;RSpec&gt;)&gt; s.what?
 =&gt; #&lt;Double (anonymous)&gt;
 pry(#&lt;RSpec&gt;)&gt; s.anything?
 =&gt; #&lt;Double (anonymous)&gt;
-</code></p>
+</code></pre>
+</div>
 
 <p>Moving towards more specificity, define a double.  Below a double is defined with a method called name that returns the string “androidgrl”.  When we call name on the double it returns “androidgrl”.  What happens when we call an undefined method like “age” on the double?  It gives us an error unlike with spies.  So with doubles, you have to define methods that can be called on them.</p>
 
-<p><code>
-pry(#&lt;RSpec&gt;)&gt; d=double(name: "androidgrl")
+<div class="highlighter-rouge"><pre class="highlight"><code>pry(#&lt;RSpec&gt;)&gt; d=double(name: "androidgrl")
 =&gt; #&lt;Double (anonymous)&gt;
 pry(#&lt;RSpec&gt;)&gt; d.name
 =&gt; "androidgrl"
 pry(#&lt;RSpec&gt;)&gt; d.age
 RSpec::Mocks::MockExpectationError: #&lt;Double (anonymous)&gt; received unexpected message :age with (no args)
 from /opt/active/acl_api/current/vendor/bundle/ruby/2.1.0/gems/rspec-support-3.3.0/lib/rspec/support.rb:86:in `block in &lt;module:Support&gt;'
-</code></p>
+</code></pre>
+</div>
 
 <p>And finally, we have the most specific type of double, instance_doubles.  Here we have to specify which Class we’re defining the double for.  This has to be an actual class that exists either in your application or inherited through Ruby.  Here we’re stubbing out the “count” method on the Array class to always return 3.  Notice that when we try to define a method on Array that doesn’t actually exist we get an error.  Also when we try to make an instance double for a Class that doesn’t exist we get an error.</p>
 
-<p><code>
-pry(#&lt;RSpec&gt;)&gt; i=instance_double(Array, count: 3)
+<div class="highlighter-rouge"><pre class="highlight"><code>pry(#&lt;RSpec&gt;)&gt; i=instance_double(Array, count: 3)
 =&gt; #&lt;InstanceDouble(Array) (anonymous)&gt;
 pry(#&lt;RSpec&gt;)&gt; i.count
 =&gt; 3
 pry(#&lt;RSpec&gt;)&gt; i=instance_double(Array, whatever: "?")
 RSpec::Mocks::MockExpectationError: the Array class does not implement the instance method: whatever
 from /opt/active/acl_api/current/vendor/bundle/ruby/2.1.0/gems/rspec-support-3.3.0/lib/rspec/support.rb:86:in `block in &lt;module:Support&gt;'
-</code>
-<code>
-pry(#&lt;RSpeci=instance_double(FakeClass, fake_method: "fake")
+</code></pre>
+</div>
+<div class="highlighter-rouge"><pre class="highlight"><code>pry(#&lt;RSpeci=instance_double(FakeClass, fake_method: "fake")
 NameError: uninitialized constant TM::FakeClass
 from (pry):14:in `block (2 levels) in &lt;module:TM&gt;'
-</code></p>
+</code></pre>
+</div>
 
 <p>In summary:</p>
 

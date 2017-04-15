@@ -4,7 +4,7 @@
  <title>Androidgrl's Blog</title>
  <link href="http://androidgrl.github.io/atom.xml" rel="self"/>
  <link href="http://androidgrl.github.io/"/>
- <updated>2017-04-14T18:12:28-05:00</updated>
+ <updated>2017-04-15T18:46:15-05:00</updated>
  <id>http://androidgrl.github.io</id>
  <author>
    <name>Jamie Kawahara</name>
@@ -17,7 +17,106 @@
    <link href="http://androidgrl.github.io/2017/04/14/testing/"/>
    <updated>2017-04-14T00:00:00-05:00</updated>
    <id>http://androidgrl.github.io/2017/04/14/testing</id>
-   <content type="html">
+   <content type="html">&lt;p&gt;Sometimes it can be difficult to determine what you want to test inside a method, especially if that method calls other methods, which in turn call other methods and so on.  For example, take the example class &lt;strong&gt;Cake&lt;/strong&gt; below.  It has a method called &lt;strong&gt;make&lt;/strong&gt; which calls two methods &lt;strong&gt;mix_ingredients&lt;/strong&gt; and &lt;strong&gt;bake&lt;/strong&gt;, which in turn call &lt;strong&gt;Foo.mix&lt;/strong&gt; and &lt;strong&gt;Foo.bake&lt;/strong&gt; respectively.&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;class Cake
+  def make
+    mix_ingredients
+    bake
+  end
+
+  def mix_ingredients
+    Foo.mix
+  end
+
+  private
+
+  def bake
+    Foo.bake
+  end
+end
+
+class Foo
+  def self.mix
+  end
+
+  def self.bake
+  end
+end
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;If we were to write a test for &lt;strong&gt;make&lt;/strong&gt;, certainly we would want to test that &lt;strong&gt;mix_ingredients&lt;/strong&gt; and &lt;strong&gt;bake&lt;/strong&gt; get called.&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;describe Cake do
+  describe &#39;#make&#39; do
+    it &#39;calls mix_ingredients and bake&#39; do
+      expect_any_instance_of(described_class).to receive(:mix_ingredients)
+      expect_any_instance_of(described_class).to receive(:bake)
+
+      described_class.new.make
+    end
+  end
+end
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;However since &lt;strong&gt;mix_ingredients&lt;/strong&gt; calls &lt;strong&gt;Foo.mix&lt;/strong&gt; and &lt;strong&gt;bake&lt;/strong&gt; calls &lt;strong&gt;Foo.bake&lt;/strong&gt; would we also want to test that those get called in our test for &lt;strong&gt;make&lt;/strong&gt;?  The answer is it depends on whether these get called inside public or private methods.&lt;/p&gt;
+
+&lt;p&gt;Taking a look at &lt;strong&gt;mix_ingredients&lt;/strong&gt; we see that it’s a public method.  Since all public methods should be tested, we know that we will have a separate test for it and it will check if &lt;strong&gt;Foo.mix&lt;/strong&gt; is called.  Here is our updated test file with the test for &lt;strong&gt;mix_ingredients&lt;/strong&gt;.&lt;/p&gt;
+
+&lt;pre&gt;
+describe Cake do
+  describe &#39;#make&#39; do
+    it &#39;calls mix_ingredients and bake&#39; do
+      expect_any_instance_of(described_class).to receive(:mix_ingredients)
+      expect_any_instance_of(described_class).to receive(:bake)
+
+      described_class.new.make
+    end
+  end
+  &lt;b&gt;
+  describe &#39;#mix_ingredients&#39; do
+    it &#39;calls mix on Foo&#39; do
+      expect(Foo).to receive(:mix)
+
+      described_class.new.mix_ingredients
+    end
+  end &lt;/b&gt;
+end
+&lt;/pre&gt;
+
+&lt;p&gt;But what about &lt;strong&gt;bake&lt;/strong&gt;?  Since we don’t test private methods we won’t have a test for this.  However, we still want to test that it calls &lt;strong&gt;Foo.bake&lt;/strong&gt;.  Since &lt;strong&gt;bake&lt;/strong&gt; gets called when &lt;strong&gt;make&lt;/strong&gt; gets called, we need to add a test for this in our &lt;strong&gt;make&lt;/strong&gt; test.&lt;/p&gt;
+
+&lt;pre&gt;
+describe Cake do
+  describe &#39;#make&#39; do
+    it &#39;calls mix_ingredients and bake&#39; do
+      expect_any_instance_of(described_class).to receive(:mix_ingredients)
+      expect_any_instance_of(described_class).to receive(:bake)
+
+      described_class.new.make
+    end
+  &lt;b&gt;
+    it &#39;calls bake on Foo&#39; do
+      expect(Foo).to receive(:bake)
+
+      described_class.new.make
+    end
+  end
+  &lt;/b&gt;
+
+  describe &#39;#mix_ingredients&#39; do
+    it &#39;calls mix on Foo&#39; do
+      expect(Foo).to receive(:mix)
+
+      described_class.new.mix_ingredients
+    end
+  end
+end
+&lt;/pre&gt;
+
+&lt;p&gt;In summary, determining the scope of what to test inside of a method that calls other methods, depends on whether public or private methods get called within it.  If a public method is called, then it will have it’s own test and you only need to test that this public method gets called.  If a private method is called, then it won’t have it’s own test, so you’ll need to test what’s happening inside the private method.&lt;/p&gt;
 </content>
  </entry>
  
@@ -73,133 +172,133 @@
    <id>http://androidgrl.github.io/2017/01/28/namespace</id>
    <content type="html">&lt;p&gt;At work I saw an interesting version of the namespace resolution operator, aka the double colon operator.  Previously I had only seen it used to gain access inside scoped modules.  Such as gaining access to the ID defined inside module B below:&lt;/p&gt;
 
-&lt;p&gt;```
-module A
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;module A
   module B
     ID = 3
   end
-end&lt;/p&gt;
+end
 
-&lt;p&gt;puts A::B::ID
-» 3
-```&lt;/p&gt;
+puts A::B::ID
+&amp;gt;&amp;gt; 3
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
 
 &lt;p&gt;But this time it was used at the beginning of a scoped chain of modules like inside module B below:&lt;/p&gt;
 
-&lt;p&gt;```
-module C
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;module C
   ID = 3
-end&lt;/p&gt;
+end
 
-&lt;p&gt;module A
+module A
   module C
   ID = 4
     module B
       ID = ::C::ID
     end
   end
-end&lt;/p&gt;
+end
 
-&lt;p&gt;puts A::C::B::ID
-» 3
-```&lt;/p&gt;
+puts A::C::B::ID
+&amp;gt;&amp;gt; 3
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
 
 &lt;p&gt;This is called the root namespace resolution operator and it specifies that you are looking for a root level module.  A root level module is one that is not scoped inside another module.  So in this case, it is the module C defined on top which has the ID of 3.&lt;/p&gt;
 
 &lt;p&gt;Why was this needed?  It was needed so that it wouldn’t find the scoped module A::C’s ID instead.  For example if we removed the root operator like below, it would return 4 instead of 3.&lt;/p&gt;
 
-&lt;p&gt;```
-module C
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;module C
   ID = 3
-end&lt;/p&gt;
+end
 
-&lt;p&gt;module A
+module A
   module C
   ID = 4
     module B
       ID = C::ID
     end
   end
-end&lt;/p&gt;
+end
 
-&lt;p&gt;puts A::C::B::ID
-» 4
-```&lt;/p&gt;
+puts A::C::B::ID
+&amp;gt;&amp;gt; 4
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
 
 &lt;p&gt;In fact, if we did not have the ID = 4 defined inside the scoped module C, it would error out and never find the root level module C ID, like below.&lt;/p&gt;
 
-&lt;p&gt;```
-module C
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;module C
   ID = 3
-end&lt;/p&gt;
+end
 
-&lt;p&gt;module A
+module A
   module C
     module B
       ID = C::ID
     end
   end
-end&lt;/p&gt;
+end
 
-&lt;p&gt;puts A::C::B::ID
-» error
-```&lt;/p&gt;
+puts A::C::B::ID
+&amp;gt;&amp;gt; error
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
 
 &lt;p&gt;Why does the scoped A::C take precedence over the root level C in the above case?
 Because when you call C::ID inside of module B, it starts from where it is inside the scope and moves outward through it’s surrounding modules.  It then finds the outer module A::C and looks for an ID there.  Because it found a module C, it stops there and does not continue even though it has no ID defined, and does not continue to look for the root module C.&lt;/p&gt;
 
 &lt;p&gt;Also it is important to note that when two modules have the same name but are scoped differently they are completely different modules.  In fact they might as well have different names.  For example below:&lt;/p&gt;
 
-&lt;p&gt;```
-module C
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;module C
   ID = 1
-end&lt;/p&gt;
+end
 
-&lt;p&gt;module A
+module A
   module C
     ID = 2
   end
-end&lt;/p&gt;
+end
 
-&lt;p&gt;puts C::ID
-» 1
+puts C::ID
+&amp;gt;&amp;gt; 1
 puts A::C::ID
-» 2
-```&lt;/p&gt;
+&amp;gt;&amp;gt; 2
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
 
 &lt;p&gt;This is not to be confused with monkey patching a module, for example the code below first defines a root level module C with a constant of ONE, then it monkey patches the same root level module to add another constant TWO.  You can monkey patch a module or class as many times as you want, Ruby doesn’t care.&lt;/p&gt;
 
-&lt;p&gt;```
-module C
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;module C
   ONE = 1
-end&lt;/p&gt;
+end
 
-&lt;p&gt;module C
+module C
   TWO = 2
-end&lt;/p&gt;
+end
 
-&lt;p&gt;puts C::ONE
-» 1
+puts C::ONE
+&amp;gt;&amp;gt; 1
 puts C::TWO
-» 2
-```&lt;/p&gt;
+&amp;gt;&amp;gt; 2
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
 
 &lt;p&gt;However, if you tried to monkey patch into a module with the same name but on a different scoped level it would not work because they’re two entirely different modules.&lt;/p&gt;
 
-&lt;p&gt;```
-module C
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;module C
   ONE = 1
-end&lt;/p&gt;
+end
 
-&lt;p&gt;module A
+module A
   module C
     TWO = 2
   end
-end&lt;/p&gt;
+end
 
-&lt;p&gt;puts C::TWO
-» error
-```&lt;/p&gt;
+puts C::TWO
+&amp;gt;&amp;gt; error
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
 </content>
  </entry>
  
@@ -211,71 +310,71 @@ end&lt;/p&gt;
    <content type="html">&lt;p&gt;We’ve seen the use of include for including methods from a module into a Class.
 The following shows three modules included into Class A:&lt;/p&gt;
 
-&lt;p&gt;```
-module B
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;module B
   def b
     :b
   end
-end&lt;/p&gt;
+end
 
-&lt;p&gt;module C
+module C
   def c
     :c
   end
-end&lt;/p&gt;
+end
 
-&lt;p&gt;module D
+module D
   def d
     :d
   end
-end&lt;/p&gt;
+end
 
-&lt;p&gt;class A
+class A
   include B
   include C
   include D
 end
-```&lt;/p&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
 
 &lt;p&gt;Include turns the methods inside the module into &lt;em&gt;instance&lt;/em&gt; methods for that class:&lt;/p&gt;
 
-&lt;p&gt;&lt;code&gt;
-puts A.new.b &amp;gt;&amp;gt; b
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;puts A.new.b &amp;gt;&amp;gt; b
 puts A.new.c &amp;gt;&amp;gt; c
 puts A.new.d &amp;gt;&amp;gt; d
-&lt;/code&gt;&lt;/p&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
 
 &lt;p&gt;However you can also change the methods into &lt;em&gt;class&lt;/em&gt; methods by using extend:&lt;/p&gt;
 
-&lt;p&gt;```
-module B
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;module B
   def b
     :b
   end
-end&lt;/p&gt;
+end
 
-&lt;p&gt;module C
+module C
   def c
     :c
   end
-end&lt;/p&gt;
+end
 
-&lt;p&gt;module D
+module D
   def d
     :d
   end
-end&lt;/p&gt;
+end
 
-&lt;p&gt;class A
+class A
   extend B
   extend C
   extend D
-end&lt;/p&gt;
+end
 
-&lt;p&gt;puts A.b » b
-puts A.c » c
-puts A.d » d
-```&lt;/p&gt;
+puts A.b &amp;gt;&amp;gt; b
+puts A.c &amp;gt;&amp;gt; c
+puts A.d &amp;gt;&amp;gt; d
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
 
 &lt;p&gt;Notice how we didn’t have to change the method definitions inside the module to self.method.
 This is because modules have no sense of Class, they’re just buckets for methods.  They are called
@@ -287,38 +386,38 @@ classes with their ‘methods’ (in a good way in this case), in the sense that
 &lt;p&gt;I wrote include in class A three times which is repetitive.  If you find that you are
 including modules in a class many times you can avoid this by using the self.included module method.&lt;/p&gt;
 
-&lt;p&gt;```
-module B
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;module B
   def self.included(klass)
     klass.include C
     klass.include D
-  end&lt;/p&gt;
+  end
 
-&lt;p&gt;def b
+  def b
     :b
   end
-end&lt;/p&gt;
+end
 
-&lt;p&gt;module C
+module C
   def c
     :c
   end
-end&lt;/p&gt;
+end
 
-&lt;p&gt;module D
+module D
   def d
     :d
   end
-end&lt;/p&gt;
+end
 
-&lt;p&gt;class A
+class A
   include B
-end&lt;/p&gt;
+end
 
-&lt;p&gt;puts A.new.b » b
-puts A.new.c » c
-puts A.new.d » d
-```&lt;/p&gt;
+puts A.new.b &amp;gt;&amp;gt; b
+puts A.new.c &amp;gt;&amp;gt; c
+puts A.new.d &amp;gt;&amp;gt; d
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
 
 &lt;p&gt;Now there is only ‘include B’ inside class A.  Whenever B is included in a Class, it calls self.included
 which passes in the class A as an argument.  “self.included” then included modules C and D into the klass
@@ -333,17 +432,17 @@ passed as the argument which in our case is class A.&lt;/p&gt;
    <id>http://androidgrl.github.io/2017/01/14/try</id>
    <content type="html">&lt;p&gt;At my work we have a North America team and a China team.  Part of our workflow is to review each others merge requests before merging.  As a junior developer I often see things that I have never seen before and must make an educated decision about whether the unfamiliar pattern is a genuine coding error or deviation from best practices, or just something new I don’t know about.  And because the person who wrote the code is in China in an opposite time zone, it’s not easy to ask them directly about it.  So, while reviewing an MR I saw a use of the try method that I had never seen before.  Here is a simplified version:&lt;/p&gt;
 
-&lt;p&gt;```
-class Order
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;class Order
   def grand_total
     sub_total.try(:*, sales_tax)
-  end&lt;/p&gt;
+  end
 
-&lt;p&gt;def sub_total
+  def sub_total
     FooBar.baz
   end
 end
-```&lt;/p&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
 
 &lt;p&gt;Here the asterisk is the multiplication operator.  Try is trying to multiply sub_total by sales_tax.  If sub_total is nil, it will return nil, instead of erroring out as would happen when trying to multiply nil by a number.&lt;/p&gt;
 
@@ -351,45 +450,44 @@ end
 
 &lt;p&gt;The first alternative is to use an if statement.&lt;/p&gt;
 
-&lt;p&gt;```
-class Order
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;class Order
   def grand_total
     if subtotal
       (sub_total * sales_tax)
     else
       nil
     end
-  end&lt;/p&gt;
+  end
 
-&lt;p&gt;def sub_total
+  def sub_total
     FooBar.baz
   end
 end
-```&lt;/p&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
 
 &lt;p&gt;If there’s a subtotal it will perform the multiplication, if there is not it will return nil.  Since by default nil is what is returned by else, you can take out the else and make the statement one line.&lt;/p&gt;
 
-&lt;p&gt;```
-class Order
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;class Order
   def grand_total
     (sub_total * sales_tax) if sub_total
-  end&lt;/p&gt;
+  end
 
-&lt;p&gt;def sub_total
+  def sub_total
     FooBar.baz
   end
 end
-```&lt;/p&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
 
 &lt;p&gt;What if we wanted to return 0 instead of nil if there was no sub_total?  We could go back to the if else statement but sometimes it can be better to use a Null Object pattern, which is the second alternative.&lt;/p&gt;
 
-&lt;p&gt;```
-class Order
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;class Order
   def grand_total
     sub_total * sales_tax
-  end&lt;/p&gt;
+  end
 
-&lt;p&gt;def sub_total
+  def sub_total
     result = FooBar.baz
     if result
       result
@@ -397,14 +495,15 @@ class Order
       NullOrder.new.sub_total
     end
   end
-end&lt;/p&gt;
+end
 
-&lt;p&gt;class NullOrder
+class NullOrder
   def sub_total
     0
   end
 end
-```&lt;/p&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
 
 &lt;p&gt;Going into the sub_total method, if we get a result from FooBar.baz we return it, if it is nil then we return an instance of NullOrder which has a sub_total of 0.&lt;/p&gt;
 
@@ -414,17 +513,17 @@ end
 
 &lt;p&gt;In order to prevent an error in case someone tries to call an undefined method on the NullOrder, we can override the method_missing method to return whatever we want.  For example:&lt;/p&gt;
 
-&lt;p&gt;```
-class NullOrder
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;class NullOrder
   def method_missing(*_args)
     nil
-  end&lt;/p&gt;
+  end
 
-&lt;p&gt;def sub_total
+  def sub_total
     0
   end
 end
-```&lt;/p&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
 
 &lt;p&gt;If someone were to call NullOrder.new.whatever, the method_missing method gets called which by default will raise an error.  Instead we override it to return nil.  We add a splat argument in case someone calls an undefined method on it that has arguments.  The underscore in  front of “args” denotes that it’s something that’s not supposed to be used.&lt;/p&gt;
 
@@ -439,37 +538,37 @@ end
    <id>http://androidgrl.github.io/2017/01/04/demeter</id>
    <content type="html">&lt;p&gt;A few times I’ve been told during code review that something violates the Law of Demeter.  This method for example.&lt;/p&gt;
 
-&lt;p&gt;&lt;code&gt;
-class User
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;class User
   def user_info
     &quot;#{user.name}, #{user.department.name}&quot;
   end
 end
-&lt;/code&gt;&lt;/p&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
 
 &lt;p&gt;Which led me to ask: what is the Law of Demeter, why should I follow it, how do I know if I’m violating it, and how do I avoid violating it?&lt;/p&gt;
 
 &lt;p&gt;The Law of Demeter is formally defined as,&lt;/p&gt;
 
-&lt;p&gt;&lt;code&gt;
-A method of an object may only call methods of:
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;A method of an object may only call methods of:
   The object itself.
   An argument of the method.
   Any object created within the method.
   Any direct properties/fields of the object.
-&lt;/code&gt;&lt;/p&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
 
 &lt;p&gt;The above code sample violates the law with “user.department.name” because it’s calling name on the user’s department, and department is an entirely different object from a user.&lt;/p&gt;
 
 &lt;p&gt;In general it is better if one class does not have to know about methods from another class, in other words when the classes are “decoupled”.  This is because it makes the code more flexible.  For example in our code sample, there is only one department for a user.  But what happens if things changed so that a user could have many departments and we wanted the only use the first one for our user_info method?  We would then have to say:&lt;/p&gt;
 
-&lt;p&gt;&lt;code&gt;
-class User
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;class User
   def user_info
     &quot;#{user.name}, #{user.departments.first.name}&quot;
   end
 end
-&lt;/code&gt;&lt;/p&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
 
 &lt;p&gt;This seems reasonable for now but what if we used “user.department” in multiple places?  We’d have to make the same change wherever it was used, which would be cumbersome.&lt;/p&gt;
 
@@ -477,27 +576,27 @@ end
 
 &lt;p&gt;You could make a custom method in the User class called “department_name”:&lt;/p&gt;
 
-&lt;p&gt;```
-class User
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;class User
   def user_info
-    “#{user.name}, #{user.department_name}”
-  end&lt;/p&gt;
+    &quot;#{user.name}, #{user.department_name}&quot;
+  end
 
-&lt;p&gt;def department_name
+  def department_name
     departments.first.name
   end
 end
-```&lt;/p&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
 
 &lt;p&gt;Now the department_name is an immediate property of the user itself, satisfying the law and also making it easier to make future changes if we want to change what we use for the department’s name.&lt;/p&gt;
 
 &lt;p&gt;One sign that is often but not always an indication of Demeter violation is chaining of dots.  For example “user.departments.first.name” had chained dots and indeed was a violation.  However, sometimes dot chaining does not mean Demeter violation for example:&lt;/p&gt;
 
-&lt;p&gt;&lt;code&gt;
-def slug(string)
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;def slug(string)
   string.strip.downcase.tr_s(&#39;^[a-z0-9]&#39;, &#39;-&#39;)
 end
-&lt;/code&gt;&lt;/p&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
 
 &lt;p&gt;The above complies with the Law of Demeter because each method is called on a String object.  And the law doesn’t care about the number of methods called, but the number of &lt;em&gt;types&lt;/em&gt; of methods called.&lt;/p&gt;
 
@@ -514,9 +613,9 @@ end
 
 &lt;p&gt;For example say I wanted to search for the keyword “organization” in files that end in spec.rb.  I would use:&lt;/p&gt;
 
-&lt;p&gt;&lt;code&gt;
-&amp;gt; Ag organization -G spec.rb$
-&lt;/code&gt;&lt;/p&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&amp;gt; Ag organization -G spec.rb$
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
 
 &lt;p&gt;The -G flag tells Ag to look for the term inside files with names containing spec.rb.  It can accept a regex which is what the $ is for.  The $ indicates that I want to search in files that end in spec.rb, not just files that have spec.rb somewhere within their names.&lt;/p&gt;
 
@@ -524,9 +623,9 @@ end
 
 &lt;p&gt;Ag has a literal expression flag -Q to specify that you’re searching for a literal expression not a regex.  In order to search for “.try” you would use:&lt;/p&gt;
 
-&lt;p&gt;&lt;code&gt;
-&amp;gt; Ag -Q .try
-&lt;/code&gt;&lt;/p&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&amp;gt; Ag -Q .try
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
 
 &lt;p&gt;For more  information see &lt;a href=&quot;http://conqueringthecommandline.com/book/ack_ag&quot;&gt;Conquering the Command Line, by Mark Bates&lt;/a&gt;&lt;/p&gt;
 </content>
@@ -542,34 +641,34 @@ end
 &lt;p&gt;Start by making a custom error class that inherits from StandardError.  This will give you a more descriptive error instead of raising the generic StandardError, so you can better deduce where the error came from.
  I will use a hypothetical example of an error that is raised when a User is being created.&lt;/p&gt;
 
-&lt;p&gt;&lt;code&gt;
-class UserCreateError &amp;lt; StandardError
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;class UserCreateError &amp;lt; StandardError
 end
-&lt;/code&gt;&lt;/p&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
 
 &lt;p&gt;Each custom error class should have it’s own file which you can put in an app/errors directory.&lt;/p&gt;
 
 &lt;p&gt;Here I will raise the error in a User model method.&lt;/p&gt;
 
-&lt;p&gt;&lt;code&gt;
-class User &amp;lt; ActiveRecord::Base
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;class User &amp;lt; ActiveRecord::Base
   def self.example_method
     raise UserCreateError
   end
 end
-&lt;/code&gt;&lt;/p&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
 
 &lt;p&gt;When the create action is called on the controller, it will call User.example_method, which will raise the error.  The error then goes back up to the controller where it is rescued.&lt;/p&gt;
 
-&lt;p&gt;&lt;code&gt;
-class UsersController &amp;lt; ApplicationController
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;class UsersController &amp;lt; ApplicationController
   def create
     User.example_method
   rescue UserCreateError
     render json: &quot;Invalid User Information&quot;, status: :bad_request
   end
 end
-&lt;/code&gt;&lt;/p&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
 
 &lt;p&gt;Note the indentation of the rescue is on the same column as the def.&lt;/p&gt;
 
@@ -593,29 +692,28 @@ You only need it to set instance variables and to allow passing of arguments whe
 
 &lt;p&gt;Let’s make a class with a single instance method and no initialize method.&lt;/p&gt;
 
-&lt;p&gt;&lt;code&gt;
-class Holiday
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;class Holiday
   def statement
     &quot;I&#39;m going to the beach&quot;
   end
 end
 puts Holiday.new
 puts Holiday.new.statement
-&lt;/code&gt;&lt;/p&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
 
 &lt;p&gt;If we run the code, the “puts” outputs the following, and we see that Holiday.new instantiates an object just fine and we can call the method statement on it:&lt;/p&gt;
 
-&lt;p&gt;&lt;code&gt;
-#&amp;lt;Holiday:0x007fe194093d00&amp;gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;#&amp;lt;Holiday:0x007fe194093d00&amp;gt;
 I&#39;m going to the beach
-&lt;/code&gt;&lt;/p&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
 
 &lt;p&gt;&lt;strong&gt;Example two:&lt;/strong&gt; &lt;em&gt;You don’t need it to use attr_accessors&lt;/em&gt;&lt;/p&gt;
 
 &lt;p&gt;Let’s make a class with an attr_accessor and no initialize method.  We instantiate two different holiday objects, and then using the attr_accessors set a separate location attribute for each.&lt;/p&gt;
 
-&lt;p&gt;&lt;code&gt;
-class Holiday
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;class Holiday
   attr_accessor :location
   def statement
     &quot;I&#39;m going on holiday to #{location}&quot;
@@ -627,34 +725,34 @@ holiday1.location = &quot;Europe&quot;
 holiday2.location = &quot;Hawaii&quot;
 puts holiday1.statement
 puts holiday2.statement
-&lt;/code&gt;&lt;/p&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
 
 &lt;p&gt;The output shows that the attr_accessors still work without the initialize method.&lt;/p&gt;
 
-&lt;p&gt;&lt;code&gt;
-I&#39;m going on holiday to Europe
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;I&#39;m going on holiday to Europe
 I&#39;m going on holiday to Hawaii
-&lt;/code&gt;&lt;/p&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
 
 &lt;p&gt;&lt;strong&gt;Example three:&lt;/strong&gt; &lt;em&gt;You DO need it to set instance variables&lt;/em&gt;&lt;/p&gt;
 
 &lt;p&gt;The following is a class that tries to set an instance variable @word to equal “whatever”.
 The output is nothing, because instance variables need to be put inside an initialize method.&lt;/p&gt;
 
-&lt;p&gt;&lt;code&gt;
-class Random
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;class Random
   @word = &quot;whatever&quot;
   def whatever
     @word
   end
 end
 puts Random.new.whatever
-&lt;/code&gt;&lt;/p&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
 
 &lt;p&gt;The following will correctly result in an output of “whatever”.&lt;/p&gt;
 
-&lt;p&gt;&lt;code&gt;
-class Random
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;class Random
   def initialize
     @word = &quot;whatever&quot;
   end
@@ -663,57 +761,58 @@ class Random
   end
 end
 puts Random.new.whatever
-&lt;/code&gt;&lt;/p&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
 
 &lt;p&gt;&lt;strong&gt;Example four:&lt;/strong&gt; &lt;em&gt;You DO need it to allow arguments to be passed in when instantiating a Class&lt;/em&gt;&lt;/p&gt;
 
 &lt;p&gt;The following code tries to pass in a string argument into the “new” method.&lt;/p&gt;
 
-&lt;p&gt;```
-class Random
-end&lt;/p&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;class Random
+end
 
-&lt;p&gt;puts Random.new(“whatever”)
-```&lt;/p&gt;
+puts Random.new(&quot;whatever&quot;)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
 
 &lt;p&gt;This results in an error.&lt;/p&gt;
 
-&lt;p&gt;&lt;code&gt;
-new.rb:35:in `initialize&#39;: no implicit conversion of String into Integer (TypeError)
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;new.rb:35:in `initialize&#39;: no implicit conversion of String into Integer (TypeError)
         from new.rb:35:in `new&#39;
         from new.rb:35:in `&amp;lt;main&amp;gt;&#39;
-&lt;/code&gt;&lt;/p&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
 
 &lt;p&gt;You need to specify that there are arguments in the initialize method for “new” method to be able to take any.
 However, you don’t have to actually do anything with the arguments in the initialize method.&lt;/p&gt;
 
-&lt;p&gt;```
-class Random
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;class Random
   def initialize(word)
   end
-end&lt;/p&gt;
+end
 
-&lt;p&gt;puts Random.new(“whatever”)
-```&lt;/p&gt;
+puts Random.new(&quot;whatever&quot;)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
 
 &lt;p&gt;This will result in the object being successfully instantiated, as shown in the output below.&lt;/p&gt;
 
-&lt;p&gt;&lt;code&gt;
-#&amp;lt;Random:0x007fbbb9170cd8&amp;gt;
-&lt;/code&gt;&lt;/p&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;#&amp;lt;Random:0x007fbbb9170cd8&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
 
 &lt;p&gt;If you wanted to actually have access to the attribute then you would have to set it as an instance variable inside the initialize method, and set an attr_reader.&lt;/p&gt;
 
-&lt;p&gt;```
-class Random
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;class Random
   attr_reader :word
   def initialize(word)
     @word = word
   end
-end&lt;/p&gt;
+end
 
-&lt;p&gt;puts Random.new(“whatever”).word
-```&lt;/p&gt;
+puts Random.new(&quot;whatever&quot;).word
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
 
 &lt;p&gt;Which will output “whatever”.&lt;/p&gt;
 
@@ -738,51 +837,51 @@ end&lt;/p&gt;
 
 &lt;p&gt;The best way to demonstrate how they work is to pry into an rspec file.  This assumes that you are already familiar with setting up an Rspec test file in a Rails app. In the Rspec file, inside an “it” block place a binding.pry.&lt;/p&gt;
 
-&lt;p&gt;&lt;code&gt;
-    it &quot;demonstrates doubles&quot; do
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;    it &quot;demonstrates doubles&quot; do
       binding.pry
     end
-&lt;/code&gt;&lt;/p&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
 
 &lt;p&gt;In the pry session, define a spy, then try to call undefined methods on it.  It will keep returning a double.  So spies, are just generic doubles that will keep giving you a double no matter what methods you call on them.&lt;/p&gt;
 
-&lt;p&gt;&lt;code&gt;
-pry(#&amp;lt;RSpec&amp;gt;)&amp;gt; s=spy
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;pry(#&amp;lt;RSpec&amp;gt;)&amp;gt; s=spy
 =&amp;gt; #&amp;lt;Double (anonymous)&amp;gt;
 pry(#&amp;lt;RSpec&amp;gt;)&amp;gt; s.what?
 =&amp;gt; #&amp;lt;Double (anonymous)&amp;gt;
 pry(#&amp;lt;RSpec&amp;gt;)&amp;gt; s.anything?
 =&amp;gt; #&amp;lt;Double (anonymous)&amp;gt;
-&lt;/code&gt;&lt;/p&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
 
 &lt;p&gt;Moving towards more specificity, define a double.  Below a double is defined with a method called name that returns the string “androidgrl”.  When we call name on the double it returns “androidgrl”.  What happens when we call an undefined method like “age” on the double?  It gives us an error unlike with spies.  So with doubles, you have to define methods that can be called on them.&lt;/p&gt;
 
-&lt;p&gt;&lt;code&gt;
-pry(#&amp;lt;RSpec&amp;gt;)&amp;gt; d=double(name: &quot;androidgrl&quot;)
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;pry(#&amp;lt;RSpec&amp;gt;)&amp;gt; d=double(name: &quot;androidgrl&quot;)
 =&amp;gt; #&amp;lt;Double (anonymous)&amp;gt;
 pry(#&amp;lt;RSpec&amp;gt;)&amp;gt; d.name
 =&amp;gt; &quot;androidgrl&quot;
 pry(#&amp;lt;RSpec&amp;gt;)&amp;gt; d.age
 RSpec::Mocks::MockExpectationError: #&amp;lt;Double (anonymous)&amp;gt; received unexpected message :age with (no args)
 from /opt/active/acl_api/current/vendor/bundle/ruby/2.1.0/gems/rspec-support-3.3.0/lib/rspec/support.rb:86:in `block in &amp;lt;module:Support&amp;gt;&#39;
-&lt;/code&gt;&lt;/p&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
 
 &lt;p&gt;And finally, we have the most specific type of double, instance_doubles.  Here we have to specify which Class we’re defining the double for.  This has to be an actual class that exists either in your application or inherited through Ruby.  Here we’re stubbing out the “count” method on the Array class to always return 3.  Notice that when we try to define a method on Array that doesn’t actually exist we get an error.  Also when we try to make an instance double for a Class that doesn’t exist we get an error.&lt;/p&gt;
 
-&lt;p&gt;&lt;code&gt;
-pry(#&amp;lt;RSpec&amp;gt;)&amp;gt; i=instance_double(Array, count: 3)
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;pry(#&amp;lt;RSpec&amp;gt;)&amp;gt; i=instance_double(Array, count: 3)
 =&amp;gt; #&amp;lt;InstanceDouble(Array) (anonymous)&amp;gt;
 pry(#&amp;lt;RSpec&amp;gt;)&amp;gt; i.count
 =&amp;gt; 3
 pry(#&amp;lt;RSpec&amp;gt;)&amp;gt; i=instance_double(Array, whatever: &quot;?&quot;)
 RSpec::Mocks::MockExpectationError: the Array class does not implement the instance method: whatever
 from /opt/active/acl_api/current/vendor/bundle/ruby/2.1.0/gems/rspec-support-3.3.0/lib/rspec/support.rb:86:in `block in &amp;lt;module:Support&amp;gt;&#39;
-&lt;/code&gt;
-&lt;code&gt;
-pry(#&amp;lt;RSpeci=instance_double(FakeClass, fake_method: &quot;fake&quot;)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;pry(#&amp;lt;RSpeci=instance_double(FakeClass, fake_method: &quot;fake&quot;)
 NameError: uninitialized constant TM::FakeClass
 from (pry):14:in `block (2 levels) in &amp;lt;module:TM&amp;gt;&#39;
-&lt;/code&gt;&lt;/p&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
 
 &lt;p&gt;In summary:&lt;/p&gt;
 
@@ -811,56 +910,46 @@ from (pry):14:in `block (2 levels) in &amp;lt;module:TM&amp;gt;&#39;
 
 &lt;p&gt;&lt;a href=&quot;https://www.youtube.com/watch?v=VJI_D-GGwqY&quot;&gt;&lt;img src=&quot;http://img.youtube.com/vi/VJI_D-GGwqY/0.jpg&quot; alt=&quot;&quot; /&gt;&lt;/a&gt;&lt;em&gt;Youtube tutorial&lt;/em&gt;&lt;/p&gt;
 
-&lt;h2 id=&quot;sign-up-for-tinkercad-and-thingiverse-accounts&quot;&gt;Sign up for Tinkercad and Thingiverse accounts:&lt;/h2&gt;
-&lt;ol&gt;
-  &lt;li&gt;Sign up for a free &lt;a href=&quot;https://www.tinkercad.com/&quot;&gt;Tindercad account&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;Sign up for a free &lt;a href=&quot;http://www.thingiverse.com/&quot;&gt;Thingiverse account&lt;/a&gt;&lt;/li&gt;
-&lt;/ol&gt;
+&lt;p&gt;##Sign up for Tinkercad and Thingiverse accounts:
+1.  Sign up for a free &lt;a href=&quot;https://www.tinkercad.com/&quot;&gt;Tindercad account&lt;/a&gt;
+2.  Sign up for a free &lt;a href=&quot;http://www.thingiverse.com/&quot;&gt;Thingiverse account&lt;/a&gt;&lt;/p&gt;
 
-&lt;h2 id=&quot;create-a-lithopane-portrait&quot;&gt;Create a lithopane portrait:&lt;/h2&gt;
-&lt;ol&gt;
-  &lt;li&gt;Go to &lt;a href=&quot;http://www.thingiverse.com/thing:74322&quot;&gt;Thingiverse lithopane generator&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;Click on “open in customizer”&lt;/li&gt;
-  &lt;li&gt;Choose the small pane size, and click “invert colors”&lt;/li&gt;
-  &lt;li&gt;Choose the jpg file that you want to use for your portrait&lt;/li&gt;
-  &lt;li&gt;Click “create thing”
-It will take a few minutes for your lithopane to be generated.  You will be able to see it by clicking on the dropdown arrow next to your avatar photo on the top right of the page, and selecting “My Things”.&lt;/li&gt;
-  &lt;li&gt;When it’s ready, download the .stl file by clicking on “Thing Files” and selecting the file.&lt;/li&gt;
-&lt;/ol&gt;
+&lt;p&gt;##Create a lithopane portrait:
+1.  Go to &lt;a href=&quot;http://www.thingiverse.com/thing:74322&quot;&gt;Thingiverse lithopane generator&lt;/a&gt;
+2.  Click on “open in customizer”
+3.  Choose the small pane size, and click “invert colors”
+4.  Choose the jpg file that you want to use for your portrait
+5.  Click “create thing”
+It will take a few minutes for your lithopane to be generated.  You will be able to see it by clicking on the dropdown arrow next to your avatar photo on the top right of the page, and selecting “My Things”.
+6. When it’s ready, download the .stl file by clicking on “Thing Files” and selecting the file.&lt;/p&gt;
 
-&lt;h2 id=&quot;create-the-business-card-base&quot;&gt;Create the business card base:&lt;/h2&gt;
-&lt;ol&gt;
-  &lt;li&gt;Sign into Tinkercad and click on “Create New Design”&lt;/li&gt;
-  &lt;li&gt;Under shape generators select geometric option, and select the red box.  Drag it to the workplane and click to deposit.&lt;/li&gt;
-  &lt;li&gt;I recommend using a mouse- it’s much easier than using the touchpad.  To zoom in and out, turn the scroll wheel.  To rotate your view around the model, right click and drag.&lt;/li&gt;
-  &lt;li&gt;The standard size of business cards in the US is 89 X 51mm.  We’ll use the ruler tool to manually enter the dimensions of the card.  On the toolbar on the top, select the grid, then select the ruler.  Drag it next to the red box and click. Now click on the red box, the dimensions will show up.  Click on the width and enter 89.00, click on the height and enter 51.00, finally click on the thickness and enter 1.00.&lt;/li&gt;
-  &lt;li&gt;Another shape manipulation feature is the black arrow you see on the top of the box. Click and drag it up to lift the card off of the workplane.  To drop the card back onto the workplane, just press “d”.&lt;/li&gt;
-&lt;/ol&gt;
+&lt;p&gt;##Create the business card base:
+1.  Sign into Tinkercad and click on “Create New Design”
+2.  Under shape generators select geometric option, and select the red box.  Drag it to the workplane and click to deposit.
+3.  I recommend using a mouse- it’s much easier than using the touchpad.  To zoom in and out, turn the scroll wheel.  To rotate your view around the model, right click and drag.
+4.  The standard size of business cards in the US is 89 X 51mm.  We’ll use the ruler tool to manually enter the dimensions of the card.  On the toolbar on the top, select the grid, then select the ruler.  Drag it next to the red box and click. Now click on the red box, the dimensions will show up.  Click on the width and enter 89.00, click on the height and enter 51.00, finally click on the thickness and enter 1.00.
+5. Another shape manipulation feature is the black arrow you see on the top of the box. Click and drag it up to lift the card off of the workplane.  To drop the card back onto the workplane, just press “d”.&lt;/p&gt;
 
-&lt;h2 id=&quot;create-the-business-card-text&quot;&gt;Create the business card text:&lt;/h2&gt;
-&lt;ol&gt;
-  &lt;li&gt;Under the Shape Generator’s menu, select Tinkercad, and click on the “TEXT” icon.  Drag it to the workplane and click to deposit.
-You’ll notice an Inspector window will automatically appear on the right.  In the “Text” field enter your name.&lt;/li&gt;
-  &lt;li&gt;Select the ruler tool again, and manually enter the following dimensions for your name:  5mm high, 40mm wide, 0.5mm thick.&lt;/li&gt;
-  &lt;li&gt;Now we’re going to drop the text on top of the card by creating a new workplane on top of the card.  Select the workplane tool.  Click anywhere on the top surface of the card.  This creates a new orange workplane.  Drag the text to be on top of the card.  Then type “d” and the text gets “dropped” on top of the new workplane.  We don’t need the new workplane anymore so to get rid of it, select the workplane tool again and click anywhere outside the orange workplane.&lt;/li&gt;
-  &lt;li&gt;To make the twitter handle, phone number, title and email fields, click on your name text, then copy and paste from the edit menu, 4 times.  Drag these texts onto the card.
+&lt;p&gt;##Create the business card text:
+1.  Under the Shape Generator’s menu, select Tinkercad, and click on the “TEXT” icon.  Drag it to the workplane and click to deposit.
+You’ll notice an Inspector window will automatically appear on the right.  In the “Text” field enter your name.
+2.  Select the ruler tool again, and manually enter the following dimensions for your name:  5mm high, 40mm wide, 0.5mm thick.
+3.  Now we’re going to drop the text on top of the card by creating a new workplane on top of the card.  Select the workplane tool.  Click anywhere on the top surface of the card.  This creates a new orange workplane.  Drag the text to be on top of the card.  Then type “d” and the text gets “dropped” on top of the new workplane.  We don’t need the new workplane anymore so to get rid of it, select the workplane tool again and click anywhere outside the orange workplane.
+4.  To make the twitter handle, phone number, title and email fields, click on your name text, then copy and paste from the edit menu, 4 times.  Drag these texts onto the card.
 To change the text, click on it and edit it with the Inspector that pops up.
-Make any adjustments you want to the width of the text by manually entering it using the ruler.  Line them up on the left side of the card.  The horizontal placement doesn’t have to be exact now, but you’ll want the vertical spacing between the lines of text to be exactly how you want.  For fine adjustments, change the snap grid setting on the bottom right corner to 0.1mm.&lt;/li&gt;
-  &lt;li&gt;To horizontally align, shift click on all lines of text, and then select “Adjust” from the toolbar and select “Align”.  This will place an align tool on the card.  Click on the bottom right dot, and your text will be aligned to the right.
-Finally group all the text and the card base together by clicking and dragging to draw a square around the card.  Select “Group” on the toolbar.&lt;/li&gt;
-&lt;/ol&gt;
+Make any adjustments you want to the width of the text by manually entering it using the ruler.  Line them up on the left side of the card.  The horizontal placement doesn’t have to be exact now, but you’ll want the vertical spacing between the lines of text to be exactly how you want.  For fine adjustments, change the snap grid setting on the bottom right corner to 0.1mm.
+5.  To horizontally align, shift click on all lines of text, and then select “Adjust” from the toolbar and select “Align”.  This will place an align tool on the card.  Click on the bottom right dot, and your text will be aligned to the right.
+Finally group all the text and the card base together by clicking and dragging to draw a square around the card.  Select “Group” on the toolbar.&lt;/p&gt;
 
-&lt;h2 id=&quot;add-the-lithopane-portrait&quot;&gt;Add the lithopane portrait:&lt;/h2&gt;
-&lt;ol&gt;
-  &lt;li&gt;Under “Import” choose your .stl file that you downloaded from Thingiverse.  Click on “Import”.  It takes a minute or two to upload.
-Adjust it to the size you want by clicking and dragging on one of the small white squares on the corners.&lt;/li&gt;
-  &lt;li&gt;Next we need to get rid of the raised edges, and the top loop.  Under “Letters” select the letter “I” and drag it onto the workplane.  Make 3 more copies.  You can use the copy and edit from the Edit menu, or you can just use the keyboard shortcuts cmd+c for copy and cmd+v for paste.  Make each “I’ big enough to cover each raised edge.  The top one needs to be thick enough to cover the loop.  You don’t have to be exact, the point is to just cover the edges.&lt;/li&gt;
-  &lt;li&gt;Next, shift click on all 4 of them, and in the Inspector box on the top right, select “Hole”.
-Draw a box around it and select “Group”.  This will remove any material where you have put the holes.&lt;/li&gt;
-  &lt;li&gt;Finally, drag the lithopane onto the card.
-Draw a box around the whole card and select “Group”.&lt;/li&gt;
-  &lt;li&gt;That’s it!  You can download the .stl file to be 3D printed by selecting the ”Design” menu and selecting “Download for 3D printing”.&lt;/li&gt;
-&lt;/ol&gt;
+&lt;p&gt;##Add the lithopane portrait:
+1.  Under “Import” choose your .stl file that you downloaded from Thingiverse.  Click on “Import”.  It takes a minute or two to upload.
+Adjust it to the size you want by clicking and dragging on one of the small white squares on the corners.
+2.  Next we need to get rid of the raised edges, and the top loop.  Under “Letters” select the letter “I” and drag it onto the workplane.  Make 3 more copies.  You can use the copy and edit from the Edit menu, or you can just use the keyboard shortcuts cmd+c for copy and cmd+v for paste.  Make each “I’ big enough to cover each raised edge.  The top one needs to be thick enough to cover the loop.  You don’t have to be exact, the point is to just cover the edges.
+3.  Next, shift click on all 4 of them, and in the Inspector box on the top right, select “Hole”.
+Draw a box around it and select “Group”.  This will remove any material where you have put the holes.
+4.  Finally, drag the lithopane onto the card.
+Draw a box around the whole card and select “Group”.
+5.  That’s it!  You can download the .stl file to be 3D printed by selecting the ”Design” menu and selecting “Download for 3D printing”.&lt;/p&gt;
 </content>
  </entry>
  
@@ -916,9 +1005,10 @@ Follow these instructions and you will be able to make a 3D print of a person!&l
     &lt;p&gt;Watch my &lt;a href=&quot;https://www.youtube.com/watch?v=8Nm2ufFYNBI&quot;&gt;Youtube video&lt;/a&gt; which demonstrates: how to make a scan of a person, how to export it as an .stl file, and how to import the file to slic3r.&lt;/p&gt;
   &lt;/li&gt;
   &lt;li&gt;
-    &lt;p&gt;Once it’s imported to slic3r, follow the instructions below for how to make a print on a lulzbot Taz 4.  Or, proceed with your usual way of making 3D prints! &lt;script src=&quot;https://gist.github.com/0361b0f2b917a1c322f3.js&quot;&gt; &lt;/script&gt;&lt;/p&gt;
+    &lt;p&gt;Once it’s imported to slic3r, follow the instructions below for how to make a print on a lulzbot Taz 4.  Or, proceed with your usual way of making 3D prints! &lt;noscript&gt;&amp;lt;pre&amp;gt;400: Invalid request&lt;/noscript&gt;&lt;/p&gt;
   &lt;/li&gt;
 &lt;/ol&gt;
+&lt;p&gt;&amp;lt;/pre&amp;gt;&amp;lt;/noscript&amp;gt;&lt;script src=&quot;https://gist.github.com/0361b0f2b917a1c322f3.js&quot;&gt; &lt;/script&gt;&lt;/p&gt;
 
 </content>
  </entry>

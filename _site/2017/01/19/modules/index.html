@@ -50,29 +50,6 @@
 
     
     
-      
-        
-      
-    
-      
-        
-      
-    
-      
-        
-        
-      
-    
-      
-    
-      
-        
-      
-    
-      
-        
-      
-    
   </nav>
 
   <div class="sidebar-item">
@@ -102,71 +79,71 @@
   <p>We’ve seen the use of include for including methods from a module into a Class.
 The following shows three modules included into Class A:</p>
 
-<p>```
-module B
+<div class="highlighter-rouge"><pre class="highlight"><code>module B
   def b
     :b
   end
-end</p>
+end
 
-<p>module C
+module C
   def c
     :c
   end
-end</p>
+end
 
-<p>module D
+module D
   def d
     :d
   end
-end</p>
+end
 
-<p>class A
+class A
   include B
   include C
   include D
 end
-```</p>
+</code></pre>
+</div>
 
 <p>Include turns the methods inside the module into <em>instance</em> methods for that class:</p>
 
-<p><code>
-puts A.new.b &gt;&gt; b
+<div class="highlighter-rouge"><pre class="highlight"><code>puts A.new.b &gt;&gt; b
 puts A.new.c &gt;&gt; c
 puts A.new.d &gt;&gt; d
-</code></p>
+</code></pre>
+</div>
 
 <p>However you can also change the methods into <em>class</em> methods by using extend:</p>
 
-<p>```
-module B
+<div class="highlighter-rouge"><pre class="highlight"><code>module B
   def b
     :b
   end
-end</p>
+end
 
-<p>module C
+module C
   def c
     :c
   end
-end</p>
+end
 
-<p>module D
+module D
   def d
     :d
   end
-end</p>
+end
 
-<p>class A
+class A
   extend B
   extend C
   extend D
-end</p>
+end
 
-<p>puts A.b » b
-puts A.c » c
-puts A.d » d
-```</p>
+puts A.b &gt;&gt; b
+puts A.c &gt;&gt; c
+puts A.d &gt;&gt; d
+</code></pre>
+</div>
 
 <p>Notice how we didn’t have to change the method definitions inside the module to self.method.
 This is because modules have no sense of Class, they’re just buckets for methods.  They are called
@@ -178,38 +155,38 @@ classes with their ‘methods’ (in a good way in this case), in the sense that
 <p>I wrote include in class A three times which is repetitive.  If you find that you are
 including modules in a class many times you can avoid this by using the self.included module method.</p>
 
-<p>```
-module B
+<div class="highlighter-rouge"><pre class="highlight"><code>module B
   def self.included(klass)
     klass.include C
     klass.include D
-  end</p>
+  end
 
-<p>def b
+  def b
     :b
   end
-end</p>
+end
 
-<p>module C
+module C
   def c
     :c
   end
-end</p>
+end
 
-<p>module D
+module D
   def d
     :d
   end
-end</p>
+end
 
-<p>class A
+class A
   include B
-end</p>
+end
 
-<p>puts A.new.b » b
-puts A.new.c » c
-puts A.new.d » d
-```</p>
+puts A.new.b &gt;&gt; b
+puts A.new.c &gt;&gt; c
+puts A.new.d &gt;&gt; d
+</code></pre>
+</div>
 
 <p>Now there is only ‘include B’ inside class A.  Whenever B is included in a Class, it calls self.included
 which passes in the class A as an argument.  “self.included” then included modules C and D into the klass

@@ -50,29 +50,6 @@
 
     
     
-      
-        
-      
-    
-      
-        
-      
-    
-      
-        
-        
-      
-    
-      
-    
-      
-        
-      
-    
-      
-        
-      
-    
   </nav>
 
   <div class="sidebar-item">
@@ -103,9 +80,9 @@
 
 <p>For example say I wanted to search for the keyword “organization” in files that end in spec.rb.  I would use:</p>
 
-<p><code>
-&gt; Ag organization -G spec.rb$
-</code></p>
+<div class="highlighter-rouge"><pre class="highlight"><code>&gt; Ag organization -G spec.rb$
+</code></pre>
+</div>
 
 <p>The -G flag tells Ag to look for the term inside files with names containing spec.rb.  It can accept a regex which is what the $ is for.  The $ indicates that I want to search in files that end in spec.rb, not just files that have spec.rb somewhere within their names.</p>
 
@@ -113,9 +90,9 @@
 
 <p>Ag has a literal expression flag -Q to specify that you’re searching for a literal expression not a regex.  In order to search for “.try” you would use:</p>
 
-<p><code>
-&gt; Ag -Q .try
-</code></p>
+<div class="highlighter-rouge"><pre class="highlight"><code>&gt; Ag -Q .try
+</code></pre>
+</div>
 
 <p>For more  information see <a href="http://conqueringthecommandline.com/book/ack_ag">Conquering the Command Line, by Mark Bates</a></p>
 

@@ -50,29 +50,6 @@
 
     
     
-      
-        
-      
-    
-      
-        
-      
-    
-      
-        
-        
-      
-    
-      
-    
-      
-        
-      
-    
-      
-        
-      
-    
   </nav>
 
   <div class="sidebar-item">
@@ -104,34 +81,34 @@
 <p>Start by making a custom error class that inherits from StandardError.  This will give you a more descriptive error instead of raising the generic StandardError, so you can better deduce where the error came from.
  I will use a hypothetical example of an error that is raised when a User is being created.</p>
 
-<p><code>
-class UserCreateError &lt; StandardError
+<div class="highlighter-rouge"><pre class="highlight"><code>class UserCreateError &lt; StandardError
 end
-</code></p>
+</code></pre>
+</div>
 
 <p>Each custom error class should have it’s own file which you can put in an app/errors directory.</p>
 
 <p>Here I will raise the error in a User model method.</p>
 
-<p><code>
-class User &lt; ActiveRecord::Base
+<div class="highlighter-rouge"><pre class="highlight"><code>class User &lt; ActiveRecord::Base
   def self.example_method
     raise UserCreateError
   end
 end
-</code></p>
+</code></pre>
+</div>
 
 <p>When the create action is called on the controller, it will call User.example_method, which will raise the error.  The error then goes back up to the controller where it is rescued.</p>
 
-<p><code>
-class UsersController &lt; ApplicationController
+<div class="highlighter-rouge"><pre class="highlight"><code>class UsersController &lt; ApplicationController
   def create
     User.example_method
   rescue UserCreateError
     render json: "Invalid User Information", status: :bad_request
   end
 end
-</code></p>
+</code></pre>
+</div>
 
 <p>Note the indentation of the rescue is on the same column as the def.</p>
 

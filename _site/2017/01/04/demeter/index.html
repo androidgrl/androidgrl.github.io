@@ -50,29 +50,6 @@
 
     
     
-      
-        
-      
-    
-      
-        
-      
-    
-      
-        
-        
-      
-    
-      
-    
-      
-        
-      
-    
-      
-        
-      
-    
   </nav>
 
   <div class="sidebar-item">
@@ -101,37 +78,37 @@
   <span class="post-date">04 Jan 2017</span>
   <p>A few times I’ve been told during code review that something violates the Law of Demeter.  This method for example.</p>
 
-<p><code>
-class User
+<div class="highlighter-rouge"><pre class="highlight"><code>class User
   def user_info
     "#{user.name}, #{user.department.name}"
   end
 end
-</code></p>
+</code></pre>
+</div>
 
 <p>Which led me to ask: what is the Law of Demeter, why should I follow it, how do I know if I’m violating it, and how do I avoid violating it?</p>
 
 <p>The Law of Demeter is formally defined as,</p>
 
-<p><code>
-A method of an object may only call methods of:
+<div class="highlighter-rouge"><pre class="highlight"><code>A method of an object may only call methods of:
   The object itself.
   An argument of the method.
   Any object created within the method.
   Any direct properties/fields of the object.
-</code></p>
+</code></pre>
+</div>
 
 <p>The above code sample violates the law with “user.department.name” because it’s calling name on the user’s department, and department is an entirely different object from a user.</p>
 
 <p>In general it is better if one class does not have to know about methods from another class, in other words when the classes are “decoupled”.  This is because it makes the code more flexible.  For example in our code sample, there is only one department for a user.  But what happens if things changed so that a user could have many departments and we wanted the only use the first one for our user_info method?  We would then have to say:</p>
 
-<p><code>
-class User
+<div class="highlighter-rouge"><pre class="highlight"><code>class User
   def user_info
     "#{user.name}, #{user.departments.first.name}"
   end
 end
-</code></p>
+</code></pre>
+</div>
 
 <p>This seems reasonable for now but what if we used “user.department” in multiple places?  We’d have to make the same change wherever it was used, which would be cumbersome.</p>
 
@@ -139,27 +116,27 @@ end
 
 <p>You could make a custom method in the User class called “department_name”:</p>
 
-<p>```
-class User
+<div class="highlighter-rouge"><pre class="highlight"><code>class User
   def user_info
-    “#{user.name}, #{user.department_name}”
-  end</p>
+    "#{user.name}, #{user.department_name}"
+  end
 
-<p>def department_name
+  def department_name
     departments.first.name
   end
 end
-```</p>
+</code></pre>
+</div>
 
 <p>Now the department_name is an immediate property of the user itself, satisfying the law and also making it easier to make future changes if we want to change what we use for the department’s name.</p>
 
 <p>One sign that is often but not always an indication of Demeter violation is chaining of dots.  For example “user.departments.first.name” had chained dots and indeed was a violation.  However, sometimes dot chaining does not mean Demeter violation for example:</p>
 
-<p><code>
-def slug(string)
+<div class="highlighter-rouge"><pre class="highlight"><code>def slug(string)
   string.strip.downcase.tr_s('^[a-z0-9]', '-')
 end
-</code></p>
+</code></pre>
+</div>
 
 <p>The above complies with the Law of Demeter because each method is called on a String object.  And the law doesn’t care about the number of methods called, but the number of <em>types</em> of methods called.</p>
 

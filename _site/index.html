@@ -50,29 +50,6 @@
 
     
     
-      
-        
-      
-    
-      
-        
-      
-    
-      
-        
-        
-      
-    
-      
-    
-      
-        
-      
-    
-      
-        
-      
-    
   </nav>
 
   <div class="sidebar-item">
@@ -107,7 +84,106 @@
 
     <span class="post-date">14 Apr 2017</span>
 
-    
+    <p>Sometimes it can be difficult to determine what you want to test inside a method, especially if that method calls other methods, which in turn call other methods and so on.  For example, take the example class <strong>Cake</strong> below.  It has a method called <strong>make</strong> which calls two methods <strong>mix_ingredients</strong> and <strong>bake</strong>, which in turn call <strong>Foo.mix</strong> and <strong>Foo.bake</strong> respectively.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>class Cake
+  def make
+    mix_ingredients
+    bake
+  end
+
+  def mix_ingredients
+    Foo.mix
+  end
+
+  private
+
+  def bake
+    Foo.bake
+  end
+end
+
+class Foo
+  def self.mix
+  end
+
+  def self.bake
+  end
+end
+</code></pre>
+</div>
+
+<p>If we were to write a test for <strong>make</strong>, certainly we would want to test that <strong>mix_ingredients</strong> and <strong>bake</strong> get called.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>describe Cake do
+  describe '#make' do
+    it 'calls mix_ingredients and bake' do
+      expect_any_instance_of(described_class).to receive(:mix_ingredients)
+      expect_any_instance_of(described_class).to receive(:bake)
+
+      described_class.new.make
+    end
+  end
+end
+</code></pre>
+</div>
+
+<p>However since <strong>mix_ingredients</strong> calls <strong>Foo.mix</strong> and <strong>bake</strong> calls <strong>Foo.bake</strong> would we also want to test that those get called in our test for <strong>make</strong>?  The answer is it depends on whether these get called inside public or private methods.</p>
+
+<p>Taking a look at <strong>mix_ingredients</strong> we see that it’s a public method.  Since all public methods should be tested, we know that we will have a separate test for it and it will check if <strong>Foo.mix</strong> is called.  Here is our updated test file with the test for <strong>mix_ingredients</strong>.</p>
+
+<pre>
+describe Cake do
+  describe '#make' do
+    it 'calls mix_ingredients and bake' do
+      expect_any_instance_of(described_class).to receive(:mix_ingredients)
+      expect_any_instance_of(described_class).to receive(:bake)
+
+      described_class.new.make
+    end
+  end
+  <b>
+  describe '#mix_ingredients' do
+    it 'calls mix on Foo' do
+      expect(Foo).to receive(:mix)
+
+      described_class.new.mix_ingredients
+    end
+  end </b>
+end
+</pre>
+
+<p>But what about <strong>bake</strong>?  Since we don’t test private methods we won’t have a test for this.  However, we still want to test that it calls <strong>Foo.bake</strong>.  Since <strong>bake</strong> gets called when <strong>make</strong> gets called, we need to add a test for this in our <strong>make</strong> test.</p>
+
+<pre>
+describe Cake do
+  describe '#make' do
+    it 'calls mix_ingredients and bake' do
+      expect_any_instance_of(described_class).to receive(:mix_ingredients)
+      expect_any_instance_of(described_class).to receive(:bake)
+
+      described_class.new.make
+    end
+  <b>
+    it 'calls bake on Foo' do
+      expect(Foo).to receive(:bake)
+
+      described_class.new.make
+    end
+  end
+  </b>
+
+  describe '#mix_ingredients' do
+    it 'calls mix on Foo' do
+      expect(Foo).to receive(:mix)
+
+      described_class.new.mix_ingredients
+    end
+  end
+end
+</pre>
+
+<p>In summary, determining the scope of what to test inside of a method that calls other methods, depends on whether public or private methods get called within it.  If a public method is called, then it will have it’s own test and you only need to test that this public method gets called.  If a private method is called, then it won’t have it’s own test, so you’ll need to test what’s happening inside the private method.</p>
 
   </div>
   
@@ -171,133 +247,133 @@
 
     <p>At work I saw an interesting version of the namespace resolution operator, aka the double colon operator.  Previously I had only seen it used to gain access inside scoped modules.  Such as gaining access to the ID defined inside module B below:</p>
 
-<p>```
-module A
+<div class="highlighter-rouge"><pre class="highlight"><code>module A
   module B
     ID = 3
   end
-end</p>
+end
 
-<p>puts A::B::ID
-» 3
-```</p>
+puts A::B::ID
+&gt;&gt; 3
+</code></pre>
+</div>
 
 <p>But this time it was used at the beginning of a scoped chain of modules like inside module B below:</p>
 
-<p>```
-module C
+<div class="highlighter-rouge"><pre class="highlight"><code>module C
   ID = 3
-end</p>
+end
 
-<p>module A
+module A
   module C
   ID = 4
     module B
       ID = ::C::ID
     end
   end
-end</p>
+end
 
-<p>puts A::C::B::ID
-» 3
-```</p>
+puts A::C::B::ID
+&gt;&gt; 3
+</code></pre>
+</div>
 
 <p>This is called the root namespace resolution operator and it specifies that you are looking for a root level module.  A root level module is one that is not scoped inside another module.  So in this case, it is the module C defined on top which has the ID of 3.</p>
 
 <p>Why was this needed?  It was needed so that it wouldn’t find the scoped module A::C’s ID instead.  For example if we removed the root operator like below, it would return 4 instead of 3.</p>
 
-<p>```
-module C
+<div class="highlighter-rouge"><pre class="highlight"><code>module C
   ID = 3
-end</p>
+end
 
-<p>module A
+module A
   module C
   ID = 4
     module B
       ID = C::ID
     end
   end
-end</p>
+end
 
-<p>puts A::C::B::ID
-» 4
-```</p>
+puts A::C::B::ID
+&gt;&gt; 4
+</code></pre>
+</div>
 
 <p>In fact, if we did not have the ID = 4 defined inside the scoped module C, it would error out and never find the root level module C ID, like below.</p>
 
-<p>```
-module C
+<div class="highlighter-rouge"><pre class="highlight"><code>module C
   ID = 3
-end</p>
+end
 
-<p>module A
+module A
   module C
     module B
       ID = C::ID
     end
   end
-end</p>
+end
 
-<p>puts A::C::B::ID
-» error
-```</p>
+puts A::C::B::ID
+&gt;&gt; error
+</code></pre>
+</div>
 
 <p>Why does the scoped A::C take precedence over the root level C in the above case?
 Because when you call C::ID inside of module B, it starts from where it is inside the scope and moves outward through it’s surrounding modules.  It then finds the outer module A::C and looks for an ID there.  Because it found a module C, it stops there and does not continue even though it has no ID defined, and does not continue to look for the root module C.</p>
 
 <p>Also it is important to note that when two modules have the same name but are scoped differently they are completely different modules.  In fact they might as well have different names.  For example below:</p>
 
-<p>```
-module C
+<div class="highlighter-rouge"><pre class="highlight"><code>module C
   ID = 1
-end</p>
+end
 
-<p>module A
+module A
   module C
     ID = 2
   end
-end</p>
+end
 
-<p>puts C::ID
-» 1
+puts C::ID
+&gt;&gt; 1
 puts A::C::ID
-» 2
-```</p>
+&gt;&gt; 2
+</code></pre>
+</div>
 
 <p>This is not to be confused with monkey patching a module, for example the code below first defines a root level module C with a constant of ONE, then it monkey patches the same root level module to add another constant TWO.  You can monkey patch a module or class as many times as you want, Ruby doesn’t care.</p>
 
-<p>```
-module C
+<div class="highlighter-rouge"><pre class="highlight"><code>module C
   ONE = 1
-end</p>
+end
 
-<p>module C
+module C
   TWO = 2
-end</p>
+end
 
-<p>puts C::ONE
-» 1
+puts C::ONE
+&gt;&gt; 1
 puts C::TWO
-» 2
-```</p>
+&gt;&gt; 2
+</code></pre>
+</div>
 
 <p>However, if you tried to monkey patch into a module with the same name but on a different scoped level it would not work because they’re two entirely different modules.</p>
 
-<p>```
-module C
+<div class="highlighter-rouge"><pre class="highlight"><code>module C
   ONE = 1
-end</p>
+end
 
-<p>module A
+module A
   module C
     TWO = 2
   end
-end</p>
+end
 
-<p>puts C::TWO
-» error
-```</p>
+puts C::TWO
+&gt;&gt; error
+</code></pre>
+</div>
 
   </div>
   
@@ -313,71 +389,71 @@ end</p>
     <p>We’ve seen the use of include for including methods from a module into a Class.
 The following shows three modules included into Class A:</p>
 
-<p>```
-module B
+<div class="highlighter-rouge"><pre class="highlight"><code>module B
   def b
     :b
   end
-end</p>
+end
 
-<p>module C
+module C
   def c
     :c
   end
-end</p>
+end
 
-<p>module D
+module D
   def d
     :d
   end
-end</p>
+end
 
-<p>class A
+class A
   include B
   include C
   include D
 end
-```</p>
+</code></pre>
+</div>
 
 <p>Include turns the methods inside the module into <em>instance</em> methods for that class:</p>
 
-<p><code>
-puts A.new.b &gt;&gt; b
+<div class="highlighter-rouge"><pre class="highlight"><code>puts A.new.b &gt;&gt; b
 puts A.new.c &gt;&gt; c
 puts A.new.d &gt;&gt; d
-</code></p>
+</code></pre>
+</div>
 
 <p>However you can also change the methods into <em>class</em> methods by using extend:</p>
 
-<p>```
-module B
+<div class="highlighter-rouge"><pre class="highlight"><code>module B
   def b
     :b
   end
-end</p>
+end
 
-<p>module C
+module C
   def c
     :c
   end
-end</p>
+end
 
-<p>module D
+module D
   def d
     :d
   end
-end</p>
+end
 
-<p>class A
+class A
   extend B
   extend C
   extend D
-end</p>
+end
 
-<p>puts A.b » b
-puts A.c » c
-puts A.d » d
-```</p>
+puts A.b &gt;&gt; b
+puts A.c &gt;&gt; c
+puts A.d &gt;&gt; d
+</code></pre>
+</div>
 
 <p>Notice how we didn’t have to change the method definitions inside the module to self.method.
 This is because modules have no sense of Class, they’re just buckets for methods.  They are called
@@ -389,38 +465,38 @@ classes with their ‘methods’ (in a good way in this case), in the sense that
 <p>I wrote include in class A three times which is repetitive.  If you find that you are
 including modules in a class many times you can avoid this by using the self.included module method.</p>
 
-<p>```
-module B
+<div class="highlighter-rouge"><pre class="highlight"><code>module B
   def self.included(klass)
     klass.include C
     klass.include D
-  end</p>
+  end
 
-<p>def b
+  def b
     :b
   end
-end</p>
+end
 
-<p>module C
+module C
   def c
     :c
   end
-end</p>
+end
 
-<p>module D
+module D
   def d
     :d
   end
-end</p>
+end
 
-<p>class A
+class A
   include B
-end</p>
+end
 
-<p>puts A.new.b » b
-puts A.new.c » c
-puts A.new.d » d
-```</p>
+puts A.new.b &gt;&gt; b
+puts A.new.c &gt;&gt; c
+puts A.new.d &gt;&gt; d
+</code></pre>
+</div>
 
 <p>Now there is only ‘include B’ inside class A.  Whenever B is included in a Class, it calls self.included
 which passes in the class A as an argument.  “self.included” then included modules C and D into the klass
@@ -439,17 +515,17 @@ passed as the argument which in our case is class A.</p>
 
     <p>At my work we have a North America team and a China team.  Part of our workflow is to review each others merge requests before merging.  As a junior developer I often see things that I have never seen before and must make an educated decision about whether the unfamiliar pattern is a genuine coding error or deviation from best practices, or just something new I don’t know about.  And because the person who wrote the code is in China in an opposite time zone, it’s not easy to ask them directly about it.  So, while reviewing an MR I saw a use of the try method that I had never seen before.  Here is a simplified version:</p>
 
-<p>```
-class Order
+<div class="highlighter-rouge"><pre class="highlight"><code>class Order
   def grand_total
     sub_total.try(:*, sales_tax)
-  end</p>
+  end
 
-<p>def sub_total
+  def sub_total
     FooBar.baz
   end
 end
-```</p>
+</code></pre>
+</div>
 
 <p>Here the asterisk is the multiplication operator.  Try is trying to multiply sub_total by sales_tax.  If sub_total is nil, it will return nil, instead of erroring out as would happen when trying to multiply nil by a number.</p>
 
@@ -457,45 +533,44 @@ end
 
 <p>The first alternative is to use an if statement.</p>
 
-<p>```
-class Order
+<div class="highlighter-rouge"><pre class="highlight"><code>class Order
   def grand_total
     if subtotal
       (sub_total * sales_tax)
     else
       nil
     end
-  end</p>
+  end
 
-<p>def sub_total
+  def sub_total
     FooBar.baz
   end
 end
-```</p>
+</code></pre>
+</div>
 
 <p>If there’s a subtotal it will perform the multiplication, if there is not it will return nil.  Since by default nil is what is returned by else, you can take out the else and make the statement one line.</p>
 
-<p>```
-class Order
+<div class="highlighter-rouge"><pre class="highlight"><code>class Order
   def grand_total
     (sub_total * sales_tax) if sub_total
-  end</p>
+  end
 
-<p>def sub_total
+  def sub_total
     FooBar.baz
   end
 end
-```</p>
+</code></pre>
+</div>
 
 <p>What if we wanted to return 0 instead of nil if there was no sub_total?  We could go back to the if else statement but sometimes it can be better to use a Null Object pattern, which is the second alternative.</p>
 
-<p>```
-class Order
+<div class="highlighter-rouge"><pre class="highlight"><code>class Order
   def grand_total
     sub_total * sales_tax
-  end</p>
+  end
 
-<p>def sub_total
+  def sub_total
     result = FooBar.baz
     if result
       result
@@ -503,14 +578,15 @@ class Order
       NullOrder.new.sub_total
     end
   end
-end</p>
+end
 
-<p>class NullOrder
+class NullOrder
   def sub_total
     0
   end
 end
-```</p>
+</code></pre>
+</div>
 
 <p>Going into the sub_total method, if we get a result from FooBar.baz we return it, if it is nil then we return an instance of NullOrder which has a sub_total of 0.</p>
 
@@ -520,17 +596,17 @@ end
 
 <p>In order to prevent an error in case someone tries to call an undefined method on the NullOrder, we can override the method_missing method to return whatever we want.  For example:</p>
 
-<p>```
-class NullOrder
+<div class="highlighter-rouge"><pre class="highlight"><code>class NullOrder
   def method_missing(*_args)
     nil
-  end</p>
+  end
 
-<p>def sub_total
+  def sub_total
     0
   end
 end
-```</p>
+</code></pre>
+</div>
 
 <p>If someone were to call NullOrder.new.whatever, the method_missing method gets called which by default will raise an error.  Instead we override it to return nil.  We add a splat argument in case someone calls an undefined method on it that has arguments.  The underscore in  front of “args” denotes that it’s something that’s not supposed to be used.</p>
 

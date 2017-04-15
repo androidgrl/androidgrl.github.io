@@ -50,29 +50,6 @@
 
     
     
-      
-        
-      
-    
-      
-        
-      
-    
-      
-        
-        
-      
-    
-      
-    
-      
-        
-      
-    
-      
-        
-      
-    
   </nav>
 
   <div class="sidebar-item">
@@ -109,37 +86,37 @@
 
     <p>A few times I’ve been told during code review that something violates the Law of Demeter.  This method for example.</p>
 
-<p><code>
-class User
+<div class="highlighter-rouge"><pre class="highlight"><code>class User
   def user_info
     "#{user.name}, #{user.department.name}"
   end
 end
-</code></p>
+</code></pre>
+</div>
 
 <p>Which led me to ask: what is the Law of Demeter, why should I follow it, how do I know if I’m violating it, and how do I avoid violating it?</p>
 
 <p>The Law of Demeter is formally defined as,</p>
 
-<p><code>
-A method of an object may only call methods of:
+<div class="highlighter-rouge"><pre class="highlight"><code>A method of an object may only call methods of:
   The object itself.
   An argument of the method.
   Any object created within the method.
   Any direct properties/fields of the object.
-</code></p>
+</code></pre>
+</div>
 
 <p>The above code sample violates the law with “user.department.name” because it’s calling name on the user’s department, and department is an entirely different object from a user.</p>
 
 <p>In general it is better if one class does not have to know about methods from another class, in other words when the classes are “decoupled”.  This is because it makes the code more flexible.  For example in our code sample, there is only one department for a user.  But what happens if things changed so that a user could have many departments and we wanted the only use the first one for our user_info method?  We would then have to say:</p>
 
-<p><code>
-class User
+<div class="highlighter-rouge"><pre class="highlight"><code>class User
   def user_info
     "#{user.name}, #{user.departments.first.name}"
   end
 end
-</code></p>
+</code></pre>
+</div>
 
 <p>This seems reasonable for now but what if we used “user.department” in multiple places?  We’d have to make the same change wherever it was used, which would be cumbersome.</p>
 
@@ -147,27 +124,27 @@ end
 
 <p>You could make a custom method in the User class called “department_name”:</p>
 
-<p>```
-class User
+<div class="highlighter-rouge"><pre class="highlight"><code>class User
   def user_info
-    “#{user.name}, #{user.department_name}”
-  end</p>
+    "#{user.name}, #{user.department_name}"
+  end
 
-<p>def department_name
+  def department_name
     departments.first.name
   end
 end
-```</p>
+</code></pre>
+</div>
 
 <p>Now the department_name is an immediate property of the user itself, satisfying the law and also making it easier to make future changes if we want to change what we use for the department’s name.</p>
 
 <p>One sign that is often but not always an indication of Demeter violation is chaining of dots.  For example “user.departments.first.name” had chained dots and indeed was a violation.  However, sometimes dot chaining does not mean Demeter violation for example:</p>
 
-<p><code>
-def slug(string)
+<div class="highlighter-rouge"><pre class="highlight"><code>def slug(string)
   string.strip.downcase.tr_s('^[a-z0-9]', '-')
 end
-</code></p>
+</code></pre>
+</div>
 
 <p>The above complies with the Law of Demeter because each method is called on a String object.  And the law doesn’t care about the number of methods called, but the number of <em>types</em> of methods called.</p>
 
@@ -188,9 +165,9 @@ end
 
 <p>For example say I wanted to search for the keyword “organization” in files that end in spec.rb.  I would use:</p>
 
-<p><code>
-&gt; Ag organization -G spec.rb$
-</code></p>
+<div class="highlighter-rouge"><pre class="highlight"><code>&gt; Ag organization -G spec.rb$
+</code></pre>
+</div>
 
 <p>The -G flag tells Ag to look for the term inside files with names containing spec.rb.  It can accept a regex which is what the $ is for.  The $ indicates that I want to search in files that end in spec.rb, not just files that have spec.rb somewhere within their names.</p>
 
@@ -198,9 +175,9 @@ end
 
 <p>Ag has a literal expression flag -Q to specify that you’re searching for a literal expression not a regex.  In order to search for “.try” you would use:</p>
 
-<p><code>
-&gt; Ag -Q .try
-</code></p>
+<div class="highlighter-rouge"><pre class="highlight"><code>&gt; Ag -Q .try
+</code></pre>
+</div>
 
 <p>For more  information see <a href="http://conqueringthecommandline.com/book/ack_ag">Conquering the Command Line, by Mark Bates</a></p>
 
@@ -220,34 +197,34 @@ end
 <p>Start by making a custom error class that inherits from StandardError.  This will give you a more descriptive error instead of raising the generic StandardError, so you can better deduce where the error came from.
  I will use a hypothetical example of an error that is raised when a User is being created.</p>
 
-<p><code>
-class UserCreateError &lt; StandardError
+<div class="highlighter-rouge"><pre class="highlight"><code>class UserCreateError &lt; StandardError
 end
-</code></p>
+</code></pre>
+</div>
 
 <p>Each custom error class should have it’s own file which you can put in an app/errors directory.</p>
 
 <p>Here I will raise the error in a User model method.</p>
 
-<p><code>
-class User &lt; ActiveRecord::Base
+<div class="highlighter-rouge"><pre class="highlight"><code>class User &lt; ActiveRecord::Base
   def self.example_method
     raise UserCreateError
   end
 end
-</code></p>
+</code></pre>
+</div>
 
 <p>When the create action is called on the controller, it will call User.example_method, which will raise the error.  The error then goes back up to the controller where it is rescued.</p>
 
-<p><code>
-class UsersController &lt; ApplicationController
+<div class="highlighter-rouge"><pre class="highlight"><code>class UsersController &lt; ApplicationController
   def create
     User.example_method
   rescue UserCreateError
     render json: "Invalid User Information", status: :bad_request
   end
 end
-</code></p>
+</code></pre>
+</div>
 
 <p>Note the indentation of the rescue is on the same column as the def.</p>
 
@@ -275,29 +252,28 @@ You only need it to set instance variables and to allow passing of arguments whe
 
 <p>Let’s make a class with a single instance method and no initialize method.</p>
 
-<p><code>
-class Holiday
+<div class="highlighter-rouge"><pre class="highlight"><code>class Holiday
   def statement
     "I'm going to the beach"
   end
 end
 puts Holiday.new
 puts Holiday.new.statement
-</code></p>
+</code></pre>
+</div>
 
 <p>If we run the code, the “puts” outputs the following, and we see that Holiday.new instantiates an object just fine and we can call the method statement on it:</p>
 
-<p><code>
-#&lt;Holiday:0x007fe194093d00&gt;
+<div class="highlighter-rouge"><pre class="highlight"><code>#&lt;Holiday:0x007fe194093d00&gt;
 I'm going to the beach
-</code></p>
+</code></pre>
+</div>
 
 <p><strong>Example two:</strong> <em>You don’t need it to use attr_accessors</em></p>
 
 <p>Let’s make a class with an attr_accessor and no initialize method.  We instantiate two different holiday objects, and then using the attr_accessors set a separate location attribute for each.</p>
 
-<p><code>
-class Holiday
+<div class="highlighter-rouge"><pre class="highlight"><code>class Holiday
   attr_accessor :location
   def statement
     "I'm going on holiday to #{location}"
@@ -309,34 +285,34 @@ holiday1.location = "Europe"
 holiday2.location = "Hawaii"
 puts holiday1.statement
 puts holiday2.statement
-</code></p>
+</code></pre>
+</div>
 
 <p>The output shows that the attr_accessors still work without the initialize method.</p>
 
-<p><code>
-I'm going on holiday to Europe
+<div class="highlighter-rouge"><pre class="highlight"><code>I'm going on holiday to Europe
 I'm going on holiday to Hawaii
-</code></p>
+</code></pre>
+</div>
 
 <p><strong>Example three:</strong> <em>You DO need it to set instance variables</em></p>
 
 <p>The following is a class that tries to set an instance variable @word to equal “whatever”.
 The output is nothing, because instance variables need to be put inside an initialize method.</p>
 
-<p><code>
-class Random
+<div class="highlighter-rouge"><pre class="highlight"><code>class Random
   @word = "whatever"
   def whatever
     @word
   end
 end
 puts Random.new.whatever
-</code></p>
+</code></pre>
+</div>
 
 <p>The following will correctly result in an output of “whatever”.</p>
 
-<p><code>
-class Random
+<div class="highlighter-rouge"><pre class="highlight"><code>class Random
   def initialize
     @word = "whatever"
   end
@@ -345,57 +321,58 @@ class Random
   end
 end
 puts Random.new.whatever
-</code></p>
+</code></pre>
+</div>
 
 <p><strong>Example four:</strong> <em>You DO need it to allow arguments to be passed in when instantiating a Class</em></p>
 
 <p>The following code tries to pass in a string argument into the “new” method.</p>
 
-<p>```
-class Random
-end</p>
+<div class="highlighter-rouge"><pre class="highlight"><code>class Random
+end
 
-<p>puts Random.new(“whatever”)
-```</p>
+puts Random.new("whatever")
+</code></pre>
+</div>
 
 <p>This results in an error.</p>
 
-<p><code>
-new.rb:35:in `initialize': no implicit conversion of String into Integer (TypeError)
+<div class="highlighter-rouge"><pre class="highlight"><code>new.rb:35:in `initialize': no implicit conversion of String into Integer (TypeError)
         from new.rb:35:in `new'
         from new.rb:35:in `&lt;main&gt;'
-</code></p>
+</code></pre>
+</div>
 
 <p>You need to specify that there are arguments in the initialize method for “new” method to be able to take any.
 However, you don’t have to actually do anything with the arguments in the initialize method.</p>
 
-<p>```
-class Random
+<div class="highlighter-rouge"><pre class="highlight"><code>class Random
   def initialize(word)
   end
-end</p>
+end
 
-<p>puts Random.new(“whatever”)
-```</p>
+puts Random.new("whatever")
+</code></pre>
+</div>
 
 <p>This will result in the object being successfully instantiated, as shown in the output below.</p>
 
-<p><code>
-#&lt;Random:0x007fbbb9170cd8&gt;
-</code></p>
+<div class="highlighter-rouge"><pre class="highlight"><code>#&lt;Random:0x007fbbb9170cd8&gt;
+</code></pre>
+</div>
 
 <p>If you wanted to actually have access to the attribute then you would have to set it as an instance variable inside the initialize method, and set an attr_reader.</p>
 
-<p>```
-class Random
+<div class="highlighter-rouge"><pre class="highlight"><code>class Random
   attr_reader :word
   def initialize(word)
     @word = word
   end
-end</p>
+end
 
-<p>puts Random.new(“whatever”).word
-```</p>
+puts Random.new("whatever").word
+</code></pre>
+</div>
 
 <p>Which will output “whatever”.</p>
 
@@ -424,51 +401,51 @@ end</p>
 
 <p>The best way to demonstrate how they work is to pry into an rspec file.  This assumes that you are already familiar with setting up an Rspec test file in a Rails app. In the Rspec file, inside an “it” block place a binding.pry.</p>
 
-<p><code>
-    it "demonstrates doubles" do
+<div class="highlighter-rouge"><pre class="highlight"><code>    it "demonstrates doubles" do
       binding.pry
     end
-</code></p>
+</code></pre>
+</div>
 
 <p>In the pry session, define a spy, then try to call undefined methods on it.  It will keep returning a double.  So spies, are just generic doubles that will keep giving you a double no matter what methods you call on them.</p>
 
-<p><code>
-pry(#&lt;RSpec&gt;)&gt; s=spy
+<div class="highlighter-rouge"><pre class="highlight"><code>pry(#&lt;RSpec&gt;)&gt; s=spy
 =&gt; #&lt;Double (anonymous)&gt;
 pry(#&lt;RSpec&gt;)&gt; s.what?
 =&gt; #&lt;Double (anonymous)&gt;
 pry(#&lt;RSpec&gt;)&gt; s.anything?
 =&gt; #&lt;Double (anonymous)&gt;
-</code></p>
+</code></pre>
+</div>
 
 <p>Moving towards more specificity, define a double.  Below a double is defined with a method called name that returns the string “androidgrl”.  When we call name on the double it returns “androidgrl”.  What happens when we call an undefined method like “age” on the double?  It gives us an error unlike with spies.  So with doubles, you have to define methods that can be called on them.</p>
 
-<p><code>
-pry(#&lt;RSpec&gt;)&gt; d=double(name: "androidgrl")
+<div class="highlighter-rouge"><pre class="highlight"><code>pry(#&lt;RSpec&gt;)&gt; d=double(name: "androidgrl")
 =&gt; #&lt;Double (anonymous)&gt;
 pry(#&lt;RSpec&gt;)&gt; d.name
 =&gt; "androidgrl"
 pry(#&lt;RSpec&gt;)&gt; d.age
 RSpec::Mocks::MockExpectationError: #&lt;Double (anonymous)&gt; received unexpected message :age with (no args)
 from /opt/active/acl_api/current/vendor/bundle/ruby/2.1.0/gems/rspec-support-3.3.0/lib/rspec/support.rb:86:in `block in &lt;module:Support&gt;'
-</code></p>
+</code></pre>
+</div>
 
 <p>And finally, we have the most specific type of double, instance_doubles.  Here we have to specify which Class we’re defining the double for.  This has to be an actual class that exists either in your application or inherited through Ruby.  Here we’re stubbing out the “count” method on the Array class to always return 3.  Notice that when we try to define a method on Array that doesn’t actually exist we get an error.  Also when we try to make an instance double for a Class that doesn’t exist we get an error.</p>
 
-<p><code>
-pry(#&lt;RSpec&gt;)&gt; i=instance_double(Array, count: 3)
+<div class="highlighter-rouge"><pre class="highlight"><code>pry(#&lt;RSpec&gt;)&gt; i=instance_double(Array, count: 3)
 =&gt; #&lt;InstanceDouble(Array) (anonymous)&gt;
 pry(#&lt;RSpec&gt;)&gt; i.count
 =&gt; 3
 pry(#&lt;RSpec&gt;)&gt; i=instance_double(Array, whatever: "?")
 RSpec::Mocks::MockExpectationError: the Array class does not implement the instance method: whatever
 from /opt/active/acl_api/current/vendor/bundle/ruby/2.1.0/gems/rspec-support-3.3.0/lib/rspec/support.rb:86:in `block in &lt;module:Support&gt;'
-</code>
-<code>
-pry(#&lt;RSpeci=instance_double(FakeClass, fake_method: "fake")
+</code></pre>
+</div>
+<div class="highlighter-rouge"><pre class="highlight"><code>pry(#&lt;RSpeci=instance_double(FakeClass, fake_method: "fake")
 NameError: uninitialized constant TM::FakeClass
 from (pry):14:in `block (2 levels) in &lt;module:TM&gt;'
-</code></p>
+</code></pre>
+</div>
 
 <p>In summary:</p>
 
