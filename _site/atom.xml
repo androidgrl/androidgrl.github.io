@@ -4,7 +4,7 @@
  <title>Androidgrl's Blog</title>
  <link href="http://androidgrl.github.io/atom.xml" rel="self"/>
  <link href="http://androidgrl.github.io/"/>
- <updated>2019-01-01T17:44:46-08:00</updated>
+ <updated>2019-01-01T17:58:45-08:00</updated>
  <id>http://androidgrl.github.io</id>
  <author>
    <name>Jamie Kawahara</name>
@@ -19,19 +19,19 @@
    <id>http://androidgrl.github.io/2019/01/01/binary</id>
    <content type="html">&lt;p&gt;Most software engineers know that a computer stores data as binary code, and that binary code consists of 0’s and 1’s.  However, the 0’s and 1’s themselves are just abstract symbols that represent real physical states within a computer.  In this blog, I will give an overview of these physical states.&lt;/p&gt;
 
-&lt;p&gt;Before proceeding I would like to give a brief overview of the mechanisms by which computers store data.  Computers use two main mechanisms to store data: memory and storage.  Memory is used to temporarily store data that the computer uses while it is actively processing things.  Memory is considered “volatile” in that it disappears when the computer is powered off.  Memory is what is commonly referred to when people say “RAM”.&lt;/p&gt;
+&lt;p&gt;Before proceeding I would like to give a brief overview of the mechanisms by which computers store data.  Computers use two main mechanisms to store data: memory and storage.  Memory is used to temporarily store data that the computer uses while it is actively processing things.  Memory is considered “volatile” in that it disappears when the computer is powered-off.  Memory is what is commonly referred to when people say “RAM”.&lt;/p&gt;
 
-&lt;p&gt;Storage on the other hand is what the computer uses to store long term data like photos, music, and documents.  Unlike memory, storage is “non-volatile” and remains after the computer is powered off.  Therefore things like music and documents do not disappear when you power-off your computer.  Historically a computer’s storage device has been a hard disk drive or “HDD”.  Most computers nowadays however use a solid state drive or “SSD”.&lt;/p&gt;
+&lt;p&gt;Storage on the other hand is what the computer uses to store long term data like photos, music, and documents.  Unlike memory, storage is “non-volatile” and remains after the computer is powered-off.  Therefore things like music and documents do not disappear when you power-off your computer.  Historically a computer’s storage device has been a hard disk drive or “HDD”.  Most computers nowadays however use a solid state drive or “SSD”.&lt;/p&gt;
 
-&lt;p&gt;So, we have our three main mechanisms for data storage: “RAM”, “HDD”, and “SSD” and we will now examine how they store their binary data.&lt;/p&gt;
+&lt;p&gt;So, we have our three main mechanisms for data storage: “RAM”, “HDD”, and “SSD” and we will now examine how they store binary data.&lt;/p&gt;
 
 &lt;p&gt;&lt;strong&gt;RAM&lt;/strong&gt;&lt;/p&gt;
 
-&lt;p&gt;A RAM memory chip stores binary data through billions of tiny capacitors.  Each capacitor is like a microscopic bucket that holds electrons.  When a capacitor is charged, it’s bucket is filled with electrons.  When it is not charged, the bucket is empty.  Whether or not a capacitor is full or empty determines whether it represents a “0” or “1”.  A charged state is considered a “1”, and an un-charged state is considered a “0”.  Since each “0” or “1” is considered a “bit” of data, and there are 8 bits in a “byte”, and a typical computer has 8 gigabytes of memory, then there can be approximately 8X8e+9 or (64 billion) RAM memory cells in a computer!  See photo below showing microscopic RAM capacitors.  For a sense of scale, the width of the photo is approximately 1/300th the width of a human hair.&lt;/p&gt;
+&lt;p&gt;A RAM memory chip stores binary data through billions of tiny capacitors.  Each capacitor is like a microscopic bucket that holds electrons.  When a capacitor is charged, it’s bucket is filled with electrons.  When it is not charged, the bucket is empty.  Whether or not a capacitor is full or empty determines whether it represents a “0” or “1”.  A charged state is considered a “1”, and an un-charged state is considered a “0”.  Since each “0” or “1” is considered a “bit” of data, and there are 8 bits in a “byte”, and a typical computer can have 8 gigabytes of memory, then there can be approximately 8X8e+9 or (64 billion) RAM memory cells in a computer!  See photo below showing microscopic RAM capacitors.  For a sense of scale, the width of the photo is approximately 1/300th the width of a human hair.&lt;/p&gt;
 
 &lt;p&gt;&lt;img src=&quot;./public/dramcapacitor.png&quot; alt=&quot;dram&quot; /&gt;&lt;/p&gt;
 
-&lt;p&gt;As an aside, RAM capacitors are like leaky buckets which continuously leak out the electrons they’re holding.  Therefore, when the computer is powered on there is a constant refilling of the buckets that happens multiple times per second.  When the computer is powered-off the buckets drain-out which is why RAM memory is not retained after powering-off.&lt;/p&gt;
+&lt;p&gt;As an aside, RAM capacitors are like leaky buckets which continuously leak out the electrons they’re holding.  Therefore, when the computer is powered-on there is a constant refilling of the buckets that happens multiple times per second.  When the computer is powered-off the buckets drain-out which is why RAM memory is not retained after powering-off.&lt;/p&gt;
 
 &lt;p&gt;&lt;strong&gt;HDD&lt;/strong&gt;&lt;/p&gt;
 
@@ -43,7 +43,15 @@
 
 &lt;p&gt;&lt;img src=&quot;./public/magnetic.png&quot; alt=&quot;magnetic&quot; /&gt;&lt;/p&gt;
 
-&lt;p&gt;A common misconception is that household magnets placed near an HDD can cause memory loss through disrupting the magnetic line patterns.  This is false since most household magnets are not powerful enough to do this.  However, very powerful magnets called “degaussers” are made and used specifically for erasing hard disks.&lt;/p&gt;
+&lt;p&gt;A common misconception is that household magnets placed near an HDD can cause memory loss through disrupting the magnetic line patterns.  This is false since most household magnets are not powerful enough to do this.  However, very powerful magnets called “degaussers” are made and used specifically for erasing hard disks by randomizing or scrambling the line patterns.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;SDD&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;A solid state drive stores binary data through billions of tiny transistors.  Each transistor can either exist in a charged or un-charged state.  A charged state is considered a “0”, and an un-charged state a “1”.  Unlike RAM capacitors, SSD transistors are designed to hold their charge after the computer is powered-off.  Therefore, data is not lost after powering-off.  Below is a cross section of three memory cells.  The width of the photo is approximately 1/300th the width of a human hair.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;./public/ssd.png&quot; alt=&quot;ssd&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;In summary, the 0’s and 1’s of binary code are abstract symbols which represent real physical states within a computer.  For RAM it is the electric charge inside tiny capacitors, for HDD’s it is the magnetic charge of tiny lines, for SSD’s it is the electric charge inside tiny transistors.&lt;/p&gt;
 </content>
  </entry>
  
