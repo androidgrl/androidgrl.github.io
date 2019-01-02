@@ -73,6 +73,10 @@
         
       
     
+      
+        
+      
+    
   </nav>
 
   <div class="sidebar-item">
@@ -97,6 +101,116 @@
 
       <div class="container content">
         <div class="posts">
+  
+  <div class="post">
+    <h1 class="post-title">
+      <a href="//2017/01/14/try/">
+        Alternatives to Using the Try method
+      </a>
+    </h1>
+
+    <span class="post-date">14 Jan 2017</span>
+
+    <p>At my work we have a North America team and a China team.  Part of our workflow is to review each others merge requests before merging.  As a junior developer I often see things that I have never seen before and must make an educated decision about whether the unfamiliar pattern is a genuine coding error or deviation from best practices, or just something new I don’t know about.  And because the person who wrote the code is in China in an opposite time zone, it’s not easy to ask them directly about it.  So, while reviewing an MR I saw a use of the try method that I had never seen before.  Here is a simplified version:</p>
+
+<p>```
+class Order
+  def grand_total
+    sub_total.try(:*, sales_tax)
+  end</p>
+
+<p>def sub_total
+    FooBar.baz
+  end
+end
+```</p>
+
+<p>Here the asterisk is the multiplication operator.  Try is trying to multiply sub_total by sales_tax.  If sub_total is nil, it will return nil, instead of erroring out as would happen when trying to multiply nil by a number.</p>
+
+<p>This seemed harmless enough but when I showed it to the team architect in North America he said that using try is like introducing cancer into the code base.  I believe his exact words were “OMG make it stop that try needs to die with fire”.  It seems harmless but then other people see it and start to use it and if allowed to continue can introduce a lot of uncertainty into the code.  It is better to know what kind of result your methods are returning.  We then had a pairing session to use alternative ways to handle nil cases without using try, and here are two of the alternatives we used:</p>
+
+<p>The first alternative is to use an if statement.</p>
+
+<p>```
+class Order
+  def grand_total
+    if subtotal
+      (sub_total * sales_tax)
+    else
+      nil
+    end
+  end</p>
+
+<p>def sub_total
+    FooBar.baz
+  end
+end
+```</p>
+
+<p>If there’s a subtotal it will perform the multiplication, if there is not it will return nil.  Since by default nil is what is returned by else, you can take out the else and make the statement one line.</p>
+
+<p>```
+class Order
+  def grand_total
+    (sub_total * sales_tax) if sub_total
+  end</p>
+
+<p>def sub_total
+    FooBar.baz
+  end
+end
+```</p>
+
+<p>What if we wanted to return 0 instead of nil if there was no sub_total?  We could go back to the if else statement but sometimes it can be better to use a Null Object pattern, which is the second alternative.</p>
+
+<p>```
+class Order
+  def grand_total
+    sub_total * sales_tax
+  end</p>
+
+<p>def sub_total
+    result = FooBar.baz
+    if result
+      result
+    else
+      NullOrder.new.sub_total
+    end
+  end
+end</p>
+
+<p>class NullOrder
+  def sub_total
+    0
+  end
+end
+```</p>
+
+<p>Going into the sub_total method, if we get a result from FooBar.baz we return it, if it is nil then we return an instance of NullOrder which has a sub_total of 0.</p>
+
+<p>We then no longer have to have branching inside the grand_total method.  It will either be the actual sub_total or the sub_total on the NullOrder which is 0.</p>
+
+<p>This is an example of Duck Typing.  Duck Typing is when we don’t care what type of object we’re dealing with only that it has certain behavior.  In this case  we just care that Order and NullOrder both have a sub_total method.</p>
+
+<p>In order to prevent an error in case someone tries to call an undefined method on the NullOrder, we can override the method_missing method to return whatever we want.  For example:</p>
+
+<p>```
+class NullOrder
+  def method_missing(*_args)
+    nil
+  end</p>
+
+<p>def sub_total
+    0
+  end
+end
+```</p>
+
+<p>If someone were to call NullOrder.new.whatever, the method_missing method gets called which by default will raise an error.  Instead we override it to return nil.  We add a splat argument in case someone calls an undefined method on it that has arguments.  The underscore in  front of “args” denotes that it’s something that’s not supposed to be used.</p>
+
+<p>In summary, the try method introduces uncertainty into the code because it makes it ok to not know what is being returned by a method.  Alternatives to using try are using if statements and the Null Object pattern.</p>
+
+  </div>
   
   <div class="post">
     <h1 class="post-title">
@@ -399,90 +513,6 @@ end</p>
 
 <p>Which will output “whatever”.</p>
 
-
-  </div>
-  
-  <div class="post">
-    <h1 class="post-title">
-      <a href="//2016/07/13/double/">
-        The difference between Rspec spies, doubles and instance_doubles
-      </a>
-    </h1>
-
-    <span class="post-date">13 Jul 2016</span>
-
-    <p>Throughout the code base of our Rails app at work, we have many Rspec tests that use spies, doubles and instance_doubles.  I found most of the information on the web about them to be very theoretical and not practical.  My coworker then explained it to me very clearly as follows:</p>
-
-<ol>
-  <li>
-    <p>All three terms belong under an umbrella term called “doubles”. In other words, a spy is a type of double, and so is an instance_double.</p>
-  </li>
-  <li>
-    <p>Spies, doubles, and instance_doubles are doubles that increase in their power of specificity in that order. So a double is more specific than a spy and an instance_double is more specific than a double.</p>
-  </li>
-</ol>
-
-<p>The best way to demonstrate how they work is to pry into an rspec file.  This assumes that you are already familiar with setting up an Rspec test file in a Rails app. In the Rspec file, inside an “it” block place a binding.pry.</p>
-
-<p><code>
-    it "demonstrates doubles" do
-      binding.pry
-    end
-</code></p>
-
-<p>In the pry session, define a spy, then try to call undefined methods on it.  It will keep returning a double.  So spies, are just generic doubles that will keep giving you a double no matter what methods you call on them.</p>
-
-<p><code>
-pry(#&lt;RSpec&gt;)&gt; s=spy
-=&gt; #&lt;Double (anonymous)&gt;
-pry(#&lt;RSpec&gt;)&gt; s.what?
-=&gt; #&lt;Double (anonymous)&gt;
-pry(#&lt;RSpec&gt;)&gt; s.anything?
-=&gt; #&lt;Double (anonymous)&gt;
-</code></p>
-
-<p>Moving towards more specificity, define a double.  Below a double is defined with a method called name that returns the string “androidgrl”.  When we call name on the double it returns “androidgrl”.  What happens when we call an undefined method like “age” on the double?  It gives us an error unlike with spies.  So with doubles, you have to define methods that can be called on them.</p>
-
-<p><code>
-pry(#&lt;RSpec&gt;)&gt; d=double(name: "androidgrl")
-=&gt; #&lt;Double (anonymous)&gt;
-pry(#&lt;RSpec&gt;)&gt; d.name
-=&gt; "androidgrl"
-pry(#&lt;RSpec&gt;)&gt; d.age
-RSpec::Mocks::MockExpectationError: #&lt;Double (anonymous)&gt; received unexpected message :age with (no args)
-from /opt/active/acl_api/current/vendor/bundle/ruby/2.1.0/gems/rspec-support-3.3.0/lib/rspec/support.rb:86:in `block in &lt;module:Support&gt;'
-</code></p>
-
-<p>And finally, we have the most specific type of double, instance_doubles.  Here we have to specify which Class we’re defining the double for.  This has to be an actual class that exists either in your application or inherited through Ruby.  Here we’re stubbing out the “count” method on the Array class to always return 3.  Notice that when we try to define a method on Array that doesn’t actually exist we get an error.  Also when we try to make an instance double for a Class that doesn’t exist we get an error.</p>
-
-<p><code>
-pry(#&lt;RSpec&gt;)&gt; i=instance_double(Array, count: 3)
-=&gt; #&lt;InstanceDouble(Array) (anonymous)&gt;
-pry(#&lt;RSpec&gt;)&gt; i.count
-=&gt; 3
-pry(#&lt;RSpec&gt;)&gt; i=instance_double(Array, whatever: "?")
-RSpec::Mocks::MockExpectationError: the Array class does not implement the instance method: whatever
-from /opt/active/acl_api/current/vendor/bundle/ruby/2.1.0/gems/rspec-support-3.3.0/lib/rspec/support.rb:86:in `block in &lt;module:Support&gt;'
-</code>
-<code>
-pry(#&lt;RSpeci=instance_double(FakeClass, fake_method: "fake")
-NameError: uninitialized constant TM::FakeClass
-from (pry):14:in `block (2 levels) in &lt;module:TM&gt;'
-</code></p>
-
-<p>In summary:</p>
-
-<ol>
-  <li>
-    <p>Instance_doubles have to be defined on Classes that actually exist in your code and you can only stub methods that actually exist.</p>
-  </li>
-  <li>
-    <p>Doubles can have any methods called on them as long as you define them in the double.</p>
-  </li>
-  <li>
-    <p>Spies don’t need to have anything defined on them and will always return a double.</p>
-  </li>
-</ol>
 
   </div>
   
