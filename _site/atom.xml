@@ -4,7 +4,7 @@
  <title>Androidgrl's Blog</title>
  <link href="http://androidgrl.github.io/atom.xml" rel="self"/>
  <link href="http://androidgrl.github.io/"/>
- <updated>2017-04-14T18:12:28-05:00</updated>
+ <updated>2019-01-01T17:08:49-08:00</updated>
  <id>http://androidgrl.github.io</id>
  <author>
    <name>Jamie Kawahara</name>
@@ -15,7 +15,7 @@
  <entry>
    <title>Determining the Scope of What to Test Inside Methods</title>
    <link href="http://androidgrl.github.io/2017/04/14/testing/"/>
-   <updated>2017-04-14T00:00:00-05:00</updated>
+   <updated>2017-04-14T00:00:00-07:00</updated>
    <id>http://androidgrl.github.io/2017/04/14/testing</id>
    <content type="html">
 </content>
@@ -24,7 +24,7 @@
  <entry>
    <title>What Makes a Language Fast?  Five Factors That Affect a Programming Language's Speed</title>
    <link href="http://androidgrl.github.io/2017/02/17/languages/"/>
-   <updated>2017-02-17T00:00:00-06:00</updated>
+   <updated>2017-02-17T00:00:00-08:00</updated>
    <id>http://androidgrl.github.io/2017/02/17/languages</id>
    <content type="html">&lt;p&gt;Often I have heard that Ruby is a slow language compared to other languages like Go and Elixir.  I have also heard of startups that originally build their apps on Rails but after hitting it big need to switch to a language like Java in order to scale up.  What are the factors that determine whether a language is considered fast?  How do companies choose which language is most appropriate for their application?  This blog will cover these five factors, a brief overview of how a language is run on your computer processor, and some considerations that go into deciding what is an optimal language for a particular end use.&lt;/p&gt;
 
@@ -69,7 +69,7 @@
  <entry>
    <title>The Namespace Resolution Operator, aka the "double colon operator"</title>
    <link href="http://androidgrl.github.io/2017/01/28/namespace/"/>
-   <updated>2017-01-28T00:00:00-06:00</updated>
+   <updated>2017-01-28T00:00:00-08:00</updated>
    <id>http://androidgrl.github.io/2017/01/28/namespace</id>
    <content type="html">&lt;p&gt;At work I saw an interesting version of the namespace resolution operator, aka the double colon operator.  Previously I had only seen it used to gain access inside scoped modules.  Such as gaining access to the ID defined inside module B below:&lt;/p&gt;
 
@@ -206,7 +206,7 @@ end&lt;/p&gt;
  <entry>
    <title>The difference between using include and extend when including modules in a Class</title>
    <link href="http://androidgrl.github.io/2017/01/19/modules/"/>
-   <updated>2017-01-19T00:00:00-06:00</updated>
+   <updated>2017-01-19T00:00:00-08:00</updated>
    <id>http://androidgrl.github.io/2017/01/19/modules</id>
    <content type="html">&lt;p&gt;We’ve seen the use of include for including methods from a module into a Class.
 The following shows three modules included into Class A:&lt;/p&gt;
@@ -329,7 +329,7 @@ passed as the argument which in our case is class A.&lt;/p&gt;
  <entry>
    <title>Alternatives to Using the Try method</title>
    <link href="http://androidgrl.github.io/2017/01/14/try/"/>
-   <updated>2017-01-14T00:00:00-06:00</updated>
+   <updated>2017-01-14T00:00:00-08:00</updated>
    <id>http://androidgrl.github.io/2017/01/14/try</id>
    <content type="html">&lt;p&gt;At my work we have a North America team and a China team.  Part of our workflow is to review each others merge requests before merging.  As a junior developer I often see things that I have never seen before and must make an educated decision about whether the unfamiliar pattern is a genuine coding error or deviation from best practices, or just something new I don’t know about.  And because the person who wrote the code is in China in an opposite time zone, it’s not easy to ask them directly about it.  So, while reviewing an MR I saw a use of the try method that I had never seen before.  Here is a simplified version:&lt;/p&gt;
 
@@ -435,7 +435,7 @@ end
  <entry>
    <title>Law of Demeter</title>
    <link href="http://androidgrl.github.io/2017/01/04/demeter/"/>
-   <updated>2017-01-04T00:00:00-06:00</updated>
+   <updated>2017-01-04T00:00:00-08:00</updated>
    <id>http://androidgrl.github.io/2017/01/04/demeter</id>
    <content type="html">&lt;p&gt;A few times I’ve been told during code review that something violates the Law of Demeter.  This method for example.&lt;/p&gt;
 
@@ -508,7 +508,7 @@ end
  <entry>
    <title>Refining Searches using Ag</title>
    <link href="http://androidgrl.github.io/2017/01/03/ag/"/>
-   <updated>2017-01-03T00:00:00-06:00</updated>
+   <updated>2017-01-03T00:00:00-08:00</updated>
    <id>http://androidgrl.github.io/2017/01/03/ag</id>
    <content type="html">&lt;p&gt;I use Ag a lot to search for keywords in Rails Apps.  However sometimes a keyword is present so often that I want to refine my search.  One example of this is if I want to search for a keyword present only in test files. Ag has a useful -G flag that allows you to do this.&lt;/p&gt;
 
@@ -535,7 +535,7 @@ end
  <entry>
    <title>How to Raise and Rescue Errors in Rails</title>
    <link href="http://androidgrl.github.io/2016/08/30/rescue/"/>
-   <updated>2016-08-30T00:00:00-05:00</updated>
+   <updated>2016-08-30T00:00:00-07:00</updated>
    <id>http://androidgrl.github.io/2016/08/30/rescue</id>
    <content type="html">&lt;p&gt;Raising and rescuing errors in Rails is relatively easy.  All you need to do is make a custom error class, raise it (usually in a model) and rescue it (usually in a controller).&lt;/p&gt;
 
@@ -584,7 +584,7 @@ end
  <entry>
    <title>What is initialize used for in Ruby?</title>
    <link href="http://androidgrl.github.io/2016/07/15/initialize/"/>
-   <updated>2016-07-15T00:00:00-05:00</updated>
+   <updated>2016-07-15T00:00:00-07:00</updated>
    <id>http://androidgrl.github.io/2016/07/15/initialize</id>
    <content type="html">&lt;p&gt;Does initialize need to be used all the time in a class?  No.
 You only need it to set instance variables and to allow passing of arguments when instantiating a class.&lt;/p&gt;
@@ -723,7 +723,7 @@ end&lt;/p&gt;
  <entry>
    <title>The difference between Rspec spies, doubles and instance_doubles</title>
    <link href="http://androidgrl.github.io/2016/07/13/double/"/>
-   <updated>2016-07-13T00:00:00-05:00</updated>
+   <updated>2016-07-13T00:00:00-07:00</updated>
    <id>http://androidgrl.github.io/2016/07/13/double</id>
    <content type="html">&lt;p&gt;Throughout the code base of our Rails app at work, we have many Rspec tests that use spies, doubles and instance_doubles.  I found most of the information on the web about them to be very theoretical and not practical.  My coworker then explained it to me very clearly as follows:&lt;/p&gt;
 
@@ -803,7 +803,7 @@ from (pry):14:in `block (2 levels) in &amp;lt;module:TM&amp;gt;&#39;
  <entry>
    <title>3D Printed Portrait-Business Cards Tutorial</title>
    <link href="http://androidgrl.github.io/2015/10/10/card/"/>
-   <updated>2015-10-10T00:00:00-05:00</updated>
+   <updated>2015-10-10T00:00:00-07:00</updated>
    <id>http://androidgrl.github.io/2015/10/10/card</id>
    <content type="html">&lt;p&gt;Have business cards that truly stand out! The next time you give your business card to someone, impress them with a 3D printed business card with your own portrait on it!  This tutorial will show you how to use Tinkercad, a free online 3D design tool.  Tinkercad is easy-to-use and is web-based, so there is no need to download anything.  This design takes only 15 minutes to create.&lt;/p&gt;
 
@@ -867,7 +867,7 @@ Draw a box around the whole card and select “Group”.&lt;/li&gt;
  <entry>
    <title>How to add custom text to a 3D model</title>
    <link href="http://androidgrl.github.io/2015/08/07/text/"/>
-   <updated>2015-08-07T00:00:00-05:00</updated>
+   <updated>2015-08-07T00:00:00-07:00</updated>
    <id>http://androidgrl.github.io/2015/08/07/text</id>
    <content type="html">&lt;p&gt;This is a tutorial on how to add custom text to a 3D model, using Tinkercad’s free easy-to-use web-based 3D modeling tool.  This is great for adding personal messages and names to your prints!  In this tutorial I will add custom text to a trophy downloaded from Thingiverse.&lt;/p&gt;
 
@@ -894,7 +894,7 @@ Draw a box around the whole card and select “Group”.&lt;/li&gt;
  <entry>
    <title>How to use a Kinect to take a 3D scan and Print It</title>
    <link href="http://androidgrl.github.io/2015/07/30/kinect/"/>
-   <updated>2015-07-30T00:00:00-05:00</updated>
+   <updated>2015-07-30T00:00:00-07:00</updated>
    <id>http://androidgrl.github.io/2015/07/30/kinect</id>
    <content type="html">&lt;p&gt;This is a tutorial on how to use a Kinect to take a 3D scan and print it on a Lulzbot printer.
 Follow these instructions and you will be able to make a 3D print of a person!&lt;/p&gt;
@@ -926,7 +926,7 @@ Follow these instructions and you will be able to make a 3D print of a person!&l
  <entry>
    <title>Impostor Phenomenon in Software Development</title>
    <link href="http://androidgrl.github.io/2015/06/30/impostor/"/>
-   <updated>2015-06-30T00:00:00-05:00</updated>
+   <updated>2015-06-30T00:00:00-07:00</updated>
    <id>http://androidgrl.github.io/2015/06/30/impostor</id>
    <content type="html">&lt;p&gt;This is a lightning talk that I did on the Impostor Phenomenon in Software Development.  It is a very common phenomenon among high achievers especially in open source software.  Covered in this talk is results from a survey at Turing School of Software &amp;amp; Design, and 3 steps on how to deal with it.&lt;/p&gt;
 
@@ -937,7 +937,7 @@ Follow these instructions and you will be able to make a 3D print of a person!&l
  <entry>
    <title>A Day in the Life of Jamie Kawahara</title>
    <link href="http://androidgrl.github.io/2015/06/24/day/"/>
-   <updated>2015-06-24T00:00:00-05:00</updated>
+   <updated>2015-06-24T00:00:00-07:00</updated>
    <id>http://androidgrl.github.io/2015/06/24/day</id>
    <content type="html">&lt;p&gt;This is an article for Built in Colorado that I wrote that follows a day in my life as a student at Turing School of Software &amp;amp; Design.&lt;/p&gt;
 
