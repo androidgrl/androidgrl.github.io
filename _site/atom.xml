@@ -4,7 +4,7 @@
  <title>Androidgrl's Blog</title>
  <link href="http://androidgrl.github.io/atom.xml" rel="self"/>
  <link href="http://androidgrl.github.io/"/>
- <updated>2019-01-01T17:08:49-08:00</updated>
+ <updated>2019-01-01T17:20:58-08:00</updated>
  <id>http://androidgrl.github.io</id>
  <author>
    <name>Jamie Kawahara</name>
@@ -17,7 +17,104 @@
    <link href="http://androidgrl.github.io/2017/04/14/testing/"/>
    <updated>2017-04-14T00:00:00-07:00</updated>
    <id>http://androidgrl.github.io/2017/04/14/testing</id>
-   <content type="html">
+   <content type="html">&lt;p&gt;Sometimes it can be difficult to determine what you want to test inside a method, especially if that method calls other methods, which in turn call other methods and so on.  For example, take the example class &lt;strong&gt;Cake&lt;/strong&gt; below.  It has a method called &lt;strong&gt;make&lt;/strong&gt; which calls two methods &lt;strong&gt;mix_ingredients&lt;/strong&gt; and &lt;strong&gt;bake&lt;/strong&gt;, which in turn call &lt;strong&gt;Foo.mix&lt;/strong&gt; and &lt;strong&gt;Foo.bake&lt;/strong&gt; respectively.&lt;/p&gt;
+
+&lt;p&gt;```
+class Cake
+  def make
+    mix_ingredients
+    bake
+  end&lt;/p&gt;
+
+&lt;p&gt;def mix_ingredients
+    Foo.mix
+  end&lt;/p&gt;
+
+&lt;p&gt;private&lt;/p&gt;
+
+&lt;p&gt;def bake
+    Foo.bake
+  end
+end&lt;/p&gt;
+
+&lt;p&gt;class Foo
+  def self.mix
+  end&lt;/p&gt;
+
+&lt;p&gt;def self.bake
+  end
+end
+```&lt;/p&gt;
+
+&lt;p&gt;If we were to write a test for &lt;strong&gt;make&lt;/strong&gt;, certainly we would want to test that &lt;strong&gt;mix_ingredients&lt;/strong&gt; and &lt;strong&gt;bake&lt;/strong&gt; get called.&lt;/p&gt;
+
+&lt;p&gt;```
+describe Cake do
+  describe ‘#make’ do
+    it ‘calls mix_ingredients and bake’ do
+      expect_any_instance_of(described_class).to receive(:mix_ingredients)
+      expect_any_instance_of(described_class).to receive(:bake)&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;  described_class.new.make
+end   end end ```
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;However since &lt;strong&gt;mix_ingredients&lt;/strong&gt; calls &lt;strong&gt;Foo.mix&lt;/strong&gt; and &lt;strong&gt;bake&lt;/strong&gt; calls &lt;strong&gt;Foo.bake&lt;/strong&gt; would we also want to test that those get called in our test for &lt;strong&gt;make&lt;/strong&gt;?  The answer is it depends on whether these get called inside public or private methods.&lt;/p&gt;
+
+&lt;p&gt;Taking a look at &lt;strong&gt;mix_ingredients&lt;/strong&gt; we see that it’s a public method.  Since all public methods should be tested, we know that we will have a separate test for it and it will check if &lt;strong&gt;Foo.mix&lt;/strong&gt; is called.  Here is our updated test file with the test for &lt;strong&gt;mix_ingredients&lt;/strong&gt;.&lt;/p&gt;
+
+&lt;pre&gt;
+describe Cake do
+  describe &#39;#make&#39; do
+    it &#39;calls mix_ingredients and bake&#39; do
+      expect_any_instance_of(described_class).to receive(:mix_ingredients)
+      expect_any_instance_of(described_class).to receive(:bake)
+
+      described_class.new.make
+    end
+  end
+  &lt;b&gt;
+  describe &#39;#mix_ingredients&#39; do
+    it &#39;calls mix on Foo&#39; do
+      expect(Foo).to receive(:mix)
+
+      described_class.new.mix_ingredients
+    end
+  end &lt;/b&gt;
+end
+&lt;/pre&gt;
+
+&lt;p&gt;But what about &lt;strong&gt;bake&lt;/strong&gt;?  Since we don’t test private methods we won’t have a test for this.  However, we still want to test that it calls &lt;strong&gt;Foo.bake&lt;/strong&gt;.  Since &lt;strong&gt;bake&lt;/strong&gt; gets called when &lt;strong&gt;make&lt;/strong&gt; gets called, we need to add a test for this in our &lt;strong&gt;make&lt;/strong&gt; test.&lt;/p&gt;
+
+&lt;pre&gt;
+describe Cake do
+  describe &#39;#make&#39; do
+    it &#39;calls mix_ingredients and bake&#39; do
+      expect_any_instance_of(described_class).to receive(:mix_ingredients)
+      expect_any_instance_of(described_class).to receive(:bake)
+
+      described_class.new.make
+    end
+  &lt;b&gt;
+    it &#39;calls bake on Foo&#39; do
+      expect(Foo).to receive(:bake)
+
+      described_class.new.make
+    end
+  end
+  &lt;/b&gt;
+
+  describe &#39;#mix_ingredients&#39; do
+    it &#39;calls mix on Foo&#39; do
+      expect(Foo).to receive(:mix)
+
+      described_class.new.mix_ingredients
+    end
+  end
+end
+&lt;/pre&gt;
+
+&lt;p&gt;In summary, determining the scope of what to test inside of a method that calls other methods, depends on whether public or private methods get called within it.  If a public method is called, then it will have it’s own test and you only need to test that this public method gets called.  If a private method is called, then it won’t have it’s own test, so you’ll need to test what’s happening inside the private method.&lt;/p&gt;
 </content>
  </entry>
  
@@ -323,6 +420,34 @@ puts A.new.d » d
 &lt;p&gt;Now there is only ‘include B’ inside class A.  Whenever B is included in a Class, it calls self.included
 which passes in the class A as an argument.  “self.included” then included modules C and D into the klass
 passed as the argument which in our case is class A.&lt;/p&gt;
+
+&lt;p&gt;Also, the self.included method comes in handy when you want your module to have BOTH instance and class methods.
+The following module C demonstrates the conventional way to specify both instance and class methods inside a module.&lt;/p&gt;
+
+&lt;p&gt;```
+module C
+  def self.included(base)
+    base.extend(ClassMethods)
+  end&lt;/p&gt;
+
+&lt;p&gt;def c
+    :c
+  end&lt;/p&gt;
+
+&lt;p&gt;module ClassMethods
+    def b
+      :b
+    end
+  end
+end&lt;/p&gt;
+
+&lt;p&gt;class A
+  include C
+end&lt;/p&gt;
+
+&lt;p&gt;puts A.new.c » c
+puts A.b » b
+```&lt;/p&gt;
 </content>
  </entry>
  

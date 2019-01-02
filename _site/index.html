@@ -107,7 +107,104 @@
 
     <span class="post-date">14 Apr 2017</span>
 
-    
+    <p>Sometimes it can be difficult to determine what you want to test inside a method, especially if that method calls other methods, which in turn call other methods and so on.  For example, take the example class <strong>Cake</strong> below.  It has a method called <strong>make</strong> which calls two methods <strong>mix_ingredients</strong> and <strong>bake</strong>, which in turn call <strong>Foo.mix</strong> and <strong>Foo.bake</strong> respectively.</p>
+
+<p>```
+class Cake
+  def make
+    mix_ingredients
+    bake
+  end</p>
+
+<p>def mix_ingredients
+    Foo.mix
+  end</p>
+
+<p>private</p>
+
+<p>def bake
+    Foo.bake
+  end
+end</p>
+
+<p>class Foo
+  def self.mix
+  end</p>
+
+<p>def self.bake
+  end
+end
+```</p>
+
+<p>If we were to write a test for <strong>make</strong>, certainly we would want to test that <strong>mix_ingredients</strong> and <strong>bake</strong> get called.</p>
+
+<p>```
+describe Cake do
+  describe ‘#make’ do
+    it ‘calls mix_ingredients and bake’ do
+      expect_any_instance_of(described_class).to receive(:mix_ingredients)
+      expect_any_instance_of(described_class).to receive(:bake)</p>
+
+<pre><code>  described_class.new.make
+end   end end ```
+</code></pre>
+
+<p>However since <strong>mix_ingredients</strong> calls <strong>Foo.mix</strong> and <strong>bake</strong> calls <strong>Foo.bake</strong> would we also want to test that those get called in our test for <strong>make</strong>?  The answer is it depends on whether these get called inside public or private methods.</p>
+
+<p>Taking a look at <strong>mix_ingredients</strong> we see that it’s a public method.  Since all public methods should be tested, we know that we will have a separate test for it and it will check if <strong>Foo.mix</strong> is called.  Here is our updated test file with the test for <strong>mix_ingredients</strong>.</p>
+
+<pre>
+describe Cake do
+  describe '#make' do
+    it 'calls mix_ingredients and bake' do
+      expect_any_instance_of(described_class).to receive(:mix_ingredients)
+      expect_any_instance_of(described_class).to receive(:bake)
+
+      described_class.new.make
+    end
+  end
+  <b>
+  describe '#mix_ingredients' do
+    it 'calls mix on Foo' do
+      expect(Foo).to receive(:mix)
+
+      described_class.new.mix_ingredients
+    end
+  end </b>
+end
+</pre>
+
+<p>But what about <strong>bake</strong>?  Since we don’t test private methods we won’t have a test for this.  However, we still want to test that it calls <strong>Foo.bake</strong>.  Since <strong>bake</strong> gets called when <strong>make</strong> gets called, we need to add a test for this in our <strong>make</strong> test.</p>
+
+<pre>
+describe Cake do
+  describe '#make' do
+    it 'calls mix_ingredients and bake' do
+      expect_any_instance_of(described_class).to receive(:mix_ingredients)
+      expect_any_instance_of(described_class).to receive(:bake)
+
+      described_class.new.make
+    end
+  <b>
+    it 'calls bake on Foo' do
+      expect(Foo).to receive(:bake)
+
+      described_class.new.make
+    end
+  end
+  </b>
+
+  describe '#mix_ingredients' do
+    it 'calls mix on Foo' do
+      expect(Foo).to receive(:mix)
+
+      described_class.new.mix_ingredients
+    end
+  end
+end
+</pre>
+
+<p>In summary, determining the scope of what to test inside of a method that calls other methods, depends on whether public or private methods get called within it.  If a public method is called, then it will have it’s own test and you only need to test that this public method gets called.  If a private method is called, then it won’t have it’s own test, so you’ll need to test what’s happening inside the private method.</p>
 
   </div>
   
@@ -425,6 +522,34 @@ puts A.new.d » d
 <p>Now there is only ‘include B’ inside class A.  Whenever B is included in a Class, it calls self.included
 which passes in the class A as an argument.  “self.included” then included modules C and D into the klass
 passed as the argument which in our case is class A.</p>
+
+<p>Also, the self.included method comes in handy when you want your module to have BOTH instance and class methods.
+The following module C demonstrates the conventional way to specify both instance and class methods inside a module.</p>
+
+<p>```
+module C
+  def self.included(base)
+    base.extend(ClassMethods)
+  end</p>
+
+<p>def c
+    :c
+  end</p>
+
+<p>module ClassMethods
+    def b
+      :b
+    end
+  end
+end</p>
+
+<p>class A
+  include C
+end</p>
+
+<p>puts A.new.c » c
+puts A.b » b
+```</p>
 
   </div>
   
