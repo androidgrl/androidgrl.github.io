@@ -4,13 +4,30 @@
  <title>Androidgrl's Blog</title>
  <link href="http://androidgrl.github.io/atom.xml" rel="self"/>
  <link href="http://androidgrl.github.io/"/>
- <updated>2019-01-01T18:03:01-08:00</updated>
+ <updated>2019-01-04T20:38:18-08:00</updated>
  <id>http://androidgrl.github.io</id>
  <author>
    <name>Jamie Kawahara</name>
    <email>kawaharajamie@gmail.com</email>
  </author>
 
+ 
+ <entry>
+   <title>The Effect of Cosmic Rays on Software Errors</title>
+   <link href="http://androidgrl.github.io/2019/01/04/cosmic/"/>
+   <updated>2019-01-04T00:00:00-08:00</updated>
+   <id>http://androidgrl.github.io/2019/01/04/cosmic</id>
+   <content type="html">&lt;p&gt;In my previous blog post I gave an overview of how RAM memory chips store each individual “bit” of binary code inside individual nano-sized capacitors.  In this post I would like to discuss the phenomenon of cosmic ray “bit flipping” in which a cosmic ray hitting such a nano-capacitor can cause it to flip from “0” to “1” or vice versa, and the effect that this has on software errors.&lt;/p&gt;
+
+&lt;p&gt;Cosmic rays are not actually energy waves, but high energy atomic particles that constantly shower Earth’s atmosphere.  Most of these particles originated from supernova star explosions and most of them are atomic nuclei stripped of their electrons.  When these particles hit Earth’s atmosphere they cause showers of secondary particles which can reach the Earth’s surface.  Most of these secondary particles consist of energetic neutrons.  If a secondary particle happens to hit a RAM nano-capacitor it can cause it to switch it’s state from un-charged to charged, or vice versa.  This is called a “bit flip” since the bit’s value changes from “0” to “1”, or vice versa.&lt;/p&gt;
+
+&lt;p&gt;It is roughly estimated that an average desktop computer experiences 1 bitflip per week per 1GB of RAM (&lt;a href=&quot;https://en.wikipedia.org/wiki/Soft_error&quot;&gt;wikipedia&lt;/a&gt;).  By extrapolation, if a computer has 16GB of RAM then it could possibly have about 2 bitflips per day.  For most consumer electronics, this is not enough to cause serious problems.  However, for servers responsible for financial transactions or scientific calculations, a single bit flip could result in a very serious failure.  For example, a bit flip could potentially cause a digit in someone’s bank account to change.  Although computers can be protected from cosmic rays by burying them, the most practical way to protect data from cosmic ray induced errors is to use ECC memory chips.  ECC memory or “error correcting code memory” is a special kind of memory chip that has software to detect single-bit errors and correct them.&lt;/p&gt;
+
+&lt;p&gt;The amount of cosmic ray exposure greatly increases with altitude.  A computer in Denver may receive four times more than one in New York, a computer in an airplane may receive 300 times more, and a computer in space may receive 1000 times more (&lt;a href=&quot;http://www.radioactivity.eu.com/site/pages/Dose_Cosmic.htm&quot;&gt;radioactivity.eu&lt;/a&gt;).  Most computers used in spacecraft use “radiation hardened” chips.  These are memory chips which are made from relatively less conductive marterials, which increase the amount of energy necessary to switch between states, and therefore make it less likely that a cosmic ray would carry enough energy to cause a bit flip.&lt;/p&gt;
+
+&lt;p&gt;In summary, cosmic ray induced software errors is a real phenomenon.  Computers which cannot tolerate any data corruption under any circumstances like those used in financial transactions must use special ECC memory to protect against it.  While computers in spacecraft require the use of radiation hardened chips.&lt;/p&gt;
+</content>
+ </entry>
  
  <entry>
    <title>How Does a Computer Physically Store Binary Code?</title>

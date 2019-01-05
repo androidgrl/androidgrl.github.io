@@ -104,6 +104,27 @@
   
   <div class="post">
     <h1 class="post-title">
+      <a href="//2019/01/04/cosmic/">
+        The Effect of Cosmic Rays on Software Errors
+      </a>
+    </h1>
+
+    <span class="post-date">04 Jan 2019</span>
+
+    <p>In my previous blog post I gave an overview of how RAM memory chips store each individual “bit” of binary code inside individual nano-sized capacitors.  In this post I would like to discuss the phenomenon of cosmic ray “bit flipping” in which a cosmic ray hitting such a nano-capacitor can cause it to flip from “0” to “1” or vice versa, and the effect that this has on software errors.</p>
+
+<p>Cosmic rays are not actually energy waves, but high energy atomic particles that constantly shower Earth’s atmosphere.  Most of these particles originated from supernova star explosions and most of them are atomic nuclei stripped of their electrons.  When these particles hit Earth’s atmosphere they cause showers of secondary particles which can reach the Earth’s surface.  Most of these secondary particles consist of energetic neutrons.  If a secondary particle happens to hit a RAM nano-capacitor it can cause it to switch it’s state from un-charged to charged, or vice versa.  This is called a “bit flip” since the bit’s value changes from “0” to “1”, or vice versa.</p>
+
+<p>It is roughly estimated that an average desktop computer experiences 1 bitflip per week per 1GB of RAM (<a href="https://en.wikipedia.org/wiki/Soft_error">wikipedia</a>).  By extrapolation, if a computer has 16GB of RAM then it could possibly have about 2 bitflips per day.  For most consumer electronics, this is not enough to cause serious problems.  However, for servers responsible for financial transactions or scientific calculations, a single bit flip could result in a very serious failure.  For example, a bit flip could potentially cause a digit in someone’s bank account to change.  Although computers can be protected from cosmic rays by burying them, the most practical way to protect data from cosmic ray induced errors is to use ECC memory chips.  ECC memory or “error correcting code memory” is a special kind of memory chip that has software to detect single-bit errors and correct them.</p>
+
+<p>The amount of cosmic ray exposure greatly increases with altitude.  A computer in Denver may receive four times more than one in New York, a computer in an airplane may receive 300 times more, and a computer in space may receive 1000 times more (<a href="http://www.radioactivity.eu.com/site/pages/Dose_Cosmic.htm">radioactivity.eu</a>).  Most computers used in spacecraft use “radiation hardened” chips.  These are memory chips which are made from relatively less conductive marterials, which increase the amount of energy necessary to switch between states, and therefore make it less likely that a cosmic ray would carry enough energy to cause a bit flip.</p>
+
+<p>In summary, cosmic ray induced software errors is a real phenomenon.  Computers which cannot tolerate any data corruption under any circumstances like those used in financial transactions must use special ECC memory to protect against it.  While computers in spacecraft require the use of radiation hardened chips.</p>
+
+  </div>
+  
+  <div class="post">
+    <h1 class="post-title">
       <a href="//2019/01/01/binary/">
         How Does a Computer Physically Store Binary Code?
       </a>
@@ -445,161 +466,6 @@ end</p>
 
 <p>puts C::TWO
 » error
-```</p>
-
-  </div>
-  
-  <div class="post">
-    <h1 class="post-title">
-      <a href="//2017/01/19/modules/">
-        The difference between using include and extend when including modules in a Class
-      </a>
-    </h1>
-
-    <span class="post-date">19 Jan 2017</span>
-
-    <p>We’ve seen the use of include for including methods from a module into a Class.
-The following shows three modules included into Class A:</p>
-
-<p>```
-module B
-  def b
-    :b
-  end
-end</p>
-
-<p>module C
-  def c
-    :c
-  end
-end</p>
-
-<p>module D
-  def d
-    :d
-  end
-end</p>
-
-<p>class A
-  include B
-  include C
-  include D
-end
-```</p>
-
-<p>Include turns the methods inside the module into <em>instance</em> methods for that class:</p>
-
-<p><code>
-puts A.new.b &gt;&gt; b
-puts A.new.c &gt;&gt; c
-puts A.new.d &gt;&gt; d
-</code></p>
-
-<p>However you can also change the methods into <em>class</em> methods by using extend:</p>
-
-<p>```
-module B
-  def b
-    :b
-  end
-end</p>
-
-<p>module C
-  def c
-    :c
-  end
-end</p>
-
-<p>module D
-  def d
-    :d
-  end
-end</p>
-
-<p>class A
-  extend B
-  extend C
-  extend D
-end</p>
-
-<p>puts A.b » b
-puts A.c » c
-puts A.d » d
-```</p>
-
-<p>Notice how we didn’t have to change the method definitions inside the module to self.method.
-This is because modules have no sense of Class, they’re just buckets for methods.  They are called
-‘mixins’ because they mix methods into wherever they are included or extended into.</p>
-
-<p>Our team architect Adam Zaninovich gives the analogy of modules being ‘viruses’ and classes being ‘hosts’.  Modules ‘infect’
-classes with their ‘methods’ (in a good way in this case), in the sense that viruses inject their dna into host cells.</p>
-
-<p>I wrote include in class A three times which is repetitive.  If you find that you are
-including modules in a class many times you can avoid this by using the self.included module method.</p>
-
-<p>```
-module B
-  def self.included(klass)
-    klass.include C
-    klass.include D
-  end</p>
-
-<p>def b
-    :b
-  end
-end</p>
-
-<p>module C
-  def c
-    :c
-  end
-end</p>
-
-<p>module D
-  def d
-    :d
-  end
-end</p>
-
-<p>class A
-  include B
-end</p>
-
-<p>puts A.new.b » b
-puts A.new.c » c
-puts A.new.d » d
-```</p>
-
-<p>Now there is only ‘include B’ inside class A.  Whenever B is included in a Class, it calls self.included
-which passes in the class A as an argument.  “self.included” then included modules C and D into the klass
-passed as the argument which in our case is class A.</p>
-
-<p>Also, the self.included method comes in handy when you want your module to have BOTH instance and class methods.
-The following module C demonstrates the conventional way to specify both instance and class methods inside a module.</p>
-
-<p>```
-module C
-  def self.included(base)
-    base.extend(ClassMethods)
-  end</p>
-
-<p>def c
-    :c
-  end</p>
-
-<p>module ClassMethods
-    def b
-      :b
-    end
-  end
-end</p>
-
-<p>class A
-  include C
-end</p>
-
-<p>puts A.new.c » c
-puts A.b » b
 ```</p>
 
   </div>

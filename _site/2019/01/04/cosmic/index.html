@@ -11,7 +11,7 @@
 
   <title>
     
-      Law of Demeter &middot; Androidgrl's Blog
+      The Effect of Cosmic Rays on Software Errors &middot; Androidgrl's Blog
     
   </title>
 
@@ -101,88 +101,23 @@
 
       <div class="container content">
         <div class="post">
-  <h1 class="post-title">Law of Demeter</h1>
-  <span class="post-date">04 Jan 2017</span>
-  <p>A few times I’ve been told during code review that something violates the Law of Demeter.  This method for example.</p>
+  <h1 class="post-title">The Effect of Cosmic Rays on Software Errors</h1>
+  <span class="post-date">04 Jan 2019</span>
+  <p>In my previous blog post I gave an overview of how RAM memory chips store each individual “bit” of binary code inside individual nano-sized capacitors.  In this post I would like to discuss the phenomenon of cosmic ray “bit flipping” in which a cosmic ray hitting such a nano-capacitor can cause it to flip from “0” to “1” or vice versa, and the effect that this has on software errors.</p>
 
-<p><code>
-class User
-  def user_info
-    "#{user.name}, #{user.department.name}"
-  end
-end
-</code></p>
+<p>Cosmic rays are not actually energy waves, but high energy atomic particles that constantly shower Earth’s atmosphere.  Most of these particles originated from supernova star explosions and most of them are atomic nuclei stripped of their electrons.  When these particles hit Earth’s atmosphere they cause showers of secondary particles which can reach the Earth’s surface.  Most of these secondary particles consist of energetic neutrons.  If a secondary particle happens to hit a RAM nano-capacitor it can cause it to switch it’s state from un-charged to charged, or vice versa.  This is called a “bit flip” since the bit’s value changes from “0” to “1”, or vice versa.</p>
 
-<p>Which led me to ask: what is the Law of Demeter, why should I follow it, how do I know if I’m violating it, and how do I avoid violating it?</p>
+<p>It is roughly estimated that an average desktop computer experiences 1 bitflip per week per 1GB of RAM (<a href="https://en.wikipedia.org/wiki/Soft_error">wikipedia</a>).  By extrapolation, if a computer has 16GB of RAM then it could possibly have about 2 bitflips per day.  For most consumer electronics, this is not enough to cause serious problems.  However, for servers responsible for financial transactions or scientific calculations, a single bit flip could result in a very serious failure.  For example, a bit flip could potentially cause a digit in someone’s bank account to change.  Although computers can be protected from cosmic rays by burying them, the most practical way to protect data from cosmic ray induced errors is to use ECC memory chips.  ECC memory or “error correcting code memory” is a special kind of memory chip that has software to detect single-bit errors and correct them.</p>
 
-<p>The Law of Demeter is formally defined as,</p>
+<p>The amount of cosmic ray exposure greatly increases with altitude.  A computer in Denver may receive four times more than one in New York, a computer in an airplane may receive 300 times more, and a computer in space may receive 1000 times more (<a href="http://www.radioactivity.eu.com/site/pages/Dose_Cosmic.htm">radioactivity.eu</a>).  Most computers used in spacecraft use “radiation hardened” chips.  These are memory chips which are made from relatively less conductive marterials, which increase the amount of energy necessary to switch between states, and therefore make it less likely that a cosmic ray would carry enough energy to cause a bit flip.</p>
 
-<p><code>
-A method of an object may only call methods of:
-  The object itself.
-  An argument of the method.
-  Any object created within the method.
-  Any direct properties/fields of the object.
-</code></p>
-
-<p>The above code sample violates the law with “user.department.name” because it’s calling name on the user’s department, and department is an entirely different object from a user.</p>
-
-<p>In general it is better if one class does not have to know about methods from another class, in other words when the classes are “decoupled”.  This is because it makes the code more flexible.  For example in our code sample, there is only one department for a user.  But what happens if things changed so that a user could have many departments and we wanted the only use the first one for our user_info method?  We would then have to say:</p>
-
-<p><code>
-class User
-  def user_info
-    "#{user.name}, #{user.departments.first.name}"
-  end
-end
-</code></p>
-
-<p>This seems reasonable for now but what if we used “user.department” in multiple places?  We’d have to make the same change wherever it was used, which would be cumbersome.</p>
-
-<p>So how do you avoid violating the law?</p>
-
-<p>You could make a custom method in the User class called “department_name”:</p>
-
-<p>```
-class User
-  def user_info
-    “#{user.name}, #{user.department_name}”
-  end</p>
-
-<p>def department_name
-    departments.first.name
-  end
-end
-```</p>
-
-<p>Now the department_name is an immediate property of the user itself, satisfying the law and also making it easier to make future changes if we want to change what we use for the department’s name.</p>
-
-<p>One sign that is often but not always an indication of Demeter violation is chaining of dots.  For example “user.departments.first.name” had chained dots and indeed was a violation.  However, sometimes dot chaining does not mean Demeter violation for example:</p>
-
-<p><code>
-def slug(string)
-  string.strip.downcase.tr_s('^[a-z0-9]', '-')
-end
-</code></p>
-
-<p>The above complies with the Law of Demeter because each method is called on a String object.  And the law doesn’t care about the number of methods called, but the number of <em>types</em> of methods called.</p>
-
-<p>For more information see <a href="http://www.virtuouscode.com/2011/07/05/demeter-its-not-just-a-good-idea-its-the-law/">Demeter: It’s not just a good idea. It’s the law.</a></p>
+<p>In summary, cosmic ray induced software errors is a real phenomenon.  Computers which cannot tolerate any data corruption under any circumstances like those used in financial transactions must use special ECC memory to protect against it.  While computers in spacecraft require the use of radiation hardened chips.</p>
 
 </div>
 
 <div class="related">
   <h2>Related Posts</h2>
   <ul class="related-posts">
-    
-      <li>
-        <h3>
-          <a href="/2019/01/04/cosmic/">
-            The Effect of Cosmic Rays on Software Errors
-            <small>04 Jan 2019</small>
-          </a>
-        </h3>
-      </li>
     
       <li>
         <h3>
@@ -198,6 +133,15 @@ end
           <a href="/2017/04/14/testing/">
             Determining the Scope of What to Test Inside Methods
             <small>14 Apr 2017</small>
+          </a>
+        </h3>
+      </li>
+    
+      <li>
+        <h3>
+          <a href="/2017/02/17/languages/">
+            What Makes a Language Fast?  Five Factors That Affect a Programming Language's Speed
+            <small>17 Feb 2017</small>
           </a>
         </h3>
       </li>
