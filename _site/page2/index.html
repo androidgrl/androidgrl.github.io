@@ -103,428 +103,57 @@
         <div class="posts">
   
   <div class="post">
-    <h1 class="post-title">
-      <a href="//2017/01/19/modules/">
+    <h2 class="post-title">
+      <a href="/2017/01/19/modules/">
         The difference between using include and extend when including modules in a Class
       </a>
-    </h1>
+    </h2>
 
     <span class="post-date">19 Jan 2017</span>
 
-    <p>We’ve seen the use of include for including methods from a module into a Class.
-The following shows three modules included into Class A:</p>
-
-<p>```
-module B
-  def b
-    :b
-  end
-end</p>
-
-<p>module C
-  def c
-    :c
-  end
-end</p>
-
-<p>module D
-  def d
-    :d
-  end
-end</p>
-
-<p>class A
-  include B
-  include C
-  include D
-end
-```</p>
-
-<p>Include turns the methods inside the module into <em>instance</em> methods for that class:</p>
-
-<p><code>
-puts A.new.b &gt;&gt; b
-puts A.new.c &gt;&gt; c
-puts A.new.d &gt;&gt; d
-</code></p>
-
-<p>However you can also change the methods into <em>class</em> methods by using extend:</p>
-
-<p>```
-module B
-  def b
-    :b
-  end
-end</p>
-
-<p>module C
-  def c
-    :c
-  end
-end</p>
-
-<p>module D
-  def d
-    :d
-  end
-end</p>
-
-<p>class A
-  extend B
-  extend C
-  extend D
-end</p>
-
-<p>puts A.b » b
-puts A.c » c
-puts A.d » d
-```</p>
-
-<p>Notice how we didn’t have to change the method definitions inside the module to self.method.
-This is because modules have no sense of Class, they’re just buckets for methods.  They are called
-‘mixins’ because they mix methods into wherever they are included or extended into.</p>
-
-<p>Our team architect Adam Zaninovich gives the analogy of modules being ‘viruses’ and classes being ‘hosts’.  Modules ‘infect’
-classes with their ‘methods’ (in a good way in this case), in the sense that viruses inject their dna into host cells.</p>
-
-<p>I wrote include in class A three times which is repetitive.  If you find that you are
-including modules in a class many times you can avoid this by using the self.included module method.</p>
-
-<p>```
-module B
-  def self.included(klass)
-    klass.include C
-    klass.include D
-  end</p>
-
-<p>def b
-    :b
-  end
-end</p>
-
-<p>module C
-  def c
-    :c
-  end
-end</p>
-
-<p>module D
-  def d
-    :d
-  end
-end</p>
-
-<p>class A
-  include B
-end</p>
-
-<p>puts A.new.b » b
-puts A.new.c » c
-puts A.new.d » d
-```</p>
-
-<p>Now there is only ‘include B’ inside class A.  Whenever B is included in a Class, it calls self.included
-which passes in the class A as an argument.  “self.included” then included modules C and D into the klass
-passed as the argument which in our case is class A.</p>
-
-<p>Also, the self.included method comes in handy when you want your module to have BOTH instance and class methods.
-The following module C demonstrates the conventional way to specify both instance and class methods inside a module.</p>
-
-<p>```
-module C
-  def self.included(base)
-    base.extend(ClassMethods)
-  end</p>
-
-<p>def c
-    :c
-  end</p>
-
-<p>module ClassMethods
-    def b
-      :b
-    end
-  end
-end</p>
-
-<p>class A
-  include C
-end</p>
-
-<p>puts A.new.c » c
-puts A.b » b
-```</p>
-
   </div>
   
   <div class="post">
-    <h1 class="post-title">
-      <a href="//2017/01/14/try/">
+    <h2 class="post-title">
+      <a href="/2017/01/14/try/">
         Alternatives to Using the Try method
       </a>
-    </h1>
+    </h2>
 
     <span class="post-date">14 Jan 2017</span>
 
-    <p>At my work we have a North America team and a China team.  Part of our workflow is to review each others merge requests before merging.  As a junior developer I often see things that I have never seen before and must make an educated decision about whether the unfamiliar pattern is a genuine coding error or deviation from best practices, or just something new I don’t know about.  And because the person who wrote the code is in China in an opposite time zone, it’s not easy to ask them directly about it.  So, while reviewing an MR I saw a use of the try method that I had never seen before.  Here is a simplified version:</p>
-
-<p>```
-class Order
-  def grand_total
-    sub_total.try(:*, sales_tax)
-  end</p>
-
-<p>def sub_total
-    FooBar.baz
-  end
-end
-```</p>
-
-<p>Here the asterisk is the multiplication operator.  Try is trying to multiply sub_total by sales_tax.  If sub_total is nil, it will return nil, instead of erroring out as would happen when trying to multiply nil by a number.</p>
-
-<p>This seemed harmless enough but when I showed it to the team architect in North America he said that using try is like introducing cancer into the code base.  I believe his exact words were “OMG make it stop that try needs to die with fire”.  It seems harmless but then other people see it and start to use it and if allowed to continue can introduce a lot of uncertainty into the code.  It is better to know what kind of result your methods are returning.  We then had a pairing session to use alternative ways to handle nil cases without using try, and here are two of the alternatives we used:</p>
-
-<p>The first alternative is to use an if statement.</p>
-
-<p>```
-class Order
-  def grand_total
-    if subtotal
-      (sub_total * sales_tax)
-    else
-      nil
-    end
-  end</p>
-
-<p>def sub_total
-    FooBar.baz
-  end
-end
-```</p>
-
-<p>If there’s a subtotal it will perform the multiplication, if there is not it will return nil.  Since by default nil is what is returned by else, you can take out the else and make the statement one line.</p>
-
-<p>```
-class Order
-  def grand_total
-    (sub_total * sales_tax) if sub_total
-  end</p>
-
-<p>def sub_total
-    FooBar.baz
-  end
-end
-```</p>
-
-<p>What if we wanted to return 0 instead of nil if there was no sub_total?  We could go back to the if else statement but sometimes it can be better to use a Null Object pattern, which is the second alternative.</p>
-
-<p>```
-class Order
-  def grand_total
-    sub_total * sales_tax
-  end</p>
-
-<p>def sub_total
-    result = FooBar.baz
-    if result
-      result
-    else
-      NullOrder.new.sub_total
-    end
-  end
-end</p>
-
-<p>class NullOrder
-  def sub_total
-    0
-  end
-end
-```</p>
-
-<p>Going into the sub_total method, if we get a result from FooBar.baz we return it, if it is nil then we return an instance of NullOrder which has a sub_total of 0.</p>
-
-<p>We then no longer have to have branching inside the grand_total method.  It will either be the actual sub_total or the sub_total on the NullOrder which is 0.</p>
-
-<p>This is an example of Duck Typing.  Duck Typing is when we don’t care what type of object we’re dealing with only that it has certain behavior.  In this case  we just care that Order and NullOrder both have a sub_total method.</p>
-
-<p>In order to prevent an error in case someone tries to call an undefined method on the NullOrder, we can override the method_missing method to return whatever we want.  For example:</p>
-
-<p>```
-class NullOrder
-  def method_missing(*_args)
-    nil
-  end</p>
-
-<p>def sub_total
-    0
-  end
-end
-```</p>
-
-<p>If someone were to call NullOrder.new.whatever, the method_missing method gets called which by default will raise an error.  Instead we override it to return nil.  We add a splat argument in case someone calls an undefined method on it that has arguments.  The underscore in  front of “args” denotes that it’s something that’s not supposed to be used.</p>
-
-<p>In summary, the try method introduces uncertainty into the code because it makes it ok to not know what is being returned by a method.  Alternatives to using try are using if statements and the Null Object pattern.</p>
-
   </div>
   
   <div class="post">
-    <h1 class="post-title">
-      <a href="//2017/01/04/demeter/">
+    <h2 class="post-title">
+      <a href="/2017/01/04/demeter/">
         Law of Demeter
       </a>
-    </h1>
+    </h2>
 
     <span class="post-date">04 Jan 2017</span>
 
-    <p>A few times I’ve been told during code review that something violates the Law of Demeter.  This method for example.</p>
-
-<p><code>
-class User
-  def user_info
-    "#{user.name}, #{user.department.name}"
-  end
-end
-</code></p>
-
-<p>Which led me to ask: what is the Law of Demeter, why should I follow it, how do I know if I’m violating it, and how do I avoid violating it?</p>
-
-<p>The Law of Demeter is formally defined as,</p>
-
-<p><code>
-A method of an object may only call methods of:
-  The object itself.
-  An argument of the method.
-  Any object created within the method.
-  Any direct properties/fields of the object.
-</code></p>
-
-<p>The above code sample violates the law with “user.department.name” because it’s calling name on the user’s department, and department is an entirely different object from a user.</p>
-
-<p>In general it is better if one class does not have to know about methods from another class, in other words when the classes are “decoupled”.  This is because it makes the code more flexible.  For example in our code sample, there is only one department for a user.  But what happens if things changed so that a user could have many departments and we wanted the only use the first one for our user_info method?  We would then have to say:</p>
-
-<p><code>
-class User
-  def user_info
-    "#{user.name}, #{user.departments.first.name}"
-  end
-end
-</code></p>
-
-<p>This seems reasonable for now but what if we used “user.department” in multiple places?  We’d have to make the same change wherever it was used, which would be cumbersome.</p>
-
-<p>So how do you avoid violating the law?</p>
-
-<p>You could make a custom method in the User class called “department_name”:</p>
-
-<p>```
-class User
-  def user_info
-    “#{user.name}, #{user.department_name}”
-  end</p>
-
-<p>def department_name
-    departments.first.name
-  end
-end
-```</p>
-
-<p>Now the department_name is an immediate property of the user itself, satisfying the law and also making it easier to make future changes if we want to change what we use for the department’s name.</p>
-
-<p>One sign that is often but not always an indication of Demeter violation is chaining of dots.  For example “user.departments.first.name” had chained dots and indeed was a violation.  However, sometimes dot chaining does not mean Demeter violation for example:</p>
-
-<p><code>
-def slug(string)
-  string.strip.downcase.tr_s('^[a-z0-9]', '-')
-end
-</code></p>
-
-<p>The above complies with the Law of Demeter because each method is called on a String object.  And the law doesn’t care about the number of methods called, but the number of <em>types</em> of methods called.</p>
-
-<p>For more information see <a href="http://www.virtuouscode.com/2011/07/05/demeter-its-not-just-a-good-idea-its-the-law/">Demeter: It’s not just a good idea. It’s the law.</a></p>
-
   </div>
   
   <div class="post">
-    <h1 class="post-title">
-      <a href="//2017/01/03/ag/">
+    <h2 class="post-title">
+      <a href="/2017/01/03/ag/">
         Refining Searches using Ag
       </a>
-    </h1>
+    </h2>
 
     <span class="post-date">03 Jan 2017</span>
 
-    <p>I use Ag a lot to search for keywords in Rails Apps.  However sometimes a keyword is present so often that I want to refine my search.  One example of this is if I want to search for a keyword present only in test files. Ag has a useful -G flag that allows you to do this.</p>
-
-<p>For example say I wanted to search for the keyword “organization” in files that end in spec.rb.  I would use:</p>
-
-<p><code>
-&gt; Ag organization -G spec.rb$
-</code></p>
-
-<p>The -G flag tells Ag to look for the term inside files with names containing spec.rb.  It can accept a regex which is what the $ is for.  The $ indicates that I want to search in files that end in spec.rb, not just files that have spec.rb somewhere within their names.</p>
-
-<p>Another example is if I am searching for a keyword that includes punctuation marks which happen to be regex characters.  For example, I was searching for “.try” and since Ag automatically treats search terms as regexes by default, it will find all terms with any character followed by try, like “retry” in addition to “.try”.</p>
-
-<p>Ag has a literal expression flag -Q to specify that you’re searching for a literal expression not a regex.  In order to search for “.try” you would use:</p>
-
-<p><code>
-&gt; Ag -Q .try
-</code></p>
-
-<p>For more  information see <a href="http://conqueringthecommandline.com/book/ack_ag">Conquering the Command Line, by Mark Bates</a></p>
-
   </div>
   
   <div class="post">
-    <h1 class="post-title">
-      <a href="//2016/08/30/rescue/">
+    <h2 class="post-title">
+      <a href="/2016/08/30/rescue/">
         How to Raise and Rescue Errors in Rails
       </a>
-    </h1>
+    </h2>
 
     <span class="post-date">30 Aug 2016</span>
-
-    <p>Raising and rescuing errors in Rails is relatively easy.  All you need to do is make a custom error class, raise it (usually in a model) and rescue it (usually in a controller).</p>
-
-<p>Start by making a custom error class that inherits from StandardError.  This will give you a more descriptive error instead of raising the generic StandardError, so you can better deduce where the error came from.
- I will use a hypothetical example of an error that is raised when a User is being created.</p>
-
-<p><code>
-class UserCreateError &lt; StandardError
-end
-</code></p>
-
-<p>Each custom error class should have it’s own file which you can put in an app/errors directory.</p>
-
-<p>Here I will raise the error in a User model method.</p>
-
-<p><code>
-class User &lt; ActiveRecord::Base
-  def self.example_method
-    raise UserCreateError
-  end
-end
-</code></p>
-
-<p>When the create action is called on the controller, it will call User.example_method, which will raise the error.  The error then goes back up to the controller where it is rescued.</p>
-
-<p><code>
-class UsersController &lt; ApplicationController
-  def create
-    User.example_method
-  rescue UserCreateError
-    render json: "Invalid User Information", status: :bad_request
-  end
-end
-</code></p>
-
-<p>Note the indentation of the rescue is on the same column as the def.</p>
-
-<p>Whatever you put underneath the rescue will be run if there is an error.</p>
-
-<p>Here I render a custom json error message and specify an optional status code.</p>
-
-<p>And that’s pretty much all there is too it.</p>
 
   </div>
   
