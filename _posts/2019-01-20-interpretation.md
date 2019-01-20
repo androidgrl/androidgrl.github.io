@@ -9,7 +9,7 @@ Here is a flowchart which goes over the main steps by which Ruby is interpreted 
 
 ![interpretation](/public/RubyInterpretation.png)
 
-As shown in the chart, Ruby in interpreted in four steps:
+As shown in the chart, Ruby is interpreted in four steps:
 
 1. Ruby script is "tokenized" into tokens.
 2. The tokens are "parsed" into Abstract Syntax Tree nodes.
